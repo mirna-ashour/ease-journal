@@ -1,5 +1,5 @@
 
-# Add Ideas here
+# List of ideas for project
 
 - Sports: Soccer clubs stats, achievements, trophies.
     - Keep track of club points, goals, wins, losses, and trophies, etc.
@@ -14,3 +14,10 @@
         - Read: Users can have access to general info, tips, and reminders.
         - Update: General info/tips can be updated to be kept up do date. Users can update information about their reminders.
         - Delete: General info/tips can be removed if outdated. Users can remove reminders. Users can also unstar general info/tips.
+- Journaling application powered by GPT generated prompts
+    - Users can create journal entries/reflection under various categories (personal, health, work/school, creative)
+    - New entries can be written to respond to prompts generated using previous journal entries for a certain time period (ex. the past week)
+    - Provide insights/stats/summaries for personal or creative entries for the user to view
+    - Send reminders for updating journals or keeping up a streak
+    - Maybe make it mulit-modal by allowing easy insertion of images?
+    
