@@ -50,3 +50,19 @@
     Security: Implement password encryption, two-factor authentication, and other security measures.
     Notifications: Players can receive notifications for new game releases, server downtimes, friend requests, etc.
     Integration with External Game APIs: To fetch real-time data from games and platforms that offer public APIs.
+
+## Functional Requirements (Journaling app):
+
+- Create journal entries 
+- Provide prompts to users based on previous journal 
+- Update a journal entry 
+- categorize entries into different categories (personal, health, work/school, creative)
+- read previous entries written by users
+- delete a journal entry that the user no longer needs 
+
+### Overview for storage 
+
+| User_id  | Name      | Category   | title     | Prompt   | Date      | Entry     |
+| -------- | --------  | --------   | --------  | -------- | --------  | --------  |
+| ........ | ........  | ........   | ........  | ........ | ........  | ........  | 
+
