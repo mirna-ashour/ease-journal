@@ -42,3 +42,11 @@
     Game Info: Remove a game from the database.
     Server Info: Delete a server registration if it's no longer available or relevant.
     Player Profile: Delete a player's profile if they request account removal or violate terms of service.
+    - Other Thinking:
+    Cross-platform Integration: Ensure our system can manage games from different platforms (e.g., PC, Nintendo Switch, PlayStation). [Increase the project's usability and appeal]
+    Server Health Monitoring: Apart from just tracking the server status (online/offline), having metrics for latency, uptime, etc., to provide a comprehensive understanding of the server's     performance.
+    Social Features: Incorporate features like adding friends, messaging, or creating gaming clans/groups.
+    Game Reviews and Ratings: Allow users to leave reviews and ratings for games, which can be read by other users.
+    Security: Implement password encryption, two-factor authentication, and other security measures.
+    Notifications: Players can receive notifications for new game releases, server downtimes, friend requests, etc.
+    Integration with External Game APIs: To fetch real-time data from games and platforms that offer public APIs.
