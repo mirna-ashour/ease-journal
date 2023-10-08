@@ -88,3 +88,9 @@
 - Prompts
 - Categories
 - Trash Bin (of deleted categories/journal entries)
+- Create user
+- Retrieve previous entries to read them
+- Add images to an entry
+- update entries 
+- modify title of an entry
+- update category of an entry
