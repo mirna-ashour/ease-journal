@@ -7,20 +7,21 @@
         - Read: “Read” will be used to get updates and information about certain clubs
         - Update: “Update” will be used to update the club’s points, goals, wins, etc.
         - Delete: “Delete” will be used to remove clubs.
-  
+
 - Health: General info, tips, reminders.
     - Help users stay on top of their appointments, prescriptions, and overall personal health.
         - Create: Add general info/tips. Users can add reminders for appointments and prescriptions with names, time, location, recommended daily dosages, descriptions, etc. Users can also star general info/tips.
         - Read: Users can have access to general info, tips, and reminders.
         - Update: General info/tips can be updated to be kept up do date. Users can update information about their reminders.
         - Delete: General info/tips can be removed if outdated. Users can remove reminders. Users can also unstar general info/tips.
+
 - Journaling application powered by GPT generated prompts
     - Users can create journal entries/reflection under various categories (personal, health, work/school, creative)
     - New entries can be written to respond to prompts generated using previous journal entries for a certain time period (ex. the past week)
     - Provide insights/stats/summaries for personal or creative entries for the user to view
     - Send reminders for updating journals or keeping up a streak
     - Maybe make it mulit-modal by allowing easy insertion of images?
-    
+
 - Video Games and Game Server - Cody’s thinking
     Game Info:
     Game titles, genres, release dates, supported platforms.
@@ -56,9 +57,16 @@
 - Create journal entries 
 - Provide prompts to users based on previous journal 
 - Update a journal entry 
-- categorize entries into different categories (personal, health, work/school, creative)
-- read previous entries written by users
-- delete a journal entry that the user no longer needs 
+- Categorize entries into different categories (personal, health, work/school, creative)
+- Read previous entries written by users
+- Delete a journal entry that the user no longer needs
+- Relocation of an entry to another category
+- Show/Hide date/time stamps
+- Updating journal entry titles (by default null or date)
+- Removal/Creation of categories
+- A simple searching mechanism to find journal entries
+- Duplicate a journal entry
+
 
 ### Overview for storage 
 
