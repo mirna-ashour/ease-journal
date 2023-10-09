@@ -66,6 +66,11 @@
 - Removal/Creation of categories
 - A simple searching mechanism to find journal entries
 - Duplicate a journal entry
+- User can indicate whether or not they want a generated prompt for a new entry
+- Recommend personlized prompts to the user within the categories
+- Can discard/regenerate personalized prompts 
+- Insert images inline within entries 
+- Order entries alphabetically by title or by date
 
 
 ### Overview for storage 
