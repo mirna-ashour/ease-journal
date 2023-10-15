@@ -52,6 +52,7 @@
     Notifications: Players can receive notifications for new game releases, server downtimes, friend requests, etc.
     Integration with External Game APIs: To fetch real-time data from games and platforms that offer public APIs.
 
+
 ## Functional Requirements (Journaling app):
 
 - Create journal entries 
@@ -71,11 +72,19 @@
 - Can discard/regenerate personalized prompts 
 - Insert images inline within entries 
 - Order entries alphabetically by title or by date
+- Recovery of deleted categories (recursive)/journal entries
 
 
-### Overview for storage 
+## Overview for Storage 
 
 | User_id  | Name      | Category   | title     | Prompt   | Date      | Entry     |
 | -------- | --------  | --------   | --------  | -------- | --------  | --------  |
 | ........ | ........  | ........   | ........  | ........ | ........  | ........  | 
 
+
+## Potential Endpoints
+
+- Journal Entries
+- Prompts
+- Categories
+- Trash Bin (of deleted categories/journal entries)
