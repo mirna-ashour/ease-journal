@@ -15,7 +15,7 @@
         - Update: General info/tips can be updated to be kept up do date. Users can update information about their reminders.
         - Delete: General info/tips can be removed if outdated. Users can remove reminders. Users can also unstar general info/tips.
 
-- Journaling application powered by GPT generated prompts
+- Journaling application powered by GPT generated prompts (Mirna)
     - Users can create journal entries/reflection under various categories (personal, health, work/school, creative)
     - New entries can be written to respond to prompts generated using previous journal entries for a certain time period (ex. the past week)
     - Provide insights/stats/summaries for personal or creative entries for the user to view
@@ -52,8 +52,9 @@
     Notifications: Players can receive notifications for new game releases, server downtimes, friend requests, etc.
     Integration with External Game APIs: To fetch real-time data from games and platforms that offer public APIs.
 
+--------------------------------------------------------------------------------------------------------------------------
 
-## Functional Requirements (Journaling app):
+# Functional Requirements (for Journaling app):
 
 - Create journal entries 
 - Provide prompts to users based on previous journal 
@@ -84,13 +85,19 @@
 
 ## Potential Endpoints
 
-- Journal Entries
-- Prompts
-- Categories
-- Trash Bin (of deleted categories/journal entries)
-- Create user
-- Retrieve previous entries to read them
-- Add images to an entry
-- update entries 
-- modify title of an entry
-- update category of an entry
+- USER BASED
+    - Create user account
+    - Retrieve user account information 
+    - Retreive categories for a user
+    - Retrieve journal entries within a category for a user
+
+- OPEN AI API 
+    - Generate prompt from Open AI api given specific parameters 
+    - Retrieve previous entries with category as context for a prompt 
+
+- GENERAL UPDATES TO DATABASE
+    - update a specific entry  
+    - modify title of an entry
+    - update category of an entry
+    - Add/remove images to an entry
+    - Add to/retrieve from trash folder (of deleted categories/journal entries)
