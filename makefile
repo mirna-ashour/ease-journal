@@ -1,6 +1,6 @@
 LINTER = flake8
 API_DIR = server
-DB_DIR = db
+DB_DIR = data
 REQ_DIR = .
 
 PKG = $(API_DIR)
