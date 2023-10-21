@@ -2,7 +2,7 @@
 This module interfaces to our user data.
 """
 
-LEVEL = 'level'
+NAME = 'name'
 MIN_USER_NAME_LEN = 2
 
 
@@ -10,17 +10,17 @@ def get_users():
     """
     Our contract:
         - No arguments.
-        - Returns a dictionary of users keyed on user name (a str).
-        - Each user name must be the key for a dictionary.
-        - That dictionary must at least include a LEVEL member that has an int
-        value.
+        - Returns a dictionary of users keyed on user ID (an int).
+        - Each user ID must be the key for a dictionary.
+        - That dictionary must at least include:
+            - a NAME member (a str)
     """
     users = {
-        "Callahan": {
-            LEVEL: 0,
+        1234567890: {
+            NAME: "Emma",
         },
-        "Reddy": {
-            LEVEL: 1,
+        9876543210: {
+            NAME: "Liam",
         },
     }
     return users
