@@ -101,3 +101,5 @@
     - update category of an entry
     - Add/remove images to an entry
     - Add to/retrieve from trash folder (of deleted categories/journal entries)
+
+    
