@@ -20,6 +20,7 @@ DATA = 'Data'
 TYPE = 'Type'
 TITLE = 'Title'
 
+
 @api.route('/hello')
 class HelloWorld(Resource):
     """
