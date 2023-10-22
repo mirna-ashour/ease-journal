@@ -6,14 +6,19 @@ The endpoint called `endpoints` will return all available endpoints.
 from flask import Flask
 from flask_restx import Resource, Api
 # import db.db as db
+import data.users as users
+
 
 app = Flask(__name__)
 api = Api(app)
 
 MAIN_MENU = 'MainMenu'
 MAIN_MENU_NM = "Welcome to Text Game!"
-USERS = 'users'
-
+# USERS = 'users'
+USERS_EP = 'users'
+DATA = 'Data'
+TYPE = 'Type'
+TITLE = 'Title'
 
 @api.route('/hello')
 class HelloWorld(Resource):
@@ -60,19 +65,23 @@ class MainMenu(Resource):
                           'text': 'List Available Characters'},
                     '2': {'url': '/',
                           'method': 'get', 'text': 'List Active Games'},
-                    '3': {'url': f'/{USERS}',
+                    '3': {'url': f'/{USERS_EP}',
                           'method': 'get', 'text': 'List Users'},
                     'X': {'text': 'Exit'},
                 }}
 
 
-@api.route(f'/{USERS}')
+@api.route(f'/{USERS_EP}')
 class Users(Resource):
     """
-    This class supports fetching a list of all pets.
+    This class supports fetching a list of all users.
     """
     def get(self):
         """
         This method returns all users.
         """
-        return 'Current Users:\nSai\nAbhishek\nKristian\n'
+        return {
+            TYPE: DATA,
+            TITLE: 'Current Users',
+            DATA: users.get_users(),
+        }
