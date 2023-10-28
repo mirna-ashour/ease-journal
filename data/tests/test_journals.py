@@ -26,3 +26,16 @@ def test_get_journals():
         assert isinstance(j_title, str)
         j_content = journal[jrnls.CONTENT]
         assert isinstance(j_content, str)
+
+
+ADD_TIMESTAMP = '2000-01-01 09:57:00'
+
+
+"""
+    Ensure:
+    	- After adding a sample journal entry, 
+    	  it is in the list of journals
+"""
+def test_add_journal():
+	jrnls.add_journal(ADD_TIMESTAMP, "", "")
+	assert ADD_TIMESTAMP in jrnls.get_journals()

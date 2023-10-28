@@ -23,3 +23,9 @@ journals = {
 
 def get_journals() -> dict:
     return journals
+
+
+def add_journal(timestamp: str, title: str, content: str):
+    if not title:
+        title = "Untitled"
+    journals[timestamp] = {TITLE: title, CONTENT: content}
