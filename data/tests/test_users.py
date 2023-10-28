@@ -1,6 +1,13 @@
 import data.users as usrs
 
 
+"""
+    Ensure:
+        - get_users() returns a dict with at least 1 user
+        - each user key, or ID, is an int
+        - each user is a dict with a name member
+        - each user name is an alphabetical str with at least two letters
+"""
 def test_get_users():
     users = usrs.get_users()
     assert isinstance(users, dict)
