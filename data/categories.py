@@ -35,8 +35,13 @@ categories = {
 #     }
 # ]
 
+# return all categories
 def get_categories() -> dict:
     return categories
+
+# return categories with a specific user_id 
+def get_user_categories(user_id: int) -> dict:
+    pass
 
 # category ids are currently a parameter but should later be uniquely generated 
 def add_category(category_id: int, title: str, user_id: int, date_time: str):
