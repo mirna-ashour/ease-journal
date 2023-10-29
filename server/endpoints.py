@@ -88,4 +88,3 @@ class Users(Resource):
             TITLE: 'Current Users',
             DATA: users.get_users(),
         }
-
