@@ -8,7 +8,7 @@ TITLE = 'title'
 USER = 'user'
 DATE_TIME = 'created'
 
-# dict of dicts or a list of dictionaries that include a key for category id 
+# dict of dicts or a list of dictionaries that include a key for category id
 # like below?
 categories = {
     75638475: {
@@ -44,13 +44,18 @@ def get_categories() -> dict:
     return categories
 
 
-# return categories with a specific user_id 
+# return categories with a specific user_id
 def get_user_categories(user_id: int) -> dict:
     pass
 
 
-# category ids are currently a parameter but should later be uniquely generated 
+# category ids are currently a parameter but should later be uniquely generated
 def add_category(category_id: int, title: str, user_id: int, date_time: str):
     if not title:
         title = "Untitled"
-    categories[category_id] = {TITLE: title, USER: user_id, DATE_TIME: datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")}
+    date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+    categories[category_id] = {
+        TITLE: title,
+        USER: user_id,
+        DATE_TIME: date_time
+    }
