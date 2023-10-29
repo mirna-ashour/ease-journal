@@ -75,7 +75,8 @@ def test_get_user_categories():
         assert isinstance(category[cats.TITLE], str)
         assert isinstance(category[cats.USER], int)
         assert category[cats.USER] == emma_id
-        assert isinstance(category[cats.DATE_TIME], datetime)
+        date_time_1 = category[cats.DATE_TIME]
+        assert isinstance(datetime.strptime(date_time_1, FORMAT), datetime)
 
     # Testing categories for Liam
     liam_categories = cats.get_user_categories(liam_id)
@@ -93,6 +94,7 @@ def test_get_user_categories():
         assert isinstance(category[cats.TITLE], str)
         assert isinstance(category[cats.USER], int)
         assert category[cats.USER] == liam_id
-        assert isinstance(category[cats.DATE_TIME], datetime)
+        date_time_2 = category[cats.DATE_TIME]
+        assert isinstance(datetime.strptime(date_time_2, FORMAT), datetime)
 
     print("All tests for get_user_categories passed!")
