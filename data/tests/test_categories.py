@@ -1,6 +1,8 @@
 from datetime import datetime
 import data.categories as cats
 
+FORMAT = "%Y-%m-%d %H:%M:%S"
+
 """
 	Ensure:
 		- get_categories() returns a dict with at least 1 journal
@@ -25,9 +27,8 @@ def test_get_categories():
 
         assert isinstance(category[cats.TITLE], str)
         assert isinstance(category[cats.USER], int)
-        format = "%Y-%m-%d %H:%M:%S"
         date_time = category[cats.DATE_TIME]
-        assert isinstance(datetime.strptime(date_time, format), datetime)
+        assert isinstance(datetime.strptime(date_time, FORMAT), datetime)
 
 
 """
