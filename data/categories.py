@@ -1,3 +1,5 @@
+from datetime import datetime
+
 """
 This module interfaces to our journal data.
 """
@@ -47,4 +49,4 @@ def get_user_categories(user_id: int) -> dict:
 def add_category(category_id: int, title: str, user_id: int, date_time: str):
     if not title:
         title = "Untitled"
-    categories[category_id] = {TITLE: title, USER: user_id, DATE_TIME: date_time}
+    categories[category_id] = {TITLE: title, USER: user_id, DATE_TIME: datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")}
