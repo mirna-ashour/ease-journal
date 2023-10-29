@@ -8,14 +8,15 @@ TITLE = 'title'
 USER = 'user'
 DATE_TIME = 'created'
 
-# dict of dicts or a list of dictionaries that include a key for category id like below?
+# dict of dicts or a list of dictionaries that include a key for category id 
+# like below?
 categories = {
-    75638475 : {
+    75638475: {
         TITLE: "Work",
         USER: 1234567890,
         DATE_TIME: "2023-10-27 12:45:00"
     },
-    384762549 : {
+    384762549: {
         TITLE: "School",
         USER: 9876543210,
         DATE_TIME: "2023-10-27 18:15:00"
@@ -37,13 +38,16 @@ categories = {
 #     }
 # ]
 
+
 # return all categories
 def get_categories() -> dict:
     return categories
 
+
 # return categories with a specific user_id 
 def get_user_categories(user_id: int) -> dict:
     pass
+
 
 # category ids are currently a parameter but should later be uniquely generated 
 def add_category(category_id: int, title: str, user_id: int, date_time: str):
