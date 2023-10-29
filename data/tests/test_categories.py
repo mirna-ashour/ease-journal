@@ -23,6 +23,22 @@ def test_get_categories():
         assert cats.USER in category
         assert cats.DATE_TIME in category
 
-        assert isinstance(cats.TITLE, str)
-        assert isinstance(cats.USER, int)
-        assert isinstance(cats.DATE_TIME, datetime)
+        assert isinstance(category[cats.TITLE], str)
+        assert isinstance(category[cats.USER], int)
+        format = "%Y-%m-%d %H:%M:%S"
+        date_time = category[cats.DATE_TIME]
+        assert isinstance(datetime.strptime(date_time, format), datetime)
+
+
+"""
+    Ensure:
+    	- After adding a sample journal entry, 
+    	  it is in the list of journals
+"""
+def test_add_category():
+    cat_id = 2753837783
+    title = "Health"
+    user = 826393752
+    date_time = "2023-04-12 01:16:00"
+    cats.add_category(cat_id, title, user, date_time)
+    assert cat_id in cats.get_categories()
