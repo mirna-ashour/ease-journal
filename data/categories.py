@@ -44,9 +44,14 @@ def get_categories() -> dict:
     return categories
 
 
-# return categories with a specific user_id
+# return categories with a specific user_id - Cody updated in 10/29
 def get_user_categories(user_id: int) -> dict:
-    pass
+    #pass
+    user_specific_categories = {}
+    for category_id, category in categories.items():
+        if category[USER] == user_id:
+            user_specific_categories[category_id] = category
+    return user_specific_categories
 
 
 # category ids are currently a parameter but should later be uniquely generated
