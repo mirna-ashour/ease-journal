@@ -3,6 +3,7 @@ This module interfaces to our journal data.
 """
 
 TITLE = 'title'
+DEFAULT_TITLE = 'Untitled'
 CONTENT = 'content'
 
 journals = {
@@ -26,6 +27,7 @@ def get_journals() -> dict:
 
 
 def add_journal(timestamp: str, title: str, content: str):
-    if not title:
-        title = "Untitled"
-    journals[timestamp] = {TITLE: title, CONTENT: content}
+    if title == "":
+        title = DEFAULT_TITLE
+    journal_entry = {TITLE: title, CONTENT: content}
+    journals[timestamp] = journal_entry
