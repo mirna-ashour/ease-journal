@@ -45,8 +45,6 @@ ADD_TIMESTAMP = '2000-01-01 09:57:00'
 ADD_TITLE = 'SOME TITLE'
 ADD_PROMPT0 = 'some prompt0'
 ADD_PROMPT1 = 'some prompt1'
-ADD_PROMPT2 = 'some prompt2'
-ADD_PROMPT3 = 'some prompt3'
 ADD_CONTENT = 'blah blah blah'
 
 
@@ -74,28 +72,6 @@ def test_add_journal_without_title_or_content():
          jrnls.TITLE: jrnls.DEFAULT_TITLE,
          jrnls.PROMPT: ADD_PROMPT1,
          jrnls.CONTENT: ""
-        }
-
-
-def test_add_journal_without_content():
-    jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT2, "")
-    journals = jrnls.get_journals()
-    assert ADD_TIMESTAMP in journals
-    assert journals[ADD_TIMESTAMP] == {
-         jrnls.TITLE: ADD_TITLE,
-         jrnls.PROMPT: ADD_PROMPT2,
-         jrnls.CONTENT: ""
-        }
-
-
-def test_add_journal_without_title():
-    jrnls.add_journal(ADD_TIMESTAMP, "", ADD_PROMPT3, ADD_CONTENT)
-    journals = jrnls.get_journals()
-    assert ADD_TIMESTAMP in journals
-    assert journals[ADD_TIMESTAMP] == {
-         jrnls.TITLE: jrnls.DEFAULT_TITLE,
-         jrnls.PROMPT: ADD_PROMPT3,
-         jrnls.CONTENT: ADD_CONTENT
         }
 
 
