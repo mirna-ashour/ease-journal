@@ -1,5 +1,7 @@
 from datetime import datetime
+import random
 import data.categories as cats
+import pytest
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -30,6 +32,17 @@ def test_get_categories():
         date_time = category[cats.DATE_TIME]
         assert isinstance(datetime.strptime(date_time, FORMAT), datetime)
 
+# @pytest.fixture(scope='function')
+# def make_category():
+#     cat_id = random.randint(10**9, (10**10 - 1))
+#     user = random.randint(10**8, (10**9 - 1))
+
+#     return {
+#         'cat_id' : cat_id,
+#         'title' : "Health",
+#         'user' : user,
+#         'date_time' : '2023-04-12 01:16:00', 
+#     }
 
 """
     Ensure:
@@ -41,6 +54,7 @@ def test_add_category():
     title = "Health"
     user = 826393752
     date_time = "2023-04-12 01:16:00"
+    # cat_id, title, user, date_time = make_category 
     cats.add_category(cat_id, title, user, date_time)
     assert cat_id in cats.get_categories()
 
