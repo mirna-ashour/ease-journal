@@ -78,3 +78,8 @@ def test_add_journal_without_title_or_content():
 def test_add_journal_dup_prompt():
     with pytest.raises(ValueError):
         jrnls.add_journal(ADD_TIMESTAMP, "", jrnls.TEST_PROMPT, "")
+
+# Cody's update 11/4:
+def test_add_journal_invalid_timestamp():
+    with pytest.raises(ValueError):
+        jrnls.add_journal("invalid timestamp", ADD_TITLE, ADD_PROMPT1, ADD_CONTENT)
