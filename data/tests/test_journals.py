@@ -79,7 +79,26 @@ def test_add_journal_dup_prompt():
     with pytest.raises(ValueError):
         jrnls.add_journal(ADD_TIMESTAMP, "", jrnls.TEST_PROMPT, "")
 
+
+
 # Cody's update 11/4:
 def test_add_journal_invalid_timestamp():
     with pytest.raises(ValueError):
         jrnls.add_journal("invalid timestamp", ADD_TITLE, ADD_PROMPT1, ADD_CONTENT)
+
+def test_add_journal_prompt_too_long():
+    long_prompt = "x" * 500  # Assuming there's a limit to prompt length
+    with pytest.raises(ValueError):
+        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, long_prompt, ADD_CONTENT)
+
+def test_add_journal_non_string_title():
+    with pytest.raises(TypeError):
+        jrnls.add_journal(ADD_TIMESTAMP, 123, ADD_PROMPT1, ADD_CONTENT)
+
+def test_add_journal_non_string_prompt():
+    with pytest.raises(TypeError):
+        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, 123, ADD_CONTENT)
+
+def test_add_journal_non_string_content():
+    with pytest.raises(TypeError):
+        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, 123)
