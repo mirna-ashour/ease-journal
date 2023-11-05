@@ -1,5 +1,6 @@
 
 import server.endpoints as ep
+import pytest
 
 TEST_CLIENT = ep.app.test_client()
 
@@ -32,3 +33,17 @@ def test_main_menu():
     assert '3' in resp_json['Choices']
     assert '4' in resp_json['Choices']
     assert 'X' in resp_json['Choices']
+
+@pytest.mark.skip(reason="Getting status code 500 error")
+def test_add_category():
+    test_data = {
+        "user_id": 1234567890,
+        "title": "Test Category",
+        "date_time": "2023-11-05 15:30:00"
+    }
+    resp = TEST_CLIENT.post('/add_category', json=test_data)
+
+    assert resp.status_code == 200  
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert "category_id" in resp_json

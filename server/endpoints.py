@@ -3,6 +3,9 @@ This is the file containing all of the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
 
+import datetime
+from urllib import request
+from data import categories
 from flask import Flask
 from flask_restx import Resource, Api
 
@@ -90,3 +93,32 @@ class Users(Resource):
             TITLE: 'Current Users',
             DATA: users.get_users(),
         }
+
+
+@api.route('/add_category')
+class AddCategory(Resource):
+    def post(self):
+        # parsing the request data
+        data = request.get_json()
+        user_id = data.get('user_id')
+        title = data.get('title', "Untitled")
+        date_time_str = data.get('date_time')
+
+        # validating input
+        if not user_id:
+            return {"error": "User ID is required."}, 400
+        try:
+            date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return {
+                "error": "Invalid date-time format."}, 400
+
+        # generating a unique category ID to be implemented later !!!!!
+        # category_id = generate_unique_category_id()
+        category_id = 1231346
+
+        # add the new category to user
+        categories.add_category(category_id, title, user_id, date_time)
+
+        return {"message": "Category added successfully.",
+                "category_id": category_id}, 200
