@@ -19,3 +19,16 @@ def test_list_users():
     assert ep.TITLE in resp_json
     assert ep.TYPE in resp_json
     assert ep.DATA in resp_json
+
+def test_main_menu():
+    resp = TEST_CLIENT.get(ep.MAIN_MENU)
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert ep.TITLE in resp_json
+    assert 'Default' in resp_json
+    assert 'Choices' in resp_json
+    assert '1' in resp_json['Choices']
+    assert '2' in resp_json['Choices']
+    assert '3' in resp_json['Choices']
+    assert '4' in resp_json['Choices']
+    assert 'X' in resp_json['Choices']

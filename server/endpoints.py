@@ -13,7 +13,7 @@ app = Flask(__name__)
 api = Api(app)
 
 MAIN_MENU = 'MainMenu'
-MAIN_MENU_NM = "Welcome to Text Game!"
+MAIN_MENU_NM = "Welcome to Ease Journal"
 # USERS = 'users'
 USERS_EP = '/users'
 DATA = 'Data'
@@ -62,14 +62,16 @@ class MainMenu(Resource):
         Gets the main game menu.
         """
         return {'Title': MAIN_MENU_NM,
-                'Default': 2,
+                'Default': 1,
                 'Choices': {
                     '1': {'url': '/', 'method': 'get',
-                          'text': 'List Available Characters'},
-                    '2': {'url': '/',
-                          'method': 'get', 'text': 'List Active Games'},
-                    '3': {'url': f'/{USERS_EP}',
-                          'method': 'get', 'text': 'List Users'},
+                          'text': 'List user account information'},
+                    '2': {'url': '/', 'method': 'get',
+                          'text': 'List user journal categories'},
+                    '3': {'url': '/', 'method': 'get',
+                          'text': 'List all user journal entries'},
+                    '4': {'url': f'/{USERS_EP}', 'method': 'get',
+                          'text': 'List all users'},
                     'X': {'text': 'Exit'},
                 }}
 
