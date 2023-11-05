@@ -2,12 +2,13 @@
 This module interfaces to our journal data.
 """
 
+
 TITLE = 'title'
 PROMPT = 'prompt'
 CONTENT = 'content'
 
 DEFAULT_TITLE = 'Untitled'
-TEST_PROMPT = 'Reflect on a act of kindness.'
+TEST_PROMPT = 'Reflect on an act of kindness.'
 
 journals = {
     "2023-10-27 08:30:00": {
@@ -27,36 +28,34 @@ journals = {
     },
 }
 
+
+# Two blank lines before the function definition
 def get_journals() -> dict:
     return journals
 
-def add_journal(timestamp: str, title: str, prompt: str, content: str):
 
-    # Cody's update 11/5 - if title is not a string, raise TypeError
+# Two blank lines before the function definition
+def add_journal(timestamp: str, title: str, prompt: str, content: str):
+    # Cody's update 11/5 - Check if the input types are correct
     if not isinstance(title, str):
         raise TypeError("Title must be a string")
-
-    # Cody's update 11/5 - if prompt is not a string, raise TypeError
     if not isinstance(prompt, str):
         raise TypeError("Prompt must be a string")
-
-    # Cody's update 11/5 - if content is not a string, raise TypeError
     if not isinstance(content, str):
         raise TypeError("Content must be a string")
 
-    # Cody's update 11/5 - Check if the prompt length is acceptable (assuming there's a limit)
-    if len(prompt) > 255:  # Let's assume 255 characters is the max length for a prompt, we can change it later
+    # Cody's update 11/5 - Check prompt length
+    if len(prompt) > 255:
         raise ValueError("Woops! Prompt is too long!")
 
-    # if title is empty, set title to default title
+    # Set default title if empty
     if not title:
         title = DEFAULT_TITLE
 
-    # if prompt is duplicated, raise Value Error
-    prompt_dup = any(journal.get(PROMPT) ==
-                     prompt for journal in journals.values())
-    if prompt_dup:
+    # Check for duplicate prompts
+    if any(journal.get(PROMPT) == prompt for journal in journals.values()):
         raise ValueError(f'Duplicate journal entry prompt: {prompt=}')
 
+    # Create and add journal entry
     journal_entry = {TITLE: title, PROMPT: prompt, CONTENT: content}
     journals[timestamp] = journal_entry
