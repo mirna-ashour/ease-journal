@@ -2,6 +2,7 @@ from datetime import datetime
 import random
 import data.categories as cats
 import pytest
+from datetime import datetime
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -32,31 +33,37 @@ def test_get_categories():
         date_time = category[cats.DATE_TIME]
         assert isinstance(datetime.strptime(date_time, FORMAT), datetime)
 
-# @pytest.fixture(scope='function')
-# def make_category():
-#     cat_id = random.randint(10**9, (10**10 - 1))
-#     user = random.randint(10**8, (10**9 - 1))
+@pytest.fixture(scope='function')
+def make_category():
+    cat_id = random.randint(10**9, (10**10 - 1))
+    user = random.randint(10**8, (10**9 - 1))
+    current_time = datetime.now().strftime(FORMAT)
 
-#     return {
-#         'cat_id' : cat_id,
-#         'title' : "Health",
-#         'user' : user,
-#         'date_time' : '2023-04-12 01:16:00', 
-#     }
+    return {
+        'cat_id' : cat_id,
+        'title' : "Health",
+        'user' : user,
+        'date_time' : current_time, 
+    }
+
 
 """
     Ensure:
     	- After adding a sample journal entry, 
     	  it is in the list of journals
 """
-def test_add_category():
-    cat_id = 2753837783
-    title = "Health"
-    user = 826393752
-    date_time = "2023-04-12 01:16:00"
-    # cat_id, title, user, date_time = make_category 
+def test_add_category(make_category):
+    cat_id, title, user, date_time = make_category.values() 
     cats.add_category(cat_id, title, user, date_time)
+    new_cat = cats.get_categories()[cat_id]
     assert cat_id in cats.get_categories()
+    assert cats.TITLE in new_cat
+    assert cats.USER in new_cat
+    assert cats.DATE_TIME in new_cat
+    assert isinstance(cat_id, int)
+    assert isinstance(title, str)
+    assert isinstance(user, int)
+    assert isinstance(date_time, str)
 
 
 """
