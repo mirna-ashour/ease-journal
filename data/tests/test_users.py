@@ -21,3 +21,18 @@ def test_get_users():
         assert isinstance(user_name, str)
         assert user_name.isalpha()
         assert len(user_name) >= usrs.MIN_USER_NAME_LEN
+
+def test_add_user():
+    user_id = 1902837465
+    name = "Emma"
+    if not name:
+        raise ValueError("Name must not be empty")
+    if not isinstance(name, str):
+        raise TypeError("Name must be a string")
+    if not name.isalpha():
+        raise ValueError("Name must be alphabetical")
+    if len(name) < usrs.MIN_USER_NAME_LEN:
+        raise ValueError("Name must be at least 2 characters")
+    
+    usrs.add_user(user_id, name)
+    assert user_id in usrs.get_users()
