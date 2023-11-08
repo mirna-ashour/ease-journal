@@ -55,6 +55,8 @@ def get_user_categories(user_id: int) -> dict:
 
 # category ids are currently a parameter but should later be uniquely generated
 def add_category(category_id: int, title: str, user_id: int, date_time: str):
+    if category_id in categories:
+        raise ValueError("Duplicate category.")
     if not title:
         title = "Untitled"
     date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")

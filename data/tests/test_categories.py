@@ -49,8 +49,8 @@ def make_category():
 
 """
     Ensure:
-    	- After adding a sample journal entry, 
-    	  it is in the list of journals
+    	- After adding a category, 
+    	  it is in the list of categories
 """
 def test_add_category(make_category):
     cat_id, title, user, date_time = make_category.values() 
@@ -64,6 +64,17 @@ def test_add_category(make_category):
     assert isinstance(title, str)
     assert isinstance(user, int)
     assert isinstance(date_time, str)
+
+
+def test_add_duplicate_category(make_category):
+    cat_id, title, user, date_time = make_category.values()
+    
+    # adding category for the first time
+    cats.add_category(cat_id, title, user, date_time)
+    
+    # attempting to add category again
+    with pytest.raises(ValueError):
+        cats.add_category(cat_id, title, user, date_time)
 
 
 """

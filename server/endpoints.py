@@ -120,5 +120,4 @@ class AddCategory(Resource):
         # add the new category to user
         categories.add_category(category_id, title, user_id, date_time)
 
-        return {"message": "Category added successfully.",
-                "category_id": category_id}, 200
+        return {"category_id": category_id}, 200
