@@ -58,9 +58,14 @@ def add_journal(timestamp: str, title: str, prompt: str, content: str, date_time
 
     # Check for duplicate prompts
     if any(journal.get(PROMPT) == prompt for journal in journals.values()):
-        raise ValueError(f'Duplicate journal entry prompt: {prompt=}')
+        raise ValueError(f'Duplicate prompt: {prompt=}')
 
     date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     # Create and add journal entry
-    journal_entry = {TITLE: title, PROMPT: prompt, CONTENT: content, DATE_TIME: date_time}
+    journal_entry = {
+        TITLE: title,
+        PROMPT: prompt,
+        CONTENT: content,
+        DATE_TIME: date_time
+    }
     journals[timestamp] = journal_entry
