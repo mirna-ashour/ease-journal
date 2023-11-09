@@ -8,6 +8,7 @@ from urllib import request
 from data import categories
 from flask import Flask
 from flask_restx import Resource, Api
+import werkzeug.exceptions as wz
 
 import data.users as users
 
@@ -106,12 +107,11 @@ class AddCategory(Resource):
 
         # validating input
         if not user_id:
-            return {"error": "User ID is required."}, 400
+            raise wz.ServiceUnavailable('We have a technical problem.')
         try:
             date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            return {
-                "error": "Invalid date-time format."}, 400
+        except ValueError as e:
+            raise wz.NotAcceptable(f'{str(e)}')
 
         # generating a unique category ID to be implemented later !!!!!
         # category_id = generate_unique_category_id()

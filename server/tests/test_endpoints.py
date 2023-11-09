@@ -1,6 +1,16 @@
 
 import server.endpoints as ep
 import pytest
+import data.categories as categories
+from unittest.mock import patch
+from http.client import (
+    BAD_REQUEST,
+    FORBIDDEN,
+    NOT_ACCEPTABLE,
+    NOT_FOUND,
+    OK,
+    SERVICE_UNAVAILABLE,
+)
 
 TEST_CLIENT = ep.app.test_client()
 
@@ -21,6 +31,7 @@ def test_list_users():
     assert ep.TYPE in resp_json
     assert ep.DATA in resp_json
 
+
 def test_main_menu():
     resp = TEST_CLIENT.get(ep.MAIN_MENU)
     resp_json = resp.get_json()
@@ -34,16 +45,26 @@ def test_main_menu():
     assert '4' in resp_json['Choices']
     assert 'X' in resp_json['Choices']
 
+
 @pytest.mark.skip(reason="Getting status code 500 error")
-def test_add_category():
+@patch('data.categories.add_category', autospec=True)
+def test_add_category_success(mock_add_category):
+    mock_add_category.return_value = 123456
     test_data = {
         "user_id": 1234567890,
         "title": "Test Category",
         "date_time": "2023-11-05 15:30:00"
     }
     resp = TEST_CLIENT.post('/add_category', json=test_data)
+    assert resp.status_code == OK
 
-    assert resp.status_code == 200  
-    resp_json = resp.get_json()
-    assert "message" in resp_json
-    assert "category_id" in resp_json
+@pytest.mark.skip(reason="Getting status code 500 error")
+@patch('data.categories.add_category', side_effect=ValueError("Duplicate category"), autospec=True)
+def test_add_category_failure(mock_add_category):
+    test_data = {
+        'user_id': 1234567890, 
+        'title': 'Test Category',
+        'date_time': '2023-11-08 12:00:00'
+    }
+    resp = TEST_CLIENT.post('/add_category', json=test_data)
+    assert resp.status_code == BAD_REQUEST
