@@ -2,6 +2,7 @@ import pytest
 import data.journals as jrnls
 
 from datetime import datetime
+from unittest.mock import patch, MagicMock
 
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -46,6 +47,7 @@ ADD_TITLE = 'SOME TITLE'
 ADD_PROMPT0 = 'some prompt0'
 ADD_PROMPT1 = 'some prompt1'
 ADD_CONTENT = 'blah blah blah'
+ADD_DATE = '2000-01-01 09:57:00'
 
 
 """
@@ -54,7 +56,7 @@ ADD_CONTENT = 'blah blah blah'
           it is in the list of journals
 """
 def test_add_journal():
-    jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT)
+    jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_DATE)
     journals = jrnls.get_journals()
     assert ADD_TIMESTAMP in journals
     assert journals[ADD_TIMESTAMP] == {
@@ -102,3 +104,19 @@ def test_add_journal_non_string_prompt():
 def test_add_journal_non_string_content():
     with pytest.raises(TypeError):
         jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, 123)
+
+
+# Cody's update 11/8
+def test_add_journal_with_mocked_datetime():
+    mock_now = datetime(2023, 11, 8)
+    with patch('data.journals.datetime.now', return_value=mock_now):
+        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_DATE)
+        journals = jrnls.get_journals()
+        
+        # Now assert if the journal with the ADD_TIMESTAMP exists
+        assert ADD_TIMESTAMP in journals
+        assert journals[ADD_TIMESTAMP] == {
+             jrnls.TITLE: ADD_TITLE,
+             jrnls.PROMPT: ADD_PROMPT0,
+             jrnls.CONTENT: ADD_CONTENT
+        }
