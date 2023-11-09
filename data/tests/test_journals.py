@@ -108,10 +108,9 @@ def test_add_journal_non_string_content():
 
 # Cody's update 11/8
 def test_add_journal_with_mocked_datetime():
-    mock_now = MagicMock()
-    mock_now.return_value = datetime.datetime(2023, 11, 8)
-    with patch('data.journals.datetime.datetime.now', new=mock_now):
-        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT)
+    mock_now = datetime(2023, 11, 8)
+    with patch('data.journals.datetime.now', return_value=mock_now):
+        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_DATE)
         journals = jrnls.get_journals()
         
         # Now assert if the journal with the ADD_TIMESTAMP exists

@@ -47,7 +47,10 @@ def add_journal(timestamp: str, title: str, prompt: str, content: str, date_time
 
     # Cody's update 11/5 - Check prompt length
     if len(prompt) > 255:
-        raise ValueError("Woops! Prompt is too long!")
+        raise ValueError(
+            "Woops! Prompt is too long!"
+        )
+    # fixing a damn long line by splitting it into multiple lines
 
     # Set default title if empty
     if not title:
