@@ -1,11 +1,12 @@
 """
 This module interfaces to our journal data.
 """
-
+from datetime import datetime
 
 TITLE = 'title'
 PROMPT = 'prompt'
 CONTENT = 'content'
+DATE_TIME = 'created'
 
 DEFAULT_TITLE = 'Untitled'
 TEST_PROMPT = 'Reflect on an act of kindness.'
@@ -35,7 +36,7 @@ def get_journals() -> dict:
 
 
 # Two blank lines before the function definition
-def add_journal(timestamp: str, title: str, prompt: str, content: str):
+def add_journal(timestamp: str, title: str, prompt: str, content: str, date_time: str):
     # Cody's update 11/5 - Check if the input types are correct
     if not isinstance(title, str):
         raise TypeError("Title must be a string")
@@ -56,6 +57,7 @@ def add_journal(timestamp: str, title: str, prompt: str, content: str):
     if any(journal.get(PROMPT) == prompt for journal in journals.values()):
         raise ValueError(f'Duplicate journal entry prompt: {prompt=}')
 
+    date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     # Create and add journal entry
-    journal_entry = {TITLE: title, PROMPT: prompt, CONTENT: content}
+    journal_entry = {TITLE: title, PROMPT: prompt, CONTENT: content, DATE_TIME: date_time}
     journals[timestamp] = journal_entry
