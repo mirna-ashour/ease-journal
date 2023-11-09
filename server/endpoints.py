@@ -101,12 +101,12 @@ class AddCategory(Resource):
     def post(self):
         # parsing the request data
         data = request.get_json()
-        user_id = data.get('user_id')
+        user = data.get('user_id')
         title = data.get('title', "Untitled")
         date_time_str = data.get('date_time')
 
         # validating input
-        if not user_id:
+        if not user:
             raise wz.ServiceUnavailable('We have a technical problem.')
         try:
             date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
@@ -118,6 +118,6 @@ class AddCategory(Resource):
         category_id = 1231346
 
         # add the new category to user
-        categories.add_category(category_id, title, user_id, date_time)
+        categories.add_category(category_id, title, user, date_time)
 
         return {"category_id": category_id}, 200

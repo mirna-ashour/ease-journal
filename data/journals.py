@@ -1,12 +1,11 @@
 """
 This module interfaces to our journal data.
 """
-from datetime import datetime
 
 TITLE = 'title'
 PROMPT = 'prompt'
 CONTENT = 'content'
-DATE_TIME = 'created'
+MODIFIED = 'modified'
 
 DEFAULT_TITLE = 'Untitled'
 TEST_PROMPT = 'Reflect on an act of kindness.'
@@ -16,33 +15,30 @@ journals = {
         TITLE: "Morning Reflection",
         PROMPT: TEST_PROMPT,
         CONTENT: "My alarm is broken...",
+        MODIFIED: "2023-11-28 08:31:00",
     },
     "2023-10-27 12:45:00": {
         TITLE: "Lunchtime Thoughts",
         PROMPT: "Write about an aspiration.",
         CONTENT: "I was hungry, so...",
+        MODIFIED: "2023-10-28 11:23:00",
     },
     "2023-10-27 18:15:00": {
         TITLE: "Evening Musings",
         PROMPT: "Did you step out of your comfort zone today?",
         CONTENT: "The moon looks like cheese...",
+        MODIFIED: "2023-10-30 20:00:00",
     },
 }
 
 
-# Two blank lines before the function definition
 def get_journals() -> dict:
     return journals
 
 
-# Two blank lines before the function definition
-def add_journal(
-        timestamp: str, 
-        title: str, 
-        prompt: str, 
-        content: str, 
-        date_time: str):
-    # Cody's update 11/5 - Check if the input types are correct
+def add_journal(timestamp: str, title: str, prompt: str,
+                content: str, modified: str):
+    # Check if the input types are correct
     if not isinstance(title, str):
         raise TypeError("Title must be a string")
     if not isinstance(prompt, str):
@@ -50,12 +46,9 @@ def add_journal(
     if not isinstance(content, str):
         raise TypeError("Content must be a string")
 
-    # Cody's update 11/5 - Check prompt length
+    # Check prompt length
     if len(prompt) > 255:
-        raise ValueError(
-            "Woops! Prompt is too long!"
-        )
-    # fixing a damn long line by splitting it into multiple lines
+        raise ValueError("Prompt exceeds 255 character limit")
 
     # Set default title if empty
     if not title:
@@ -65,12 +58,11 @@ def add_journal(
     if any(journal.get(PROMPT) == prompt for journal in journals.values()):
         raise ValueError(f'Duplicate prompt: {prompt=}')
 
-    date_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     # Create and add journal entry
     journal_entry = {
         TITLE: title,
         PROMPT: prompt,
         CONTENT: content,
-        DATE_TIME: date_time
+        MODIFIED: modified,
     }
     journals[timestamp] = journal_entry
