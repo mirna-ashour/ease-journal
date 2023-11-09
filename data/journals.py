@@ -36,7 +36,12 @@ def get_journals() -> dict:
 
 
 # Two blank lines before the function definition
-def add_journal(timestamp: str, title: str, prompt: str, content: str, date_time: str):
+def add_journal(
+        timestamp: str, 
+        title: str, 
+        prompt: str, 
+        content: str, 
+        date_time: str):
     # Cody's update 11/5 - Check if the input types are correct
     if not isinstance(title, str):
         raise TypeError("Title must be a string")
