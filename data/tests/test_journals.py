@@ -2,7 +2,6 @@ import pytest
 import data.journals as jrnls
 
 from datetime import datetime
-from unittest.mock import patch, MagicMock
 
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -119,19 +118,3 @@ def test_add_journal_non_string_prompt():
 def test_add_journal_non_string_content():
     with pytest.raises(TypeError):
         jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, NON_STRING, ADD_MODIFIED)
-
-
-@pytest.mark.skip(reason="A patch that probably shouldn't be in data/")
-def test_add_journal_with_mocked_datetime():
-    mock_now = datetime(2023, 11, 8)
-    with patch('data.journals.datetime.now', return_value=mock_now):
-        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_MODIFIED)
-        journals = jrnls.get_journals()
-        
-        # Now assert if the journal with the ADD_TIMESTAMP exists
-        assert ADD_TIMESTAMP in journals
-        assert journals[ADD_TIMESTAMP] == {
-             jrnls.TITLE: ADD_TITLE,
-             jrnls.PROMPT: ADD_PROMPT0,
-             jrnls.CONTENT: ADD_CONTENT
-        }
