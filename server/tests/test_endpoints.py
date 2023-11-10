@@ -68,3 +68,8 @@ def test_add_category_failure(mock_add_category):
     }
     resp = TEST_CLIENT.post('/add_category', json=test_data)
     assert resp.status_code == NOT_ACCEPTABLE
+
+@pytest.mark.skip('This test is failing, but it is just an example of using '
+                   + 'skip')
+def test_that_doesnt_work():
+    assert False
