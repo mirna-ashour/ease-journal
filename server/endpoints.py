@@ -4,9 +4,9 @@ The endpoint called `endpoints` will return all available endpoints.
 """
 
 import datetime
-from urllib import request
+# from urllib import request
 from data import categories
-from flask import Flask
+from flask import Flask, request
 from flask_restx import Resource, Api
 import werkzeug.exceptions as wz
 
