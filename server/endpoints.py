@@ -3,7 +3,7 @@ This is the file containing all of the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
 
-import datetime
+import datetime as dt
 # from urllib import request
 from data import categories
 from flask import Flask, request
@@ -109,15 +109,17 @@ class AddCategory(Resource):
         if not user:
             raise wz.ServiceUnavailable('We have a technical problem.')
         try:
-            date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
+            date_time = dt.datetime.strptime(date_time_str,
+                                             "%Y-%m-%d %H:%M:%S")
         except ValueError as e:
             raise wz.NotAcceptable(f'{str(e)}')
 
         # generating a unique category ID to be implemented later !!!!!
         # category_id = generate_unique_category_id()
         category_id = 1231346
-
-        # add the new category to user
-        categories.add_category(category_id, title, user, date_time)
+        try:
+            categories.add_category(category_id, title, user, date_time)
+        except ValueError as e:
+            raise wz.NotAcceptable(f'{str(e)}')
 
         return {"category_id": category_id}, 200

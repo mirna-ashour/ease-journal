@@ -46,8 +46,8 @@ def test_main_menu():
     assert 'X' in resp_json['Choices']
 
 
-@pytest.mark.skip(reason="Getting status code 500 error")
-@patch('data.categories.add_category', autospec=True)
+#@pytest.mark.skip(reason="Getting status code 500 error")
+@patch('data.categories.add_category', return_value='000000000',autospec=True)
 def test_add_category_success(mock_add_category):
     mock_add_category.return_value = 123456
     test_data = {
@@ -58,7 +58,7 @@ def test_add_category_success(mock_add_category):
     resp = TEST_CLIENT.post('/add_category', json=test_data)
     assert resp.status_code == OK
 
-@pytest.mark.skip(reason="Getting status code 500 error")
+#@pytest.mark.skip(reason="Getting status code 500 error")
 @patch('data.categories.add_category', side_effect=ValueError("Duplicate category"), autospec=True)
 def test_add_category_failure(mock_add_category):
     test_data = {
@@ -67,4 +67,4 @@ def test_add_category_failure(mock_add_category):
         'date_time': '2023-11-08 12:00:00'
     }
     resp = TEST_CLIENT.post('/add_category', json=test_data)
-    assert resp.status_code == BAD_REQUEST
+    assert resp.status_code == NOT_ACCEPTABLE
