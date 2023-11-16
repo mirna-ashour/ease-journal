@@ -13,8 +13,7 @@ on:
   workflow_dispatch:
 
 env:
-  DEMO_HOME: /home/runner/work/team-ease/team-ease/
-  PYTHONPATH: /home/runner/work/team-ease/team-ease/
+  PYTHONPATH: /home/runner/work/ease-journal/ease-journal/
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
