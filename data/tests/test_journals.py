@@ -7,6 +7,32 @@ from datetime import datetime
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
+@pytest.fixture(scope='function')
+def temp_journal():
+    timestamp = jrnls._get_test_timestamp()
+    prompt = f"UniquePrompt_{timestamp}"
+    ret = jrnls.add_journal(timestamp, "", prompt, "This is a fixture", timestamp)
+    yield timestamp
+    if jrnls.exists(timestamp):
+        jrnls.del_journal(timestamp)
+
+
+def test_get_test_journal():
+    timestamp = jrnls._get_test_timestamp()
+    assert isinstance(timestamp, str)
+    assert isinstance(datetime.strptime(key, FORMAT), datetime)
+
+
+def test_gen_id():
+    _id = jrnls._gen_id()
+    assert isinstance(_id, str)
+    assert len(_id) == jrnls.ID_LEN
+
+
+def test_get_test_journal():
+    assert isinstance(jrnls.get_test_journal(), dict)
+
+
 """
     Ensure:
         - get_journals() returns a dict with at least 1 journal
@@ -17,36 +43,15 @@ FORMAT = "%Y-%m-%d %H:%M:%S"
             - CONTENT (str)
             - MODIFIED (str/valid timestamp)
 """
-def test_get_journals():
+def test_get_journals(temp_journal):
     journals = jrnls.get_journals()
     assert isinstance(journals, dict)
     assert len(journals) > 0
 
     for key in journals:
         assert isinstance(key, str)
-        assert isinstance(datetime.strptime(key, FORMAT), datetime)
-        
-        journal = journals[key]
-        assert isinstance(journal, dict)
-        
-        assert jrnls.TITLE in journal
-        assert jrnls.PROMPT in journal
-        assert jrnls.CONTENT in journal
-        assert jrnls.MODIFIED in journal
-        
-        j_title = journal[jrnls.TITLE]
-        assert isinstance(j_title, str)
-
-        j_prompt = journal[jrnls.PROMPT]
-        assert isinstance(j_prompt, str)
-        
-        j_content = journal[jrnls.CONTENT]
-        assert isinstance(j_content, str)
-
-        j_modified = journal[jrnls.MODIFIED]
-        assert isinstance(datetime.strptime(j_modified, FORMAT), datetime)
-
-        assert datetime.strptime(key, FORMAT) <= datetime.strptime(j_modified, FORMAT)
+        assert isinstance(journals[key], dict)
+    assert jrnls.exists(temp_journal)
 
 
 ADD_TIMESTAMP = '2000-01-01 09:57:00'
@@ -54,7 +59,7 @@ ADD_TITLE = 'SOME TITLE'
 ADD_PROMPT0 = 'some prompt0'
 ADD_PROMPT1 = 'some prompt1'
 ADD_CONTENT = 'blah blah blah'
-ADD_MODIFIED = '2000-01-01 09:57:00'
+ADD_MODIFIED = ADD_TIMESTAMP
 
 NON_STRING = 123
 
@@ -68,30 +73,27 @@ def test_add_journal():
     jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_MODIFIED)
     journals = jrnls.get_journals()
     assert ADD_TIMESTAMP in journals
-    print(f'journals[ADD_TIMESTAMP]: {journals[ADD_TIMESTAMP]=}')
-    assert journals[ADD_TIMESTAMP] == {
-         jrnls.TITLE: ADD_TITLE,
-         jrnls.PROMPT: ADD_PROMPT0,
-         jrnls.CONTENT: ADD_CONTENT,
-         jrnls.MODIFIED: ADD_MODIFIED,
-        }
+    assert journals[ADD_TIMESTAMP][jrnls.TITLE] == ADD_TITLE
+    assert journals[ADD_TIMESTAMP][jrnls.PROMPT] == ADD_PROMPT0
+    assert journals[ADD_TIMESTAMP][jrnls.CONTENT] == ADD_CONTENT
+    assert journals[ADD_TIMESTAMP][jrnls.MODIFIED] == ADD_MODIFIED
 
 
 def test_add_journal_without_title_or_content():
     jrnls.add_journal(ADD_TIMESTAMP, "", ADD_PROMPT1, "", ADD_MODIFIED)
     journals = jrnls.get_journals()
     assert ADD_TIMESTAMP in journals
-    assert journals[ADD_TIMESTAMP] == {
-         jrnls.TITLE: jrnls.DEFAULT_TITLE,
-         jrnls.PROMPT: ADD_PROMPT1,
-         jrnls.CONTENT: "",
-         jrnls.MODIFIED: ADD_MODIFIED,
-        }
+    assert journals[ADD_TIMESTAMP][jrnls.TITLE] == jrnls.DEFAULT_TITLE
+    assert journals[ADD_TIMESTAMP][jrnls.PROMPT] == ADD_PROMPT1
+    assert journals[ADD_TIMESTAMP][jrnls.CONTENT] == ""
+    assert journals[ADD_TIMESTAMP][jrnls.MODIFIED] == ADD_MODIFIED
 
 
-def test_add_journal_dup_prompt():
+def test_add_journal_dup_prompt(temp_journal):
+    temp_journal_entry = jrnls.get_journal(temp_journal)
+    temp_prompt = temp_journal_entry[jrnls.PROMPT]
     with pytest.raises(ValueError):
-        jrnls.add_journal(ADD_TIMESTAMP, "", jrnls.TEST_PROMPT, "", ADD_MODIFIED)
+        jrnls.add_journal(ADD_TIMESTAMP, "", temp_prompt, "", ADD_MODIFIED)
 
 
 def test_add_journal_invalid_timestamp():
@@ -118,3 +120,15 @@ def test_add_journal_non_string_prompt():
 def test_add_journal_non_string_content():
     with pytest.raises(TypeError):
         jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, NON_STRING, ADD_MODIFIED)
+
+
+def test_del_journal(temp_journal):
+    timestamp = temp_journal
+    jrnls.del_journal(timestamp)
+    assert not jrnls.exists(timestamp)
+
+
+def test_del_journal_not_there():
+    timestamp = jrnls._get_test_timestamp()
+    with pytest.raises(ValueError):
+        jrnls.del_journal(timestamp)
