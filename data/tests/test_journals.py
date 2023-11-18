@@ -50,7 +50,26 @@ def test_get_journals(temp_journal):
 
     for key in journals:
         assert isinstance(key, str)
-        assert isinstance(journals[key], dict)
+        assert isinstance(datetime.strptime(key, FORMAT), datetime)
+
+        journal = journals[key]
+        assert isinstance(journal, dict)
+
+        assert jrnls.TIMESTAMP in journal
+        assert jrnls.TITLE in journal
+        assert jrnls.PROMPT in journal
+        assert jrnls.CONTENT in journal
+        assert jrnls.MODIFIED in journal
+
+        assert journal[jrnls.TIMESTAMP] == key
+
+        assert isinstance(journal[jrnls.TITLE], str)
+        assert isinstance(journal[jrnls.PROMPT] ,str)
+        assert isinstance(journal[jrnls.CONTENT] ,str)
+        assert isinstance(journal[jrnls.MODIFIED] ,str)
+
+        assert datetime.strptime(key, FORMAT) <= datetime.strptime(journal[jrnls.MODIFIED], FORMAT)
+        
     assert jrnls.exists(temp_journal)
 
 
