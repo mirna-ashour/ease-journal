@@ -66,7 +66,7 @@ def get_categories() -> dict:
 
 
 # return categories with a specific user_id - Cody updated in 10/29
-def get_user_categories(user_id: int) -> dict:
+def get_user_categories(user_id: str) -> dict:
     dbc.connect_db()
     all_categories = dbc.fetch_all_as_dict(CATEGORY_ID, CATEGORIES_COLLECT)
     user_specific_categories = {}
@@ -77,7 +77,7 @@ def get_user_categories(user_id: int) -> dict:
 
 
 # category ids are currently a parameter but should later be uniquely generated
-def add_category(category_id: int, title: str, user_id: int, date_time: str):
+def add_category(category_id: str, title: str, user_id: str, date_time: str):
     if exists(category_id):
         raise ValueError("Duplicate category.")
     if not title:
