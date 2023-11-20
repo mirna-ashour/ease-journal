@@ -11,6 +11,7 @@ from flask_restx import Resource, Api
 import werkzeug.exceptions as wz
 
 import data.users as users
+import data.journals as journals
 
 
 app = Flask(__name__)
@@ -123,3 +124,33 @@ class AddCategory(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
         return {"category_id": category_id}, 200
+
+
+@api.route('/journals')
+class Journals(Resource):
+    def get(self):
+        """
+        Returns all journals.
+        """
+        return {
+            TYPE: DATA,
+            TITLE: 'All Journals',
+            DATA: journals.get_journals(),
+        }
+
+
+@api.route('/journal', methods=['POST'])
+class AddJournal(Resource):
+    def post(self):
+        data = request.get_json()
+        timestamp = data.get('timestamp')
+        title = data.get('title', "Untitled")
+        prompt = data.get('prompt')
+        content = data.get('content')
+        modified = data.get('modified', timestamp)
+
+        try:
+            journals.add_journal(timestamp, title, prompt, content, modified)
+        except ValueError as e:
+            raise wz.NotAcceptable(str(e))
+        return {"message": "Journal added successfully"}, 200
