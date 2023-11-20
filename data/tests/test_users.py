@@ -10,7 +10,7 @@ import pytest
         - each user name is an alphabetical str with at least two letters
 """
 
-@pytest.mark.skip(reason="Temp skip")
+
 def test_get_users():
     users = usrs.get_users()
     assert isinstance(users, dict)
@@ -19,25 +19,37 @@ def test_get_users():
         assert isinstance(key, int)
         user = users[key]
         assert isinstance(user, dict)
+        # first name
         assert usrs.FIRST_NAME in user
         user_first_name = user[usrs.FIRST_NAME]
         assert isinstance(user_first_name, str)
         assert user_first_name.isalpha()
         assert len(user_first_name) >= usrs.MIN_USER_NAME_LEN
+        # last name
+        assert usrs.LAST_NAME in user
+        user_last_name = user[usrs.LAST_NAME]
+        assert isinstance(user_last_name, str)
+        assert user_last_name.isalpha()
+        assert len(user_last_name) >= usrs.MIN_USER_NAME_LEN
+        # dob
+        user_dob = user[usrs.DOB]
+        assert isinstance(user_dob, str)
+        # email
+        user_email = user[usrs.EMAIL]
+        assert isinstance(user_email, str)
 
 
-@pytest.mark.skip(reason="Temp skip")
 def test_add_user():
     user_id = 1902837465
-    name = "Emma"
-    if not name:
-        raise ValueError("Name must not be empty")
-    if not isinstance(name, str):
-        raise TypeError("Name must be a string")
-    if not name.isalpha():
-        raise ValueError("Name must be alphabetical")
-    if len(name) < usrs.MIN_USER_NAME_LEN:
-        raise ValueError("Name must be at least 2 characters")
-    
-    usrs.add_user(user_id, name)
-    assert user_id in usrs.get_users()
+    first_name = "Emma"
+    last_name = "Watson"
+    dob = "2002-11-20"
+    email = "emma.watson@gmail.com"
+    usrs.add_user(user_id, first_name, last_name, dob, email)
+    # check
+    users = usrs.get_users()
+    assert user_id in users
+    assert users[user_id][usrs.FIRST_NAME] == first_name
+    assert users[user_id][usrs.LAST_NAME] == last_name
+    assert users[user_id][usrs.DOB] == dob
+    assert users[user_id][usrs.EMAIL] == email
