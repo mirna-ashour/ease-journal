@@ -1,4 +1,3 @@
-
 import server.endpoints as ep
 import pytest
 import data.categories as categories
@@ -73,3 +72,19 @@ def test_add_category_failure(mock_add_category):
                    + 'skip')
 def test_that_doesnt_work():
     assert False
+
+
+
+def test_add_journal():
+    test_data = {
+        "timestamp": "2023-11-10 10:00:00",
+        "title": "Test Journal",
+        "prompt": "Test Prompt",
+        "content": "Test Content",
+        "modified": "2023-11-10 10:00:00"
+    }
+    resp = TEST_CLIENT.post('/journal', json=test_data)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert resp_json["message"] == "Journal added successfully"
