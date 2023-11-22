@@ -82,7 +82,7 @@ def add_category(category_id: str, title: str, user_id: str, date_time: str):
         raise ValueError("Duplicate category.")
     if not title:
         title = "Untitled"
-    date_time = datetime.strptime(date_time, FORMAT)
+    date_time = str(datetime.strptime(date_time, FORMAT))
     category_entry = {}
     category_entry[CATEGORY_ID] = category_id
     category_entry[TITLE] = title

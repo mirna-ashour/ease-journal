@@ -11,7 +11,7 @@ def temp_category():
     category_id = cats._get_category_id()
     user_id = cats._get_user_id()
     title = cats._get_title_name()
-    date_time = "2023-10-27 12:45:00"
+    date_time = '2023-10-27 12:45:00'
     ret = cats.add_category(category_id, title, user_id, date_time)
     yield category_id
     if cats.exists(category_id):
@@ -55,25 +55,23 @@ def test_add_category():
     category_id = cats._get_category_id()
     user_id = cats._get_user_id()
     title = cats._get_title_name()
-    date_time = "2023-10-27 12:45:00"
+    date_time = '2023-10-27 12:45:00'
     ret = cats.add_category(category_id, title, user_id, date_time)
     assert cats.exists(category_id)
     assert isinstance(ret, bool)
-    cats.del_category(category_id) 
+    cats.del_category(category_id)
 
 
-def test_add_duplicate_category():
-    cat_id = cats._get_category_id()
+def test_add_duplicate_category(temp_category):
+    cat_id = temp_category
     user = cats._get_user_id()
     title = cats._get_title_name()
-    date_time = "2023-10-27 12:45:00"
-    
-    # adding category for the first time
-    cats.add_category(cat_id, title, user, date_time)
-    
+    date_time = '2023-10-27 12:45:00'
+        
     # attempting to add category again
     with pytest.raises(ValueError):
         cats.add_category(cat_id, title, user, date_time)
+
 
 def test_del_category(temp_category):
     category_id = temp_category
