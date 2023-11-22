@@ -96,6 +96,7 @@ def test_add_journal():
     assert journals[ADD_TIMESTAMP][jrnls.PROMPT] == ADD_PROMPT0
     assert journals[ADD_TIMESTAMP][jrnls.CONTENT] == ADD_CONTENT
     assert journals[ADD_TIMESTAMP][jrnls.MODIFIED] == ADD_MODIFIED
+    jrnls.del_journal(ADD_TIMESTAMP)
 
 
 def test_add_journal_without_title_or_content():
@@ -106,6 +107,7 @@ def test_add_journal_without_title_or_content():
     assert journals[ADD_TIMESTAMP][jrnls.PROMPT] == ADD_PROMPT1
     assert journals[ADD_TIMESTAMP][jrnls.CONTENT] == ""
     assert journals[ADD_TIMESTAMP][jrnls.MODIFIED] == ADD_MODIFIED
+    jrnls.del_journal(ADD_TIMESTAMP)
 
 
 def test_add_journal_dup_prompt(temp_journal):
