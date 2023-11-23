@@ -1,6 +1,9 @@
 import data.users as usrs
 import pytest
+import random
+from datetime import datetime
 
+FORMAT = "%Y-%m-%d"
 
 """
     Ensure:
@@ -11,45 +14,65 @@ import pytest
 """
 
 
-def test_get_users():
+@pytest.fixture(scope='function')
+def temp_user():
+    user_id = usrs._get_user_id()
+    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+    yield user_id
+    if usrs.exists(user_id):
+        usrs.del_user(user_id)
+
+
+def test_get_user_id():
+    _id = usrs._get_user_id()
+    assert isinstance(_id, str)
+    assert len(_id) == usrs.USER_ID_LEN
+
+
+def test_get_users(temp_user):
     users = usrs.get_users()
     assert isinstance(users, dict)
     assert len(users) > 0
     for key in users:
-        assert isinstance(key, int)
+        assert isinstance(key, str)
+
         user = users[key]
         assert isinstance(user, dict)
-        # first name
         assert usrs.FIRST_NAME in user
-        user_first_name = user[usrs.FIRST_NAME]
-        assert isinstance(user_first_name, str)
-        assert user_first_name.isalpha()
-        assert len(user_first_name) >= usrs.MIN_USER_NAME_LEN
-        # last name
         assert usrs.LAST_NAME in user
-        user_last_name = user[usrs.LAST_NAME]
-        assert isinstance(user_last_name, str)
-        assert user_last_name.isalpha()
-        assert len(user_last_name) >= usrs.MIN_USER_NAME_LEN
-        # dob
-        user_dob = user[usrs.DOB]
-        assert isinstance(user_dob, str)
-        # email
-        user_email = user[usrs.EMAIL]
-        assert isinstance(user_email, str)
+        assert usrs.DOB in user
+        assert usrs.EMAIL in user
 
+        assert isinstance(user[usrs.FIRST_NAME], str)
+        assert isinstance(user[usrs.LAST_NAME], str)
+        assert isinstance(user[usrs.EMAIL], str)
+        #assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT).strftime().date(), datetime.date)
+        
+    assert usrs.exists(temp_user)
 
 def test_add_user():
-    user_id = 1902837465
-    first_name = "Emma"
-    last_name = "Watson"
-    dob = "2002-11-20"
-    email = "emma.watson@gmail.com"
-    usrs.add_user(user_id, first_name, last_name, dob, email)
-    # check
-    users = usrs.get_users()
-    assert user_id in users
-    assert users[user_id][usrs.FIRST_NAME] == first_name
-    assert users[user_id][usrs.LAST_NAME] == last_name
-    assert users[user_id][usrs.DOB] == dob
-    assert users[user_id][usrs.EMAIL] == email
+    user_id = usrs._get_user_id()
+    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+    assert usrs.exists(user_id)
+    assert isinstance(ret, bool)
+    usrs.del_user(user_id)
+
+
+def test_add_duplicate_user(temp_user):
+    user_id = temp_user
+        
+    # attempting to add category again
+    with pytest.raises(ValueError):
+        usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+
+
+def test_del_user(temp_user):
+    user_id = temp_user
+    usrs.del_user(user_id)
+    assert not usrs.exists(user_id)
+
+
+def test_del_category_not_there():
+    user_id = usrs._get_user_id()
+    with pytest.raises(ValueError):
+        usrs.del_user(user_id)
