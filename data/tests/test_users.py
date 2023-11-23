@@ -61,7 +61,7 @@ def test_add_user():
 def test_add_duplicate_user(temp_user):
     user_id = temp_user
         
-    # attempting to add category again
+    # attempting to add user again
     with pytest.raises(ValueError):
         usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
 
@@ -72,7 +72,7 @@ def test_del_user(temp_user):
     assert not usrs.exists(user_id)
 
 
-def test_del_category_not_there():
+def test_del_user_not_there():
     user_id = usrs._get_user_id()
     with pytest.raises(ValueError):
         usrs.del_user(user_id)
