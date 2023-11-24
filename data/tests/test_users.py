@@ -46,9 +46,10 @@ def test_get_users(temp_user):
         assert isinstance(user[usrs.FIRST_NAME], str)
         assert isinstance(user[usrs.LAST_NAME], str)
         assert isinstance(user[usrs.EMAIL], str)
-        # assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT).strftime(FORMAT).date(), datetime.date)
+        assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT), datetime)
         
     assert usrs.exists(temp_user)
+
 
 def test_add_user():
     user_id = usrs._get_user_id()

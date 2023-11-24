@@ -4,7 +4,7 @@ This module interfaces to our user data.
 
 import data.db_connect as dbc
 import random
-# from datetime import datetime
+from datetime import datetime
 
 
 USERS_COLLECT = 'users'
@@ -48,7 +48,7 @@ def add_user(user_id: str, first_name: str, last_name: str,
              dob: str, email: str):
     if exists(user_id):
         raise ValueError("Duplicate user.")
-    # dob = datetime.strptime(dob, FORMAT).strftime(FORMAT)
+    dob = datetime.strptime(dob, FORMAT).strftime(FORMAT)
     user_entry = {}
     user_entry[USER_ID] = user_id
     user_entry[FIRST_NAME] = first_name
