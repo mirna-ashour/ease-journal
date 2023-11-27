@@ -107,10 +107,11 @@ def add_journal(timestamp: str, title: str, prompt: str,
 
 
 def del_journal(timestamp: str):
-    if exists(timestamp):
-        return dbc.del_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
-    else:
-        raise ValueError(f'Delete failure: {timestamp} not in database.')
+    dbc.connect_db()
+    if not exists(timestamp):
+        raise ValueError(f"Delete failure: {timestamp} not in database.")
+    dbc.del_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
+    return True
 
 
 def get_journal(timestamp: str):
