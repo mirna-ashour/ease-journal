@@ -154,3 +154,17 @@ class AddJournal(Resource):
         except ValueError as e:
             raise wz.NotAcceptable(str(e))
         return {"message": "Journal added successfully"}, 200
+
+
+@api.route('/delete_journal', methods=['DELETE'])
+class DeleteJournal(Resource):
+    def delete(self):
+        data = request.get_json()
+        timestamp = data.get('timestamp')
+        if not timestamp:
+            raise wz.BadRequest("Timestamp is required")
+
+        if journals.del_journal(timestamp):
+            return {"message": "Journal deleted successfully"}, 200
+        else:
+            raise wz.NotFound("Journal not found")

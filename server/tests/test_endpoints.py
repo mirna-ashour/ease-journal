@@ -74,7 +74,6 @@ def test_that_doesnt_work():
     assert False
 
 
-
 def test_add_journal():
     test_data = {
         "timestamp": "2023-11-10 10:00:00",
@@ -88,3 +87,13 @@ def test_add_journal():
     resp_json = resp.get_json()
     assert "message" in resp_json
     assert resp_json["message"] == "Journal added successfully"
+
+
+def test_delete_journal():
+    # Ensure this timestamp exists in your test database
+    test_data = {"timestamp": "2023-11-10 10:00:00"}
+    resp = TEST_CLIENT.delete('/delete_journal', json=test_data)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert resp_json["message"] == "Journal deleted successfully"
