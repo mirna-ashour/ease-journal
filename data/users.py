@@ -23,6 +23,8 @@ MOCK_ID = '0' * USER_ID_LEN
 
 MIN_USER_NAME_LEN = 2
 
+MIN_USER_EMAIL_LEN = 8
+
 # users = {
 #     1234567890: {
 #         FIRST_NAME: "Emma",
@@ -57,8 +59,34 @@ def get_users() -> dict:
 
 def add_user(user_id: str, first_name: str, last_name: str,
              dob: str, email: str):
+
     if exists(user_id):
         raise ValueError("Duplicate user.")
+
+    if len(user_id) != USER_ID_LEN:
+        raise ValueError(f'User id must be {USER_ID_LEN} characters.')
+
+    if len(first_name) < MIN_USER_NAME_LEN:
+        raise ValueError(f'First name must be at least '
+                         f'{MIN_USER_NAME_LEN} characters.')
+
+    if len(last_name) < MIN_USER_NAME_LEN:
+        raise ValueError(f'Last name must be at least '
+                         f'{MIN_USER_NAME_LEN} characters.')
+
+    if email.find('@') == -1:
+        raise ValueError('Invalid email address. Missing domain (@) in email address.')
+
+    if email.find('.') == -1:
+        raise ValueError('Invalid email address. Missing dot (.) in email address.')
+
+    if email.find('@') > email.find('.'):
+        raise ValueError('Invalid email address. Incorrect order of domain and dot in email address.')
+
+    if len(email) < MIN_USER_EMAIL_LEN:
+        raise ValueError(f'Email must be at least '
+                         f'{MIN_USER_EMAIL_LEN} characters.')
+
     dob = datetime.strptime(dob, FORMAT).strftime(FORMAT)
     user_entry = {}
     user_entry[USER_ID] = user_id
