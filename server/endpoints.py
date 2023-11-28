@@ -131,6 +131,7 @@ class Users(Resource):
 @api.route('/add_category')
 class AddCategory(Resource):
     def post(self):
+        '''This endpoint adds a new category to the database.'''
         # parsing the request data
         data = request.get_json()
         user = data.get('user_id')
