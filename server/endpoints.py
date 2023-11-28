@@ -7,10 +7,11 @@ import datetime as dt
 # from urllib import request
 from data import categories
 from flask import Flask, request
-from flask_restx import Resource, Api
+from http import HTTPStatus
+from flask_restx import Resource, Api, fields
 import werkzeug.exceptions as wz
 
-import data.users as users
+import data.users as usrs
 import data.journals as journals
 
 
@@ -21,6 +22,7 @@ MAIN_MENU = 'MainMenu'
 MAIN_MENU_NM = "Welcome to Ease Journal"
 # USERS = 'users'
 USERS_EP = '/users'
+USER_ID = 'User ID'
 DATA = 'Data'
 TYPE = 'Type'
 TITLE = 'Title'
@@ -81,6 +83,15 @@ class MainMenu(Resource):
                 }}
 
 
+user_fields = api.model('NewUser', {
+    usrs.USER_ID: fields.String,
+    usrs.FIRST_NAME: fields.String,
+    usrs.LAST_NAME: fields.String,
+    usrs.DOB: fields.String,
+    usrs.EMAIL: fields.String,
+})
+
+
 @api.route(USERS_EP)
 class Users(Resource):
     """
@@ -93,8 +104,28 @@ class Users(Resource):
         return {
             TYPE: DATA,
             TITLE: 'Current Users',
-            DATA: users.get_users(),
+            DATA: usrs.get_users(),
         }
+
+    @api.expect(user_fields)
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    def post(self):
+        """
+        Add a user.
+        """
+        user_id = request.json[usrs.USER_ID]
+        first_name = request.json[usrs.FIRST_NAME]
+        last_name = request.json[usrs.LAST_NAME]
+        dob = request.json[usrs.DOB]
+        email = request.json[usrs.EMAIL]
+        try:
+            new_id = usrs.add_user(user_id, first_name, last_name, dob, email)
+            if new_id is None:
+                raise wz.ServiceUnavailable('We have a technical problem.')
+            return {USER_ID: user_id}
+        except ValueError as e:
+            raise wz.NotAcceptable(f'{str(e)}')
 
 
 @api.route('/add_category')

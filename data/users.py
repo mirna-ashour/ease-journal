@@ -19,6 +19,7 @@ FORMAT = "%Y-%m-%d"
 USER_ID_LEN = 10
 USER_BIG_NUM = 1000000000
 
+MOCK_ID = '0' * USER_ID_LEN
 
 MIN_USER_NAME_LEN = 2
 
@@ -37,6 +38,16 @@ def _get_user_id():
     _id = str(_id)
     _id = _id.rjust(USER_ID_LEN, '0')
     return _id
+
+
+def get_test_user():
+    test_user = {}
+    test_user[USER_ID] = _get_user_id()
+    test_user[FIRST_NAME] = "Emma"
+    test_user[LAST_NAME] = "Watson"
+    test_user[DOB] = "2002-11-20"
+    test_user[EMAIL] = "test@gmail.com"
+    return test_user
 
 
 def get_users() -> dict:

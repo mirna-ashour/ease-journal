@@ -1,6 +1,7 @@
 import server.endpoints as ep
 import pytest
 import data.categories as categories
+import data.users as usrs
 from unittest.mock import patch
 from http.client import (
     BAD_REQUEST,
@@ -29,6 +30,32 @@ def test_list_users():
     assert ep.TITLE in resp_json
     assert ep.TYPE in resp_json
     assert ep.DATA in resp_json
+
+@patch('data.users.add_user', return_value=usrs.MOCK_ID, autospec=True)
+def test_users_add(mock_add):
+    """
+    Testing we do the right thing with a good return from add_user.
+    """
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user())
+    assert resp.status_code == OK
+
+
+@patch('data.users.add_user', side_effect=ValueError(), autospec=True)
+def test_users_bad_add(mock_add):
+    """
+    Testing we do the right thing with a value error from add_user.
+    """
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user())
+    assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('data.users.add_user', return_value=None)
+def test_users_add_db_failure(mock_add):
+    """
+    Testing we do the right thing with a null ID return from add_user.
+    """
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user())
+    assert resp.status_code == SERVICE_UNAVAILABLE
 
 
 def test_main_menu():
