@@ -75,13 +75,16 @@ def add_user(user_id: str, first_name: str, last_name: str,
                          f'{MIN_USER_NAME_LEN} characters.')
 
     if email.find('@') == -1:
-        raise ValueError('Invalid email address. Missing domain (@) in email address.')
+        raise ValueError('Invalid email address. '
+                         'Missing domain (@) in email address.')
 
     if email.find('.') == -1:
-        raise ValueError('Invalid email address. Missing dot (.) in email address.')
+        raise ValueError('Invalid email address. '
+                         'Missing dot (.) in email address.')
 
     if email.find('@') > email.find('.'):
-        raise ValueError('Invalid email address. Incorrect order of domain and dot in email address.')
+        raise ValueError('Invalid email address. '
+                         'Incorrect order of domain and dot in email address.')
 
     if len(email) < MIN_USER_EMAIL_LEN:
         raise ValueError(f'Email must be at least '
