@@ -158,12 +158,19 @@ def test_journals_add_db_failure(mock_add):
     assert resp.status_code == SERVICE_UNAVAILABLE
 
 
-@pytest.mark.skip('This test and its corresponding endpoint need to be fixed now that the add_journal endpoint works')
-def test_delete_journal():
-    # Ensure this timestamp exists in your test database
-    test_data = {"timestamp": "2023-11-10 10:00:00"}
-    resp = TEST_CLIENT.delete('/delete_journal', json=test_data)
+@patch('data.journals.del_journal', autospec=True)
+def test_journals_del(mock_del):
+    """
+    Testing we do the right thing with a call to del_journal that succeeds.
+    """
+    resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/timestamp')
     assert resp.status_code == OK
-    resp_json = resp.get_json()
-    assert "message" in resp_json
-    assert resp_json["message"] == "Journal deleted successfully"
+
+
+@patch('data.journals.del_journal', side_effect=ValueError(), autospec=True)
+def test_journals_bad_del(mock_del):
+    """
+    Testing we do the right thing with a value error from del_journal.
+    """
+    resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/timestamp')
+    assert resp.status_code == NOT_FOUND

@@ -26,6 +26,9 @@ USER_ID = 'User ID'
 DELETE = 'delete'
 DEL_USER_EP = f'{USERS_EP}/{DELETE}'
 JOURNALS_EP = '/journals'
+JOURNAL_CREATED = 'Journal Created'
+TIMESTAMP = 'Timestamp'
+DEL_JOURNAL_EP = f'{JOURNALS_EP}/{DELETE}'
 DATA = 'Data'
 TYPE = 'Type'
 TITLE = 'Title'
@@ -189,8 +192,6 @@ journal_fields = api.model('NewJournal', {
     journals.MODIFIED: fields.String,
 })
 
-JOURNAL_ID = 'Journal ID'
-
 
 @api.route(JOURNALS_EP)
 class Journals(Resource):
@@ -226,20 +227,24 @@ class Journals(Resource):
                                           prompt, content, modified)
             if new_id is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
-            return {JOURNAL_ID: new_id}
+            return {JOURNAL_CREATED: new_id}
         except ValueError as e:
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-# @api.route('/delete_journal', methods=['DELETE'])
-# class DeleteJournal(Resource):
-#     def delete(self):
-#         data = request.get_json()
-#         timestamp = data.get('timestamp')
-#         if not timestamp:
-#             raise wz.BadRequest("Timestamp is required")
-
-#         if journals.del_journal(timestamp):
-#             return {"message": "Journal deleted successfully"}, 200
-#         else:
-#             raise wz.NotFound("Journal not found")
+@api.route(f'{DEL_JOURNAL_EP}/<timestamp>')
+class DelJournal(Resource):
+    """
+    Deletes a journal by timestamp.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def delete(self, timestamp):
+        """
+        Deletes a journal by timestamp.
+        """
+        try:
+            journals.del_journal(timestamp)
+            return {f'Deleted journal with {TIMESTAMP}': timestamp}
+        except ValueError as e:
+            raise wz.NotFound(f'{str(e)}')
