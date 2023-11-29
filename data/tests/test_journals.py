@@ -153,3 +153,23 @@ def test_del_journal_not_there():
     timestamp = jrnls._get_test_timestamp()
     with pytest.raises(ValueError):
         jrnls.del_journal(timestamp)
+
+
+def test_update_journal_title(temp_journal):
+    timestamp = temp_journal
+    new_title = "New Title"
+    assert jrnls.update_journal_title(timestamp, new_title)
+
+    upd_journal = jrnls.get_journal(timestamp)
+    assert upd_journal[jrnls.TITLE] == new_title
+    assert datetime.strptime(upd_journal[jrnls.MODIFIED], FORMAT) > datetime.strptime(timestamp, FORMAT)
+
+
+def test_update_journal_content(temp_journal):
+    timestamp = temp_journal
+    new_content = "New Content"
+    assert jrnls.update_journal_content(timestamp, new_content)
+
+    upd_journal = jrnls.get_journal(timestamp)
+    assert upd_journal[jrnls.CONTENT] == new_content
+    assert datetime.strptime(upd_journal[jrnls.MODIFIED], FORMAT) > datetime.strptime(timestamp, FORMAT)

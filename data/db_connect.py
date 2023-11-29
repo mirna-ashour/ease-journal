@@ -70,6 +70,13 @@ def del_one(collection, filt, db=JOURNALS_DB):
     client[db][collection].delete_one(filt)
 
 
+def upd_one(collection, filt, upd, db=JOURNALS_DB):
+    """
+    Update a single doc in collection based on filter.
+    """
+    return client[db][collection].update_one(filt, upd)
+
+
 def fetch_all(collection, db=JOURNALS_DB):
     ret = []
     for doc in client[db][collection].find():

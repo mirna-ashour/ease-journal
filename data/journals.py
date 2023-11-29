@@ -117,3 +117,29 @@ def del_journal(timestamp: str):
 def get_journal(timestamp: str):
     dbc.connect_db()
     return dbc.fetch_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
+
+
+def update_journal_title(timestamp: str, new_title: str):
+    dbc.connect_db()
+    filt = {TIMESTAMP: timestamp}
+    upd = {
+        "$set": {
+            TITLE: new_title,
+            MODIFIED: datetime.now().strftime(FORMAT)
+        }
+    }
+    res = dbc.upd_one(JOURNALS_COLLECT, filt, upd)
+    return res.modified_count > 0
+
+
+def update_journal_content(timestamp: str, new_content: str):
+    dbc.connect_db()
+    filt = {TIMESTAMP: timestamp}
+    upd = {
+        "$set": {
+            CONTENT: new_content,
+            MODIFIED: datetime.now().strftime(FORMAT)
+        }
+    }
+    res = dbc.upd_one(JOURNALS_COLLECT, filt, upd)
+    return res.modified_count > 0
