@@ -23,6 +23,8 @@ MAIN_MENU_NM = "Welcome to Ease Journal"
 # USERS = 'users'
 USERS_EP = '/users'
 USER_ID = 'User ID'
+DELETE = 'delete'
+DEL_USER_EP = f'{USERS_EP}/{DELETE}'
 JOURNALS_EP = '/journals'
 DATA = 'Data'
 TYPE = 'Type'
@@ -84,8 +86,26 @@ class MainMenu(Resource):
                 }}
 
 
+@api.route(f'{DEL_USER_EP}/<user_id>')
+class DelUser(Resource):
+    """
+    Deletes a user by their ID.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def delete(self, user_id):
+        """
+        Deletes a user by their ID.
+        """
+        try:
+            usrs.del_user(user_id)
+            return {f'Deleted user with {USER_ID}': user_id}
+        except ValueError as e:
+            raise wz.NotFound(f'{str(e)}')
+
+
 user_fields = api.model('NewUser', {
-    usrs.USER_ID: fields.String,
+    # usrs.USER_ID: fields.String,
     usrs.FIRST_NAME: fields.String,
     usrs.LAST_NAME: fields.String,
     usrs.DOB: fields.String,
@@ -117,7 +137,7 @@ class Users(Resource):
         """
         Add a user.
         """
-        user_id = request.json[usrs.USER_ID]
+        user_id = usrs._get_user_id()
         first_name = request.json[usrs.FIRST_NAME]
         last_name = request.json[usrs.LAST_NAME]
         dob = request.json[usrs.DOB]
@@ -126,7 +146,7 @@ class Users(Resource):
             new_id = usrs.add_user(user_id, first_name, last_name, dob, email)
             if new_id is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
-            return {USER_ID: user_id}
+            return {f'New user has been added; with {USER_ID}': user_id}
         except ValueError as e:
             raise wz.NotAcceptable(f'{str(e)}')
 

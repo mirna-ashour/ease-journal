@@ -59,6 +59,23 @@ def test_users_add_db_failure(mock_add):
     resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user())
     assert resp.status_code == SERVICE_UNAVAILABLE
 
+@patch('data.users.del_user', autospec=True)
+def test_users_del(mock_del):
+    """
+    Testing we do the right thing with a call to del_user that succeeds.
+    """
+    resp = TEST_CLIENT.delete(f'{ep.DEL_USER_EP}/user_id')
+    assert resp.status_code == OK
+
+
+@patch('data.users.del_user', side_effect=ValueError(), autospec=True)
+def test_users_bad_del(mock_del):
+    """
+    Testing we do the right thing with a value error from del_user.
+    """
+    resp = TEST_CLIENT.delete(f'{ep.DEL_USER_EP}/user_id')
+    assert resp.status_code == NOT_FOUND
+
 
 def test_main_menu():
     resp = TEST_CLIENT.get(ep.MAIN_MENU)
