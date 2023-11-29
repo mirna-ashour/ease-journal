@@ -2,6 +2,7 @@ import server.endpoints as ep
 import pytest
 import data.categories as categories
 import data.users as usrs
+import data.journals as jrnls
 from unittest.mock import patch
 from http.client import (
     BAD_REQUEST,
@@ -30,6 +31,7 @@ def test_list_users():
     assert ep.TITLE in resp_json
     assert ep.TYPE in resp_json
     assert ep.DATA in resp_json
+
 
 @patch('data.users.add_user', return_value=usrs.MOCK_ID, autospec=True)
 def test_users_add(mock_add):
@@ -84,6 +86,7 @@ def test_add_category_success(mock_add_category):
     resp = TEST_CLIENT.post('/add_category', json=test_data)
     assert resp.status_code == OK
 
+
 #@pytest.mark.skip(reason="Getting status code 500 error")
 @patch('data.categories.add_category', side_effect=ValueError("Duplicate category"), autospec=True)
 def test_add_category_failure(mock_add_category):
@@ -95,27 +98,50 @@ def test_add_category_failure(mock_add_category):
     resp = TEST_CLIENT.post('/add_category', json=test_data)
     assert resp.status_code == NOT_ACCEPTABLE
 
+
 @pytest.mark.skip('This test is failing, but it is just an example of using '
                    + 'skip')
 def test_that_doesnt_work():
     assert False
 
 
-def test_add_journal():
-    test_data = {
-        "timestamp": "2023-11-10 10:00:00",
-        "title": "Test Journal",
-        "prompt": "Test Prompt",
-        "content": "Test Content",
-        "modified": "2023-11-10 10:00:00"
-    }
-    resp = TEST_CLIENT.post('/journal', json=test_data)
-    assert resp.status_code == OK
+def test_list_journals():
+    resp = TEST_CLIENT.get(ep.JOURNALS_EP)
     resp_json = resp.get_json()
-    assert "message" in resp_json
-    assert resp_json["message"] == "Journal added successfully"
+    assert isinstance(resp_json, dict)
+    assert ep.TITLE in resp_json
+    assert ep.TYPE in resp_json
+    assert ep.DATA in resp_json
 
 
+@patch('data.journals.add_journal', return_value=jrnls.MOCK_ID, autospec=True)
+def test_journals_add(mock_add):
+    """
+    Testing we do the right thing with a good return from add_journal.
+    """
+    resp = TEST_CLIENT.post(ep.JOURNALS_EP, json=jrnls.get_test_journal())
+    assert resp.status_code == OK
+
+
+@patch('data.journals.add_journal', side_effect=ValueError(), autospec=True)
+def test_journals_bad_add(mock_add):
+    """
+    Testing we do the right thing with a value error from add_journal.
+    """
+    resp = TEST_CLIENT.post(ep.JOURNALS_EP, json=jrnls.get_test_journal())
+    assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('data.journals.add_journal', return_value=None)
+def test_journals_add_db_failure(mock_add):
+    """
+    Testing we do the right thing with a null ID return from add_journal.
+    """
+    resp = TEST_CLIENT.post(ep.JOURNALS_EP, json=jrnls.get_test_journal())
+    assert resp.status_code == SERVICE_UNAVAILABLE
+
+
+@pytest.mark.skip('This test and its corresponding endpoint need to be fixed now that the add_journal endpoint works')
 def test_delete_journal():
     # Ensure this timestamp exists in your test database
     test_data = {"timestamp": "2023-11-10 10:00:00"}

@@ -23,6 +23,7 @@ MAIN_MENU_NM = "Welcome to Ease Journal"
 # USERS = 'users'
 USERS_EP = '/users'
 USER_ID = 'User ID'
+JOURNALS_EP = '/journals'
 DATA = 'Data'
 TYPE = 'Type'
 TITLE = 'Title'
@@ -95,7 +96,9 @@ user_fields = api.model('NewUser', {
 @api.route(USERS_EP)
 class Users(Resource):
     """
-    This class supports fetching a list of all users.
+    This class supports:
+        - fetching a list of all users
+        - adding a user
     """
     def get(self):
         """
@@ -158,11 +161,27 @@ class AddCategory(Resource):
         return {"category_id": category_id}, 200
 
 
-@api.route('/journals')
+journal_fields = api.model('NewJournal', {
+    journals.TIMESTAMP: fields.String,
+    journals.TITLE: fields.String,
+    journals.PROMPT: fields.String,
+    journals.CONTENT: fields.String,
+    journals.MODIFIED: fields.String,
+})
+
+JOURNAL_ID = 'Journal ID'
+
+
+@api.route(JOURNALS_EP)
 class Journals(Resource):
+    """
+    This class supports:
+        - fetching a list of all journals
+        - adding a journal
+    """
     def get(self):
         """
-        Returns all journals.
+        This method returns all journals.
         """
         return {
             TYPE: DATA,
@@ -170,33 +189,37 @@ class Journals(Resource):
             DATA: journals.get_journals(),
         }
 
-
-@api.route('/journal', methods=['POST'])
-class AddJournal(Resource):
+    @api.expect(journal_fields)
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
     def post(self):
-        data = request.get_json()
-        timestamp = data.get('timestamp')
-        title = data.get('title', "Untitled")
-        prompt = data.get('prompt')
-        content = data.get('content')
-        modified = data.get('modified', timestamp)
-
+        """
+        This method adds a journal entry.
+        """
+        timestamp = request.json[journals.TIMESTAMP]
+        title = request.json[journals.TITLE]
+        prompt = request.json[journals.PROMPT]
+        content = request.json[journals.CONTENT]
+        modified = request.json[journals.MODIFIED]
         try:
-            journals.add_journal(timestamp, title, prompt, content, modified)
+            new_id = journals.add_journal(timestamp, title,
+                                          prompt, content, modified)
+            if new_id is None:
+                raise wz.ServiceUnavailable('We have a technical problem.')
+            return {JOURNAL_ID: new_id}
         except ValueError as e:
-            raise wz.NotAcceptable(str(e))
-        return {"message": "Journal added successfully"}, 200
+            raise wz.NotAcceptable(f'{str(e)}')
 
 
-@api.route('/delete_journal', methods=['DELETE'])
-class DeleteJournal(Resource):
-    def delete(self):
-        data = request.get_json()
-        timestamp = data.get('timestamp')
-        if not timestamp:
-            raise wz.BadRequest("Timestamp is required")
+# @api.route('/delete_journal', methods=['DELETE'])
+# class DeleteJournal(Resource):
+#     def delete(self):
+#         data = request.get_json()
+#         timestamp = data.get('timestamp')
+#         if not timestamp:
+#             raise wz.BadRequest("Timestamp is required")
 
-        if journals.del_journal(timestamp):
-            return {"message": "Journal deleted successfully"}, 200
-        else:
-            raise wz.NotFound("Journal not found")
+#         if journals.del_journal(timestamp):
+#             return {"message": "Journal deleted successfully"}, 200
+#         else:
+#             raise wz.NotFound("Journal not found")
