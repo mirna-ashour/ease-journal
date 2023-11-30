@@ -154,34 +154,45 @@ class Users(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
+category_fields = api.model('NewCategory', {
+    'user_id': fields.String,
+    'title': fields.String(default="Untitled"),
+    'date_time': fields.String,
+})
+
+
 @api.route('/add_category')
 class AddCategory(Resource):
+    @api.expect(category_fields)
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    @api.response(HTTPStatus.SERVICE_UNAVAILABLE, 'Service Unavailable')
     def post(self):
-        '''This endpoint adds a new category to the database.'''
-        # parsing the request data
-        data = request.get_json()
-        user = data.get('user_id')
+        """
+        This endpoint adds a new category to the database.
+        """
+        data = request.json
+        user_id = data.get('user_id')
         title = data.get('title', "Untitled")
         date_time_str = data.get('date_time')
 
-        # validating input
-        if not user:
-            raise wz.ServiceUnavailable('We have a technical problem.')
-        try:
-            date_time = dt.datetime.strptime(date_time_str,
-                                             "%Y-%m-%d %H:%M:%S")
-        except ValueError as e:
-            raise wz.NotAcceptable(f'{str(e)}')
+        # Validate input
+        if not user_id:
+            raise wz.ServiceUnavailable('User ID is required.')
 
-        # generating a unique category ID to be implemented later !!!!!
-        # category_id = generate_unique_category_id()
-        category_id = 1231346
         try:
-            categories.add_category(category_id, title, user, date_time)
-        except ValueError as e:
-            raise wz.NotAcceptable(f'{str(e)}')
+            dt.datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            raise wz.NotAcceptable(
+                'Invalid date format. Please use YYYY-MM-DD HH:MM:SS'
+            )
 
-        return {"category_id": category_id}, 200
+        category_id = categories._get_category_id()
+        try:
+            categories.add_category(category_id, title, user_id, date_time_str)
+            return {"category_id": category_id}, HTTPStatus.OK
+        except ValueError as e:
+            raise wz.NotAcceptable(str(e))
 
 
 journal_fields = api.model('NewJournal', {

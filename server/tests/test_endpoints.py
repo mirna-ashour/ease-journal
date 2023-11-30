@@ -92,25 +92,39 @@ def test_main_menu():
 
 
 #@pytest.mark.skip(reason="Getting status code 500 error")
-@patch('data.categories.add_category', return_value='000000000',autospec=True)
-def test_add_category_success(mock_add_category):
-    mock_add_category.return_value = 123456
+@patch('data.categories._get_category_id', return_value='test_category_id')
+@patch('data.categories.add_category', autospec=True)
+def test_add_category_success(mock_add_category, mock_get_category_id):
     test_data = {
-        "user_id": 1234567890,
+        "user_id": "1234567890",
         "title": "Test Category",
         "date_time": "2023-11-05 15:30:00"
     }
     resp = TEST_CLIENT.post('/add_category', json=test_data)
     assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert "category_id" in resp_json
+    assert resp_json["category_id"] == mock_get_category_id.return_value
+
+
+@patch('data.categories.add_category', side_effect=ValueError("Invalid date format"), autospec=True)
+def test_add_category_invalid_input(mock_add_category):
+    test_data = {
+        'user_id': "1234567890", 
+        'title': "Test Category",
+        'date_time': "invalid-date"
+    }
+    resp = TEST_CLIENT.post('/add_category', json=test_data)
+    assert resp.status_code == NOT_ACCEPTABLE
 
 
 #@pytest.mark.skip(reason="Getting status code 500 error")
 @patch('data.categories.add_category', side_effect=ValueError("Duplicate category"), autospec=True)
 def test_add_category_failure(mock_add_category):
     test_data = {
-        'user_id': 1234567890, 
-        'title': 'Test Category',
-        'date_time': '2023-11-08 12:00:00'
+        'user_id': "1234567890", 
+        'title': "Test Category",
+        'date_time': "2023-11-08 12:00:00"
     }
     resp = TEST_CLIENT.post('/add_category', json=test_data)
     assert resp.status_code == NOT_ACCEPTABLE
