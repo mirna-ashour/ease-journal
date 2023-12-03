@@ -13,6 +13,7 @@ import werkzeug.exceptions as wz
 
 import data.users as usrs
 import data.journals as journals
+import data.categories as categories
 
 
 app = Flask(__name__)
@@ -26,6 +27,7 @@ USER_ID = 'User ID'
 DELETE = 'delete'
 DEL_USER_EP = f'{USERS_EP}/{DELETE}'
 JOURNALS_EP = '/journals'
+CATEGORIES_EP = '/categories'
 JOURNAL_CREATED = 'Journal Created'
 TIMESTAMP = 'Timestamp'
 DEL_JOURNAL_EP = f'{JOURNALS_EP}/{DELETE}'
@@ -160,9 +162,51 @@ category_fields = api.model('NewCategory', {
     'date_time': fields.String,
 })
 
+@api.route(f'{CATEGORIES_EP}/<user_id>')
+class GetCategory(Resource):
+    """
+    This class supports:
+        - retrieving categories for a user
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def get(self, user_id):
+        """
+        This method returns all categories for a user.
+        """
+        data = categories.get_user_categories(user_id)
+        if(data != None):
+            return {
+                TYPE: DATA,
+                TITLE: 'Categories for user',
+                DATA: data
+            }
+        else:
+            raise wz.NotFound(f'{str(e)}')
 
-@api.route('/add_category')
-class AddCategory(Resource):
+
+@api.route(f'{CATEGORIES_EP}')
+class Category(Resource):
+    """
+    This class supports:
+        - adding a category to a user
+    """
+    # def get(self):
+    #     """
+    #     This method returns all categories for a user.
+    #     """
+    #     data = request.json
+    #     user_id = data.get('user_id')
+    #     find = categories.get_user_categories(user_id)
+    #     if(find != None):
+    #         return {
+    #             TYPE: DATA,
+    #             TITLE: 'Categories for user',
+    #             DATA: data
+    #         }
+    #     else:
+    #         raise wz.NotFound(f'{str(e)}')
+
     @api.expect(category_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')

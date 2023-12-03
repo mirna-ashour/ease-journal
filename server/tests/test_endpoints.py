@@ -100,7 +100,7 @@ def test_add_category_success(mock_add_category, mock_get_category_id):
         "title": "Test Category",
         "date_time": "2023-11-05 15:30:00"
     }
-    resp = TEST_CLIENT.post('/add_category', json=test_data)
+    resp = TEST_CLIENT.post(ep.CATEGORIES_EP, json=test_data)
     assert resp.status_code == OK
     resp_json = resp.get_json()
     assert "category_id" in resp_json
@@ -114,7 +114,7 @@ def test_add_category_invalid_input(mock_add_category):
         'title': "Test Category",
         'date_time': "invalid-date"
     }
-    resp = TEST_CLIENT.post('/add_category', json=test_data)
+    resp = TEST_CLIENT.post(ep.CATEGORIES_EP, json=test_data)
     assert resp.status_code == NOT_ACCEPTABLE
 
 
@@ -126,7 +126,7 @@ def test_add_category_failure(mock_add_category):
         'title': "Test Category",
         'date_time': "2023-11-08 12:00:00"
     }
-    resp = TEST_CLIENT.post('/add_category', json=test_data)
+    resp = TEST_CLIENT.post(ep.CATEGORIES_EP, json=test_data)
     assert resp.status_code == NOT_ACCEPTABLE
 
 
