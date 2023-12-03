@@ -175,14 +175,16 @@ class GetCategory(Resource):
         This method returns all categories for a user.
         """
         data = categories.get_user_categories(user_id)
-        if data is not None:
+        if data:
             return {
                 TYPE: DATA,
                 TITLE: 'Categories for user',
                 DATA: data
             }
         else:
-            return {"There are no categories under this user."}
+            raise wz.NotAcceptable(
+                'There are no categories under this user.'
+            )
 
 
 @api.route(f'{CATEGORIES_EP}')

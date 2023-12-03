@@ -56,7 +56,7 @@ def test_users_add_db_failure(mock_add):
     """
     Testing we do the right thing with a null ID return from add_user.
     """
-    resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user())
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user()) 
     assert resp.status_code == SERVICE_UNAVAILABLE
 
 @patch('data.users.del_user', autospec=True)
@@ -89,6 +89,25 @@ def test_main_menu():
     assert '3' in resp_json['Choices']
     assert '4' in resp_json['Choices']
     assert 'X' in resp_json['Choices']
+
+
+@patch('data.categories.get_user_categories', return_value='categories_list', autospec=True)
+def test_get_user_categories_success(mock_get_user_categories):
+    USER_ID = "1234567890"
+    resp = TEST_CLIENT.get(f'/categories/{USER_ID}')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert ep.TITLE in resp_json
+    assert ep.TYPE in resp_json
+    assert ep.DATA in resp_json
+
+
+@patch('data.categories.get_user_categories', return_value=None, autospec=True)
+def test_get_user_categories_not_found(mock_get_user_categories):
+    USER_ID = "1234567890"
+    resp = TEST_CLIENT.get(f'/categories/{USER_ID}')
+    assert resp.status_code == NOT_ACCEPTABLE
 
 
 #@pytest.mark.skip(reason="Getting status code 500 error")
