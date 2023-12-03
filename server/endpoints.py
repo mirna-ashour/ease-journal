@@ -5,7 +5,6 @@ The endpoint called `endpoints` will return all available endpoints.
 
 import datetime as dt
 # from urllib import request
-from data import categories
 from flask import Flask, request
 from http import HTTPStatus
 from flask_restx import Resource, Api, fields
@@ -162,6 +161,7 @@ category_fields = api.model('NewCategory', {
     'date_time': fields.String,
 })
 
+
 @api.route(f'{CATEGORIES_EP}/<user_id>')
 class GetCategory(Resource):
     """
@@ -175,14 +175,14 @@ class GetCategory(Resource):
         This method returns all categories for a user.
         """
         data = categories.get_user_categories(user_id)
-        if(data != None):
+        if data is not None:
             return {
                 TYPE: DATA,
                 TITLE: 'Categories for user',
                 DATA: data
             }
         else:
-            raise wz.NotFound(f'{str(e)}')
+            return {"There are no categories under this user."}
 
 
 @api.route(f'{CATEGORIES_EP}')
