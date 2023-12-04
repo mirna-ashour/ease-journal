@@ -182,9 +182,9 @@ class GetCategory(Resource):
 
 
 category_fields = api.model('NewCategory', {
-    'user_id': fields.String,
-    'title': fields.String(default="Untitled"),
-    'date_time': fields.String,
+    categories.TITLE: fields.String(default="Untitled"),
+    categories.USER: fields.String,
+    categories.DATE_TIME: fields.String,
 })
 
 
