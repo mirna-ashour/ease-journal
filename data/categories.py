@@ -9,7 +9,6 @@ import random
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 CATEGORIES_COLLECT = 'categories'
-
 CATEGORY_ID = 'category_id'
 TITLE = 'title'
 USER = 'user'
@@ -23,6 +22,7 @@ CATEGORY_BIG_NUM = 10000000
 USER_BIG_NUM = 1000000000
 BIG_NUM = 100_000_000_000_000_000_000
 
+MOCK_ID = '0' * CATEGORY_ID_LEN
 
 # categories = [
 #     {
@@ -39,11 +39,21 @@ BIG_NUM = 100_000_000_000_000_000_000
 #     }
 # ]
 
+
 def _get_category_id():
     _id = random.randint(0, CATEGORY_BIG_NUM)
     _id = str(_id)
     _id = _id.rjust(CATEGORY_ID_LEN, '0')
     return _id
+
+
+def get_test_category():
+    test_category = {}
+    test_category[CATEGORY_ID] = _get_category_id()
+    test_category[TITLE] = "untitled"
+    test_category[USER] = "1234567890"
+    test_category[DATE_TIME] = "2002-11-20 12:00:00"
+    return test_category
 
 
 def _get_user_id():

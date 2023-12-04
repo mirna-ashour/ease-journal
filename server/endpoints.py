@@ -3,7 +3,7 @@ This is the file containing all of the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
 
-import datetime as dt
+# import datetime as dt
 # from urllib import request
 from flask import Flask, request
 from http import HTTPStatus
@@ -23,6 +23,7 @@ MAIN_MENU_NM = "Welcome to Ease Journal"
 # USERS = 'users'
 USERS_EP = '/users'
 USER_ID = 'User ID'
+CATEGORY_ID = 'Category ID'
 DELETE = 'delete'
 DEL_USER_EP = f'{USERS_EP}/{DELETE}'
 JOURNALS_EP = '/journals'
@@ -155,13 +156,6 @@ class Users(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-category_fields = api.model('NewCategory', {
-    'user_id': fields.String,
-    'title': fields.String(default="Untitled"),
-    'date_time': fields.String,
-})
-
-
 @api.route(f'{CATEGORIES_EP}/<user_id>')
 class GetCategory(Resource):
     """
@@ -187,58 +181,49 @@ class GetCategory(Resource):
             )
 
 
-@api.route(f'{CATEGORIES_EP}')
+category_fields = api.model('NewCategory', {
+    'user_id': fields.String,
+    'title': fields.String(default="Untitled"),
+    'date_time': fields.String,
+})
+
+
+@api.route(CATEGORIES_EP)
 class Category(Resource):
     """
     This class supports:
-        - adding a category to a user
+        - fetching a list of all users
+        - adding a user
     """
-    # def get(self):
-    #     """
-    #     This method returns all categories for a user.
-    #     """
-    #     data = request.json
-    #     user_id = data.get('user_id')
-    #     find = categories.get_user_categories(user_id)
-    #     if(find != None):
-    #         return {
-    #             TYPE: DATA,
-    #             TITLE: 'Categories for user',
-    #             DATA: data
-    #         }
-    #     else:
-    #         raise wz.NotFound(f'{str(e)}')
+    def get(self):
+        """
+        This method returns all categories.
+        """
+        return {
+            TYPE: DATA,
+            TITLE: 'Current Categories',
+            DATA: categories.get_categories(),
+        }
 
     @api.expect(category_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
-    @api.response(HTTPStatus.SERVICE_UNAVAILABLE, 'Service Unavailable')
     def post(self):
         """
-        This endpoint adds a new category to the database.
+        Add a category.
         """
-        data = request.json
-        user_id = data.get('user_id')
-        title = data.get('title', "Untitled")
-        date_time_str = data.get('date_time')
-
-        # Validate input
-        if not user_id:
-            raise wz.ServiceUnavailable('User ID is required.')
-
-        try:
-            dt.datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            raise wz.NotAcceptable(
-                'Invalid date format. Please use YYYY-MM-DD HH:MM:SS'
-            )
-
         category_id = categories._get_category_id()
+        title = request.json[categories.TITLE]
+        user_id = request.json[categories.USER]
+        date_time = request.json[categories.DATE_TIME]
         try:
-            categories.add_category(category_id, title, user_id, date_time_str)
-            return {"category_id": category_id}, HTTPStatus.OK
+            new_id = categories.add_category(category_id, title,
+                                             user_id, date_time)
+            if new_id is None:
+                raise wz.ServiceUnavailable('We have a technical problem.')
+            return {f'New category added; with {CATEGORY_ID}': category_id}
         except ValueError as e:
-            raise wz.NotAcceptable(str(e))
+            raise wz.NotAcceptable(f'{str(e)}')
 
 
 journal_fields = api.model('NewJournal', {
