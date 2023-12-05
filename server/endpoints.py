@@ -28,6 +28,7 @@ DELETE = 'delete'
 DEL_USER_EP = f'{USERS_EP}/{DELETE}'
 JOURNALS_EP = '/journals'
 CATEGORIES_EP = '/categories'
+DEL_CATEGORY_EP = f'{CATEGORIES_EP}/{DELETE}'
 JOURNAL_CREATED = 'Journal Created'
 TIMESTAMP = 'Timestamp'
 DEL_JOURNAL_EP = f'{JOURNALS_EP}/{DELETE}'
@@ -110,7 +111,6 @@ class DelUser(Resource):
 
 
 user_fields = api.model('NewUser', {
-    # usrs.USER_ID: fields.String,
     usrs.FIRST_NAME: fields.String,
     usrs.LAST_NAME: fields.String,
     usrs.DOB: fields.String,
@@ -179,6 +179,24 @@ class GetCategory(Resource):
             raise wz.NotAcceptable(
                 'There are no categories under this user.'
             )
+
+
+@api.route(f'{DEL_CATEGORY_EP}/<category_id>')
+class DelCategory(Resource):
+    """
+    Deletes a category by its ID.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def delete(self, category_id):
+        """
+        Deletes a category by its ID.
+        """
+        try:
+            categories.del_category(category_id)
+            return {f'Deleted category with {CATEGORY_ID}': category_id}
+        except ValueError as e:
+            raise wz.NotFound(f'{str(e)}')
 
 
 category_fields = api.model('NewCategory', {
