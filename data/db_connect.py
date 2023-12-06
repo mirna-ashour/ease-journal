@@ -70,11 +70,11 @@ def del_one(collection, filt, db=JOURNALS_DB):
     client[db][collection].delete_one(filt)
 
 
-def upd_one(collection, filt, upd, db=JOURNALS_DB):
+def update_doc(collection, filters, update_dict, db=JOURNALS_DB):
     """
     Update a single doc in collection based on filter.
     """
-    return client[db][collection].update_one(filt, upd)
+    return client[db][collection].update_one(filters, {'$set': update_dict})
 
 
 def fetch_all(collection, db=JOURNALS_DB):
