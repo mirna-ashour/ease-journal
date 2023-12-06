@@ -4,7 +4,9 @@ import data.categories as cats
 import pytest
 from datetime import datetime
 
+
 FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 @pytest.fixture(scope='function')
 def temp_category():
@@ -17,19 +19,27 @@ def temp_category():
     if cats.exists(category_id):
         cats.del_category(category_id)
 
+
 def test_get_category_id():
     _id = cats._get_category_id()
     assert isinstance(_id, str)
     assert len(_id) == cats.CATEGORY_ID_LEN
+
 
 def test_get_user_id():
     _id = cats._get_user_id()
     assert isinstance(_id, str)
     assert len(_id) == cats.USER_ID_LEN
 
+
+def test_get_test_category():
+    assert isinstance(cats.get_test_category(), dict)
+
+
 def test_get_title_name():
     name = cats._get_title_name()
     assert isinstance(name, str)
+
 
 def test_get_categories(temp_category):
     categories = cats.get_categories()
@@ -51,11 +61,23 @@ def test_get_categories(temp_category):
     
     assert cats.exists(temp_category)
 
+
 def test_add_category():
     category_id = cats._get_category_id()
-    user_id = cats._get_user_id()
     title = cats._get_title_name()
+    user_id = cats._get_user_id()
     date_time = '2023-10-27 12:45:00'
+    ret = cats.add_category(category_id, title, user_id, date_time)
+    assert cats.exists(category_id)
+    assert isinstance(ret, bool)
+    cats.del_category(category_id)
+
+
+def test_add_category_without_title():
+    category_id = cats._get_category_id()
+    title = ""
+    user_id = cats._get_user_id()
+    date_time = (datetime.now()).strftime(FORMAT)
     ret = cats.add_category(category_id, title, user_id, date_time)
     assert cats.exists(category_id)
     assert isinstance(ret, bool)

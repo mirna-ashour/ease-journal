@@ -29,6 +29,10 @@ def test_get_user_id():
     assert len(_id) == usrs.USER_ID_LEN
 
 
+def test_get_test_user():
+    assert isinstance(usrs.get_test_user(), dict)
+
+
 def test_get_users(temp_user):
     users = usrs.get_users()
     assert isinstance(users, dict)
