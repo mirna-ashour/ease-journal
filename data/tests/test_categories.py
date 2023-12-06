@@ -37,12 +37,12 @@ def test_get_category(temp_category):
     res = cats.get_category(cat_id)
 
     assert res is not None
+    assert isinstance(res, dict)
+    
     assert cats.CATEGORY_ID in res
     assert cats.TITLE in res
     assert cats.USER in res
     assert cats.DATE_TIME in res
-
-    cats.del_category(cat_id)
 
 
 def test_get_test_category():

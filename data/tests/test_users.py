@@ -33,6 +33,22 @@ def test_get_test_user():
     assert isinstance(usrs.get_test_user(), dict)
 
 
+def test_get_user(temp_user):
+    user_id = temp_user
+    res = usrs.get_user(user_id)
+
+    assert res is not None
+    assert isinstance(res, dict)
+
+    assert usrs.USER_ID in res
+    assert usrs.FIRST_NAME in res
+    assert usrs.LAST_NAME in res
+    assert usrs.DOB in res
+    assert usrs.EMAIL in res
+
+    assert isinstance(datetime.strptime(res[usrs.DOB], FORMAT), datetime)
+
+
 def test_get_users(temp_user):
     users = usrs.get_users()
     assert isinstance(users, dict)
@@ -69,6 +85,41 @@ def test_add_duplicate_user(temp_user):
     # attempting to add user again
     with pytest.raises(ValueError):
         usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+
+
+def test_add_user_invalid_id_length():
+    with pytest.raises(ValueError):
+        usrs.add_user("short_id", "John", "smith", "2002-11-20", "testemail@gmail.com")
+
+
+def test_add_user_short_first_name():
+    with pytest.raises(ValueError):
+        usrs.add_user(usrs._get_user_id(), "J", "Smith", "2002-11-20", "testemail@gmail.com")
+
+
+def test_add_user_short_last_name():
+    with pytest.raises(ValueError):
+        usrs.add_user(usrs._get_user_id(), "John", "S", "2002-11-20", "testemail@gmail.com")
+
+
+def test_add_user_missing_at_in_email():
+    with pytest.raises(ValueError):
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemailgmail.com")
+
+
+def test_add_user_missing_dot_in_email():
+    with pytest.raises(ValueError):
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemail@gmailcom")
+
+
+def test_add_user_incorrect_order_of_domain_and_dot_in_email():
+    with pytest.raises(ValueError):
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemail.gmail@com")
+
+
+def test_add_user_short_email():
+    with pytest.raises(ValueError):
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "a@b.com")
 
 
 def test_del_user(temp_user):
