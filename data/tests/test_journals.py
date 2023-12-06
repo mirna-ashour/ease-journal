@@ -17,10 +17,10 @@ def temp_journal():
         jrnls.del_journal(timestamp)
 
 
-def test_get_test_journal():
+def test_get_test_timestamp():
     timestamp = jrnls._get_test_timestamp()
     assert isinstance(timestamp, str)
-    assert isinstance(datetime.strptime(key, FORMAT), datetime)
+    assert isinstance(datetime.strptime(timestamp, FORMAT), datetime)
 
 
 def test_gen_id():
