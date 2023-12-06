@@ -32,8 +32,40 @@ def test_get_user_id():
     assert len(_id) == cats.USER_ID_LEN
 
 
+def test_get_category(temp_category):
+    cat_id = temp_category
+    res = cats.get_category(cat_id)
+
+    assert res is not None
+    assert cats.CATEGORY_ID in res
+    assert cats.TITLE in res
+    assert cats.USER in res
+    assert cats.DATE_TIME in res
+
+    cats.del_category(cat_id)
+
+
 def test_get_test_category():
     assert isinstance(cats.get_test_category(), dict)
+
+
+def test_get_user_categories(temp_category):
+    user_id = cats._get_user_id()
+
+    cat1_id = cats._get_category_id()
+    cat2_id = cats._get_category_id()
+
+    cats.add_category(cat1_id, "Category 1", user_id, datetime.now().strftime(FORMAT))
+    cats.add_category(cat2_id, "Category 2", user_id, datetime.now().strftime(FORMAT))
+
+    user_cats = cats.get_user_categories(user_id)
+
+    assert len(user_cats) == 2
+    assert cat1_id in user_cats
+    assert cat2_id in user_cats
+
+    cats.del_category(cat1_id)
+    cats.del_category(cat2_id)
 
 
 def test_get_title_name():
