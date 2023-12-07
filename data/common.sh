@@ -3,16 +3,16 @@
 
 echo "Importing from common.sh"
 
-DB=ease-journal
+DB=journals_db
 USER=mirnaashour
-CONNECT_STR="mongodb+srv://koukoumongo1.yud9b.mongodb.net/"
+CONNECT_STR="mongodb+srv://cluster0.o5mxzdg.mongodb.net/"
 if [ -z $DATA_DIR ]
 then
     DATA_DIR=/home/runner/work/ease-journal/ease-journal/data
 fi
 BKUP_DIR=$DATA_DIR/bkup
-EXP=/usr/local/bin/mongoexport
-IMP=/usr/local/bin/mongoimport
+EXP=/usr/bin/mongoexport
+IMP=/usr/bin/mongoimport
 
 if [ -z $MONGODB_PASSWORD ]
 then
