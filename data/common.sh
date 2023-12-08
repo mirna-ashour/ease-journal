@@ -10,9 +10,18 @@ if [ -z $DATA_DIR ]
 then
     DATA_DIR=/home/runner/work/ease-journal/ease-journal/data
 fi
+
 BKUP_DIR=$DATA_DIR/bkup
-EXP=/usr/bin/mongoexport
-IMP=/usr/bin/mongoimport
+
+if [ -z $EXP ]
+then
+    EXP=/usr/local/bin/mongoexport
+fi
+
+if [ -z $IMP ]
+then
+    IMP=/usr/bin/mongoimport
+fi
 
 if [ -z $MONGODB_PASSWORD ]
 then
