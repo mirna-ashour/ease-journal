@@ -1,22 +1,27 @@
-# flask-api
-An example flask rest API server.
+# Flask API
+An example Flask REST API server for a journaling application powered by OpenAI's GPT3. This API offers journaling insights and prompts based on the user's journal entries.
 
-To build production, type `make prod`.
+## Getting Started
+To build for production, type `make prod`.
 
-To create the env for a new developer, run `make dev_env`.
+To set up the development environment for a new developer, run `make dev_env`.
 
+## Endpoints
+- **/hello**: A basic endpoint for testing server connectivity. Returns a "hello world" response.
+- **/endpoints**: Lists all available endpoints in the system.
+- **/** or **/MainMenu**: Provides a main menu interface with various options:
+  - List user account information
+  - List user journal categories
+  - List all user journal entries
+  - List all users
+  - Exit
+- **/users**: Supports fetching a list of all users and adding a new user.
+- **/users/delete/<user_id>**: Deletes a user by their ID.
+- **/categories**: Supports fetching a list of all journal categories and adding a new category.
+- **/categories/<user_id>**: Retrieves categories for a specific user.
+- **/categories/delete/<category_id>**: Deletes a category by its ID.
+- **/journals**: Supports fetching a list of all journal entries and adding a new journal entry.
+- **/journals/delete/<timestamp>**: Deletes a journal entry by its timestamp.
 
-# Existing Endpoints:
-HELLO_EP: A basic endpoint for testing server connectivity.
-
-Endpoints: Lists all available endpoints.
-
-MainMenu: Provides a main menu interface.
-
-Users: Retrieves a list of all users.
-
-AddCategory: Allows adding a new category.
-
-Journals: Retrieves all journal entries.
-
-AddJournal: Allows adding a new journal entry.
+## About
+This Flask API serves as the backend for a journaling application. It leverages OpenAI's GPT-3 to provide journaling insights and prompts based on user journal entries.
