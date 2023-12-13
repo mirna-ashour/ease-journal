@@ -20,7 +20,7 @@ fi
 
 if [ -z $IMP ]
 then
-    IMP=/usr/bin/mongoimport
+    IMP=/usr/local/bin/mongoimport
 fi
 
 if [ -z $MONGODB_PASSWORD ]
