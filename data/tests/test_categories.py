@@ -33,16 +33,15 @@ def test_get_user_id():
 
 
 def test_get_category(temp_category):
-    cat_id = temp_category
-    res = cats.get_category(cat_id)
+    category = cats.get_category(temp_category)
 
-    assert res is not None
-    assert isinstance(res, dict)
+    assert category is not None
+    assert isinstance(category, dict)
     
-    assert cats.CATEGORY_ID in res
-    assert cats.TITLE in res
-    assert cats.USER in res
-    assert cats.DATE_TIME in res
+    assert cats.CATEGORY_ID in category
+    assert cats.TITLE in category
+    assert cats.USER in category
+    assert cats.DATE_TIME in category
 
 
 def test_get_test_category():

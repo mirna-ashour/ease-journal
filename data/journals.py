@@ -60,11 +60,6 @@ def get_journals() -> dict:
     return dbc.fetch_all_as_dict(TIMESTAMP, JOURNALS_COLLECT)
 
 
-def exists(timestamp: str) -> bool:
-    dbc.connect_db()
-    return dbc.fetch_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
-
-
 def add_journal(timestamp: str, title: str, prompt: str,
                 content: str, modified: str) -> bool:
     # Check if the input types are correct
@@ -114,9 +109,13 @@ def del_journal(timestamp: str):
     return True
 
 
-def get_journal(timestamp: str):
+def get_journal(timestamp: str) -> dict:
     dbc.connect_db()
     return dbc.fetch_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
+
+
+def exists(timestamp: str) -> bool:
+    return get_journal(timestamp) is not None
 
 
 def update_journal_title(timestamp: str, new_title: str):

@@ -104,8 +104,7 @@ def add_category(category_id: str, title: str, user_id: str, date_time: str):
 
 
 def exists(category_id: str) -> bool:
-    dbc.connect_db()
-    return dbc.fetch_one(CATEGORIES_COLLECT, {CATEGORY_ID: category_id})
+    return get_category(category_id) is not None
 
 
 def del_category(category_id: str):
@@ -115,6 +114,6 @@ def del_category(category_id: str):
         raise ValueError(f'Delete failure: {category_id} not in database.')
 
 
-def get_category(category_id: str):
+def get_category(category_id: str) -> dict:
     dbc.connect_db()
     return dbc.fetch_one(CATEGORIES_COLLECT, {CATEGORY_ID: category_id})

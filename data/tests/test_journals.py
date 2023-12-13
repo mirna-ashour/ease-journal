@@ -33,6 +33,19 @@ def test_get_test_journal():
     assert isinstance(jrnls.get_test_journal(), dict)
 
 
+def test_get_journal(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    
+    assert journal is not None
+    assert isinstance(journal, dict)
+
+    assert jrnls.TIMESTAMP in journal
+    assert jrnls.TITLE in journal
+    assert jrnls.PROMPT in journal
+    assert jrnls.CONTENT in journal
+    assert jrnls.MODIFIED in journal
+
+
 """
     Ensure:
         - get_journals() returns a dict with at least 1 journal

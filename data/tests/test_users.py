@@ -34,19 +34,18 @@ def test_get_test_user():
 
 
 def test_get_user(temp_user):
-    user_id = temp_user
-    res = usrs.get_user(user_id)
+    user = usrs.get_user(temp_user)
 
-    assert res is not None
-    assert isinstance(res, dict)
+    assert user is not None
+    assert isinstance(user, dict)
 
-    assert usrs.USER_ID in res
-    assert usrs.FIRST_NAME in res
-    assert usrs.LAST_NAME in res
-    assert usrs.DOB in res
-    assert usrs.EMAIL in res
+    assert usrs.USER_ID in user
+    assert usrs.FIRST_NAME in user
+    assert usrs.LAST_NAME in user
+    assert usrs.DOB in user
+    assert usrs.EMAIL in user
 
-    assert isinstance(datetime.strptime(res[usrs.DOB], FORMAT), datetime)
+    assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT), datetime)
 
 
 def test_get_users(temp_user):

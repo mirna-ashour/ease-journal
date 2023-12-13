@@ -103,8 +103,7 @@ def add_user(user_id: str, first_name: str, last_name: str,
 
 
 def exists(user_id: str) -> bool:
-    dbc.connect_db()
-    return dbc.fetch_one(USERS_COLLECT, {USER_ID: user_id})
+    return get_user(user_id) is not None
 
 
 def del_user(user_id: str):
@@ -114,6 +113,6 @@ def del_user(user_id: str):
         raise ValueError(f'Delete failure: {user_id} not in database.')
 
 
-def get_user(user_id: str):
+def get_user(user_id: str) -> dict:
     dbc.connect_db()
     return dbc.fetch_one(USERS_COLLECT, {USER_ID: user_id})
