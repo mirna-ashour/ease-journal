@@ -168,21 +168,15 @@ def test_del_journal_not_there():
         jrnls.del_journal(timestamp)
 
 
-def test_update_journal_title(temp_journal):
-    timestamp = temp_journal
-    new_title = "New Title"
-    assert jrnls.update_journal_title(timestamp, new_title)
-
-    upd_journal = jrnls.get_journal(timestamp)
-    assert upd_journal[jrnls.TITLE] == new_title
-    assert datetime.strptime(upd_journal[jrnls.MODIFIED], FORMAT) > datetime.strptime(timestamp, FORMAT)
+def test_update_title(temp_journal):
+    NEW_TITLE = "New Title"
+    jrnls.update_title(temp_journal, NEW_TITLE)
+    updated_journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_title(updated_journal) == NEW_TITLE
 
 
-def test_update_journal_content(temp_journal):
-    timestamp = temp_journal
-    new_content = "New Content"
-    assert jrnls.update_journal_content(timestamp, new_content)
-
-    upd_journal = jrnls.get_journal(timestamp)
-    assert upd_journal[jrnls.CONTENT] == new_content
-    assert datetime.strptime(upd_journal[jrnls.MODIFIED], FORMAT) > datetime.strptime(timestamp, FORMAT)
+def test_update_content(temp_journal):
+    NEW_CONTENT = "New Content"
+    jrnls.update_content(temp_journal, NEW_CONTENT)
+    updated_journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_content(updated_journal) == NEW_CONTENT

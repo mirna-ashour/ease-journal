@@ -118,23 +118,29 @@ def exists(timestamp: str) -> bool:
     return get_journal(timestamp) is not None
 
 
-def update_journal_title(timestamp: str, new_title: str):
-    dbc.connect_db()
-    filt = {TIMESTAMP: timestamp}
-    upd = {
-        TITLE: new_title,
-        MODIFIED: datetime.now().strftime(FORMAT)
-    }
-    res = dbc.update_doc(JOURNALS_COLLECT, filt, upd)
-    return res.modified_count > 0
+def get_title(journal: dict):
+    return journal.get(TITLE)
 
 
-def update_journal_content(timestamp: str, new_content: str):
-    dbc.connect_db()
-    filt = {TIMESTAMP: timestamp}
-    upd = {
-        CONTENT: new_content,
-        MODIFIED: datetime.now().strftime(FORMAT)
-    }
-    res = dbc.update_doc(JOURNALS_COLLECT, filt, upd)
-    return res.modified_count > 0
+def get_content(journal: dict):
+    return journal.get(CONTENT)
+
+
+def update_title(timestamp: str, new_title: str):
+    if not exists(timestamp):
+        raise ValueError(f'Update failure: {timestamp} not in database.')
+    else:
+        dbc.connect_db()
+        return dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp},
+                              {TITLE: new_title,
+                               MODIFIED: datetime.now().strftime(FORMAT)})
+
+
+def update_content(timestamp: str, new_content: str):
+    if not exists(timestamp):
+        raise ValueError(f'Update failure: {timestamp} not in database.')
+    else:
+        dbc.connect_db()
+        return dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp},
+                              {CONTENT: new_content,
+                               MODIFIED: datetime.now().strftime(FORMAT)})
