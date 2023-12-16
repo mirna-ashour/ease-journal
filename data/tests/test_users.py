@@ -131,3 +131,10 @@ def test_del_user_not_there():
     user_id = usrs._get_user_id()
     with pytest.raises(ValueError):
         usrs.del_user(user_id)
+
+
+def test_update_first_name(temp_user):
+    NEW_FIRST_NAME = "Emma"
+    usrs.update_first_name(temp_user, NEW_FIRST_NAME)
+    updated_user = usrs.get_user(temp_user)
+    assert usrs.get_first_name(updated_user) == NEW_FIRST_NAME

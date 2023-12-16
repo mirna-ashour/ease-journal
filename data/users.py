@@ -132,3 +132,12 @@ def get_dob(user: dict):
 
 def get_email(user: dict):
     return user.get(EMAIL)
+
+
+def update_first_name(user_id: str, new_first_name: str):
+    if not exists(user_id):
+        raise ValueError(f'Update failure: {user_id} not in database.')
+    else:
+        dbc.connect_db()
+        return dbc.update_doc(USERS_COLLECT, {USER_ID: user_id},
+                              {FIRST_NAME: new_first_name})
