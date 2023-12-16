@@ -310,6 +310,24 @@ class JournalTitle(Resource):
             raise wz.NotFound(f'{str(e)}')
 
 
+@api.route(f'{JOURNALS_EP}/<timestamp>/<new_content>')
+class JournalContent(Resource):
+    """
+    Updates the content of a journal.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    def put(self, timestamp, new_content):
+        """
+        Update the content of a journal.
+        """
+        try:
+            journals.update_content(timestamp, new_content)
+            return {timestamp: 'Updated journal'}
+        except ValueError as e:
+            raise wz.NotFound(f'{str(e)}')
+
+
 @api.route(f'{DEL_JOURNAL_EP}/<timestamp>')
 class DelJournal(Resource):
     """
