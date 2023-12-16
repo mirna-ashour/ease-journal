@@ -222,3 +222,21 @@ def test_journals_bad_del(mock_del):
     """
     resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/timestamp')
     assert resp.status_code == NOT_FOUND
+
+
+@patch('data.journals.update_title', autospec=True)
+def test_journals_update_title(mock_update):
+    """
+    Testing we do the right thing with a call to update_title that succeeds
+    """
+    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
+    assert resp.status_code == OK
+
+
+@patch('data.journals.update_title', side_effect=ValueError(), autospec=True)
+def test_journals_bad_update_title(mock_update):
+    """
+    Testing we do the right thing with a call to update_title that fails
+    """
+    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
+    assert resp.status_code == NOT_FOUND

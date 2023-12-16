@@ -292,6 +292,24 @@ class Journals(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
+@api.route(f'{JOURNALS_EP}/<timestamp>/<new_title>')
+class JournalTitle(Resource):
+    """
+    Updates the title of a journal.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+    def put(self, timestamp, new_title):
+        """
+        Update the title of a journal.
+        """
+        try:
+            journals.update_title(timestamp, new_title)
+            return {timestamp: 'Updated journal'}
+        except ValueError as e:
+            raise wz.NotFound(f'{str(e)}')
+
+
 @api.route(f'{DEL_JOURNAL_EP}/<timestamp>')
 class DelJournal(Resource):
     """
