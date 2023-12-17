@@ -21,6 +21,8 @@ To set up the development environment for a new developer, run `make dev_env`.
 - **/categories/<user_id>**: Retrieves categories for a specific user.
 - **/categories/delete/<category_id>**: Deletes a category by its ID.
 - **/journals**: Supports fetching a list of all journal entries and adding a new journal entry.
+- **/journals/update/title/<timestamp>/<new_title>**: Updates the title of a journal entry.
+- **/journals/update/content/<timestamp>/<new_content>**: Updates the content of a journal entry.
 - **/journals/delete/<timestamp>**: Deletes a journal entry by its timestamp.
 
 ## About
