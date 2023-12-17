@@ -1,3 +1,4 @@
+
 # Flask API
 An example Flask REST API server for a journaling application powered by OpenAI's GPT3. This API offers journaling insights and prompts based on the user's journal entries.
 
@@ -16,8 +17,10 @@ To set up the development environment for a new developer, run `make dev_env`.
   - List all users
   - Exit
 - **/users**: Supports fetching a list of all users and adding a new user.
+- **/users/update/<user_id>**: Updates a user's information.
 - **/users/delete/<user_id>**: Deletes a user by their ID.
 - **/categories**: Supports fetching a list of all journal categories and adding a new category.
+- **/categories/update/<category_id>**: Updates a category's information.
 - **/categories/<user_id>**: Retrieves categories for a specific user.
 - **/categories/delete/<category_id>**: Deletes a category by its ID.
 - **/journals**: Supports fetching a list of all journal entries and adding a new journal entry.
