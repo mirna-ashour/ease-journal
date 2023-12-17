@@ -241,6 +241,7 @@ def test_journals_bad_update_title(mock_update):
     resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
     assert resp.status_code == NOT_FOUND
 
+
 @pytest.mark.skip('This test fails and says that the timestamp does not exist')
 @patch('data.journals.update_content', autospec=True)
 def test_journals_update_content(mock_update):
