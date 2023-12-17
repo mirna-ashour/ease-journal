@@ -210,6 +210,29 @@ class GetCategory(Resource):
             )
 
 
+@api.route(f'{CATEGORIES_EP}/<category_id>')
+class UpdateCategory(Resource):
+    """
+    Updates a category's details.
+    """
+    @api.expect(category_fields)
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def put(self, category_id):
+        """
+        Update a category's details.
+        """
+        category_data = request.json
+        try:
+            updated = categories.update_category(category_id, category_data)
+            if not updated:
+                raise wz.NotFound(f'Category with '
+                                  f'{CATEGORY_ID} {category_id} not found')
+            return {f'Updated category with {CATEGORY_ID}': category_id}
+        except ValueError as e:
+            raise wz.BadRequest(f'{str(e)}')
+
+
 @api.route(f'{DEL_CATEGORY_EP}/<category_id>')
 class DelCategory(Resource):
     """

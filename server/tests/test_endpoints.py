@@ -167,6 +167,26 @@ def test_categories_add_db_failure(mock_add):
     assert resp.status_code == SERVICE_UNAVAILABLE
 
 
+@patch('data.categories.update_category', return_value=True, autospec=True)
+def test_update_category_success(mock_update):
+    """
+    Testing successful update of a category's details.
+    """
+    category_id = "test_category_id"
+    resp = TEST_CLIENT.put(f'{ep.CATEGORIES_EP}/{category_id}', json=categories.get_test_category())
+    assert resp.status_code == OK
+
+
+@patch('data.categories.update_category', return_value=False, autospec=True)
+def test_update_category_not_found(mock_update):
+    """
+    Testing update of a category's details when category is not found.
+    """
+    category_id = "nonexistent_category_id"
+    resp = TEST_CLIENT.put(f'{ep.CATEGORIES_EP}/{category_id}', json=categories.get_test_category())
+    assert resp.status_code == NOT_FOUND
+
+
 @patch('data.categories.del_category', autospec=True)
 def test_categories_del(mock_del):
     """

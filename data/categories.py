@@ -117,3 +117,30 @@ def del_category(category_id: str):
 def get_category(category_id: str) -> dict:
     dbc.connect_db()
     return dbc.fetch_one(CATEGORIES_COLLECT, {CATEGORY_ID: category_id})
+
+
+def update_category(category_id: str, category_data: dict) -> bool:
+    """
+    Updates a category's information.
+
+    Args:
+    category_id (str): The ID of the category to update.
+    category_data (dict): Dictionary containing category data to update.
+
+    Returns:
+    bool: True if the update was successful, False otherwise.
+    """
+    if not exists(category_id):
+        return False
+
+    update_data = {}
+    for key in [TITLE, USER, DATE_TIME]:
+        if key in category_data:
+            update_data[key] = category_data[key]
+
+    if not update_data:
+        raise ValueError("No valid fields to update.")
+
+    dbc.connect_db()
+    dbc.update_doc(CATEGORIES_COLLECT, {CATEGORY_ID: category_id}, update_data)
+    return True
