@@ -92,6 +92,36 @@ class MainMenu(Resource):
                 }}
 
 
+user_fields = api.model('NewUser', {
+    usrs.FIRST_NAME: fields.String,
+    usrs.LAST_NAME: fields.String,
+    usrs.DOB: fields.String,
+    usrs.EMAIL: fields.String,
+})
+
+
+@api.route(f'{USERS_EP}/<user_id>')
+class UpdateUser(Resource):
+    """
+    Updates a user's information.
+    """
+    @api.expect(user_fields)
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def put(self, user_id):
+        """
+        Update a user's information.
+        """
+        user_data = request.json
+        try:
+            updated = usrs.update_user(user_id, user_data)
+            if not updated:
+                raise wz.NotFound(f'User with {USER_ID} {user_id} not found')
+            return {f'Updated user with {USER_ID}': user_id}
+        except ValueError as e:
+            raise wz.BadRequest(f'{str(e)}')
+
+
 @api.route(f'{DEL_USER_EP}/<user_id>')
 class DelUser(Resource):
     """
@@ -108,14 +138,6 @@ class DelUser(Resource):
             return {f'Deleted user with {USER_ID}': user_id}
         except ValueError as e:
             raise wz.NotFound(f'{str(e)}')
-
-
-user_fields = api.model('NewUser', {
-    usrs.FIRST_NAME: fields.String,
-    usrs.LAST_NAME: fields.String,
-    usrs.DOB: fields.String,
-    usrs.EMAIL: fields.String,
-})
 
 
 @api.route(USERS_EP)
@@ -154,6 +176,13 @@ class Users(Resource):
             return {f'New user has been added; with {USER_ID}': user_id}
         except ValueError as e:
             raise wz.NotAcceptable(f'{str(e)}')
+
+
+category_fields = api.model('NewCategory', {
+    categories.TITLE: fields.String(default="Untitled"),
+    categories.USER: fields.String,
+    categories.DATE_TIME: fields.String,
+})
 
 
 @api.route(f'{CATEGORIES_EP}/<user_id>')
@@ -197,13 +226,6 @@ class DelCategory(Resource):
             return {f'Deleted category with {CATEGORY_ID}': category_id}
         except ValueError as e:
             raise wz.NotFound(f'{str(e)}')
-
-
-category_fields = api.model('NewCategory', {
-    categories.TITLE: fields.String(default="Untitled"),
-    categories.USER: fields.String,
-    categories.DATE_TIME: fields.String,
-})
 
 
 @api.route(CATEGORIES_EP)

@@ -141,3 +141,30 @@ def update_first_name(user_id: str, new_first_name: str):
         dbc.connect_db()
         return dbc.update_doc(USERS_COLLECT, {USER_ID: user_id},
                               {FIRST_NAME: new_first_name})
+
+
+def update_user(user_id: str, user_data: dict) -> bool:
+    """
+    Updates a user's information.
+
+    Args:
+    user_id (str): The ID of the user to update.
+    user_data (dict): Dictionary containing user data to update.
+
+    Returns:
+    bool: True if the update was successful, False otherwise.
+    """
+    if not exists(user_id):
+        return False
+
+    update_data = {}
+    for key in [FIRST_NAME, LAST_NAME, DOB, EMAIL]:
+        if key in user_data:
+            update_data[key] = user_data[key]
+
+    if not update_data:
+        raise ValueError("No valid fields to update.")
+
+    dbc.connect_db()
+    dbc.update_doc(USERS_COLLECT, {USER_ID: user_id}, update_data)
+    return True

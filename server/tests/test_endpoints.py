@@ -59,6 +59,27 @@ def test_users_add_db_failure(mock_add):
     resp = TEST_CLIENT.post(ep.USERS_EP, json=usrs.get_test_user()) 
     assert resp.status_code == SERVICE_UNAVAILABLE
 
+
+@patch('data.users.update_user', return_value=True, autospec=True)
+def test_update_user_success(mock_update):
+    """
+    Testing successful update of a user's information.
+    """
+    user_id = "test_user_id"
+    resp = TEST_CLIENT.put(f'{ep.USERS_EP}/{user_id}', json=usrs.get_test_user())
+    assert resp.status_code == OK
+
+
+@patch('data.users.update_user', return_value=False, autospec=True)
+def test_update_user_not_found(mock_update):
+    """
+    Testing update of a user's information when user is not found.
+    """
+    user_id = "nonexistent_user_id"
+    resp = TEST_CLIENT.put(f'{ep.USERS_EP}/{user_id}', json=usrs.get_test_user())
+    assert resp.status_code == NOT_FOUND
+
+
 @patch('data.users.del_user', autospec=True)
 def test_users_del(mock_del):
     """
