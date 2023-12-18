@@ -297,6 +297,12 @@ journal_fields = api.model('NewJournal', {
     journals.MODIFIED: fields.String,
 })
 
+journal_fields2 = api.model('UpdateJournal', {
+    journals.TITLE: fields.String,
+    journals.PROMPT: fields.String,
+    journals.CONTENT: fields.String,
+})
+
 
 @api.route(JOURNALS_EP)
 class Journals(Resource):
@@ -337,47 +343,70 @@ class Journals(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-@api.route(f'{JOURNALS_EP}/<timestamp>/<new_title>')
-class JournalTitle(Resource):
+@api.route(f'{JOURNALS_EP}/<time_stamp>')
+class UpdateJournal(Resource):
     """
-    Updates the title of a journal.
+    Updates a Journal's details.
     """
+    @api.expect(journal_fields2)
     @api.response(HTTPStatus.OK, 'Success')
-    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
-    def put(self, timestamp, new_title):
-        """
-        Update the title of a journal.
-        """
-        try:
-            journals.update_title(timestamp, new_title)
-            return {timestamp: 'Updated journal Title'}
-        except ValueError as e:
-            raise wz.NotFound(f'{str(e)}')
-
-
-@api.route(f'{JOURNALS_EP}/<timestamp>/<new_content>')
-class JournalContent(Resource):
-    """
-    Updates the content of a journal.
-    """
-    @api.response(HTTPStatus.OK, 'Success')
-    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
-    def put(self, timestamp, new_content):
+    def put(self, time_stamp):
         """
-        Update the content of a journal.
+        Update a Journals's details.
         """
+        journal_data = request.json
         try:
-            if not journals.exists(timestamp):
-                raise wz.NotFound(f'Journal with timestamp'
-                                  f' {timestamp} not found')
-
-            journals.update_content(timestamp, new_content)
-            return {timestamp: 'Updated journal Content'}
+            updated = journals.update_journal(time_stamp, journal_data)
+            if not updated:
+                raise wz.NotFound(f'Journal with '
+                                  f'{TIMESTAMP} {time_stamp} not found')
+            return {f'Updated Journal with {TIMESTAMP}': time_stamp}
         except ValueError as e:
-            raise wz.NotAcceptable(f'{str(e)}')
-        except Exception as e:
-            raise wz.InternalServerError(f'Internal server error: {str(e)}')
+            raise wz.BadRequest(f'{str(e)}')
+
+
+# @api.route(f'{JOURNALS_EP}/<timestamp>/<new_title>')
+# class JournalTitle(Resource):
+#     """
+#     Updates the title of a journal.
+#     """
+#     @api.response(HTTPStatus.OK, 'Success')
+#     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+#     def put(self, timestamp, new_title):
+#         """
+#         Update the title of a journal.
+#         """
+#         try:
+#             journals.update_title(timestamp, new_title)
+#             return {timestamp: 'Updated journal Title'}
+#         except ValueError as e:
+#             raise wz.NotFound(f'{str(e)}')
+
+
+# @api.route(f'{JOURNALS_EP}/<timestamp>/<new_content>')
+# class JournalContent(Resource):
+#     """
+#     Updates the content of a journal.
+#     """
+#     @api.response(HTTPStatus.OK, 'Success')
+#     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
+#     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+#     def put(self, timestamp, new_content):
+#         """
+#         Update the content of a journal.
+#         """
+#         try:
+#             if not journals.exists(timestamp):
+#                 raise wz.NotFound(f'Journal with timestamp'
+#                                   f' {timestamp} not found')
+
+#             journals.update_content(timestamp, new_content)
+#             return {timestamp: 'Updated journal Content'}
+#         except ValueError as e:
+#             raise wz.NotAcceptable(f'{str(e)}')
+#         except Exception as e:
+#             raise wz.InternalServerError(f'Internal server error: {str(e)}')
 
 
 @api.route(f'{DEL_JOURNAL_EP}/<timestamp>')

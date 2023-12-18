@@ -144,3 +144,32 @@ def update_content(timestamp: str, new_content: str):
         return dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp},
                               {CONTENT: new_content,
                                MODIFIED: datetime.now().strftime(FORMAT)})
+
+
+def update_journal(time_stamp: str, journal_data: dict) -> bool:
+    """
+    Updates a journal's information.
+
+    Args:
+    time_stamp (str): The timestamp of the journal to update.
+    journal_data (dict): Dictionary containing journal data to update.
+
+    Returns:
+    bool: True if the update was successful, False otherwise.
+    """
+    if not exists(time_stamp):
+        return False
+
+    update_data = {}
+    for key in [TITLE, PROMPT, CONTENT]:
+        if key in journal_data:
+            update_data[key] = journal_data[key]
+
+    update_data[MODIFIED] = datetime.now().strftime(FORMAT)
+
+    if not update_data:
+        raise ValueError("No valid fields to update.")
+
+    dbc.connect_db()
+    dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: time_stamp}, update_data)
+    return True

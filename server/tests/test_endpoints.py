@@ -265,38 +265,58 @@ def test_journals_bad_del(mock_del):
     assert resp.status_code == NOT_FOUND
 
 
-@patch('data.journals.update_title', autospec=True)
-def test_journals_update_title(mock_update):
+@patch('data.journals.update_journal', return_value=True, autospec=True)
+def test_update_journal_success(mock_update):
     """
-    Testing we do the right thing with a call to update_title that succeeds
+    Testing successful update of a Journal's details.
     """
-    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
+    time_stamp = "test_journal_timestamp"
+    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{time_stamp}', json=jrnls.get_test_journal())
     assert resp.status_code == OK
 
 
-@patch('data.journals.update_title', side_effect=ValueError(), autospec=True)
-def test_journals_bad_update_title(mock_update):
+@patch('data.journals.update_journal', return_value=False, autospec=True)
+def test_update_journal_not_found(mock_update):
     """
-    Testing we do the right thing with a call to update_title that fails
+    Testing update of a journal's details when journal is not found.
     """
-    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
+    time_stamp = "nonexistent_category_id"
+    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{time_stamp}', json=jrnls.get_test_journal())
     assert resp.status_code == NOT_FOUND
 
 
-@pytest.mark.skip('This test fails and says that the timestamp does not exist')
-@patch('data.journals.update_content', autospec=True)
-def test_journals_update_content(mock_update):
-    """
-    Testing we do the right thing with a call to update_content that succeeds
-    """
-    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewContent')
-    assert resp.status_code == OK
+# @patch('data.journals.update_title', autospec=True)
+# def test_journals_update_title(mock_update):
+#     """
+#     Testing we do the right thing with a call to update_title that succeeds
+#     """
+#     resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
+#     assert resp.status_code == OK
 
 
-@patch('data.journals.update_content', side_effect=ValueError(), autospec=True)
-def test_journals_bad_update_content(mock_update):
-    """
-    Testing we do the right thing with a call to update_content that fails
-    """
-    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewContent')
-    assert resp.status_code == NOT_FOUND
+# @patch('data.journals.update_title', side_effect=ValueError(), autospec=True)
+# def test_journals_bad_update_title(mock_update):
+#     """
+#     Testing we do the right thing with a call to update_title that fails
+#     """
+#     resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewTitle')
+#     assert resp.status_code == NOT_FOUND
+
+
+# @pytest.mark.skip('This test fails and says that the timestamp does not exist')
+# @patch('data.journals.update_content', autospec=True)
+# def test_journals_update_content(mock_update):
+#     """
+#     Testing we do the right thing with a call to update_content that succeeds
+#     """
+#     resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewContent')
+#     assert resp.status_code == OK
+
+
+# @patch('data.journals.update_content', side_effect=ValueError(), autospec=True)
+# def test_journals_bad_update_content(mock_update):
+#     """
+#     Testing we do the right thing with a call to update_content that fails
+#     """
+#     resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/timestamp/NewContent')
+#     assert resp.status_code == NOT_FOUND
