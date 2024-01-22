@@ -126,26 +126,6 @@ def get_content(journal: dict):
     return journal.get(CONTENT)
 
 
-def update_title(timestamp: str, new_title: str):
-    if not exists(timestamp):
-        raise ValueError(f'Update failure: {timestamp} not in database.')
-    else:
-        dbc.connect_db()
-        return dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp},
-                              {TITLE: new_title,
-                               MODIFIED: datetime.now().strftime(FORMAT)})
-
-
-def update_content(timestamp: str, new_content: str):
-    if not exists(timestamp):
-        raise ValueError(f'Update failure: {timestamp} not in database.')
-    else:
-        dbc.connect_db()
-        return dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp},
-                              {CONTENT: new_content,
-                               MODIFIED: datetime.now().strftime(FORMAT)})
-
-
 def update_journal(time_stamp: str, journal_data: dict) -> bool:
     """
     Updates a journal's information.

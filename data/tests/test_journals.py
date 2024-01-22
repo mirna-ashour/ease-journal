@@ -166,17 +166,3 @@ def test_del_journal_not_there():
     timestamp = jrnls._get_test_timestamp()
     with pytest.raises(ValueError):
         jrnls.del_journal(timestamp)
-
-
-def test_update_title(temp_journal):
-    NEW_TITLE = "New Title"
-    jrnls.update_title(temp_journal, NEW_TITLE)
-    updated_journal = jrnls.get_journal(temp_journal)
-    assert jrnls.get_title(updated_journal) == NEW_TITLE
-
-
-def test_update_content(temp_journal):
-    NEW_CONTENT = "New Content"
-    jrnls.update_content(temp_journal, NEW_CONTENT)
-    updated_journal = jrnls.get_journal(temp_journal)
-    assert jrnls.get_content(updated_journal) == NEW_CONTENT
