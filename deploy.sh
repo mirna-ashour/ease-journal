@@ -3,8 +3,8 @@
 
 PROJ_DIR=ease-journal
 VENV=EaseJournal
-PA_DOMAIN="easejournal.pythonanywhere.com"
-PA_USER="EaseJournal"
+PA_DOMAIN='easejournal.pythonanywhere.com'
+PA_USER='EaseJournal'
 
 echo "Project dir = $PROJ_DIR"
 echo "PA domain = $PA_DOMAIN"
