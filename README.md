@@ -29,8 +29,8 @@ To set up the development environment for a new developer, run `make dev_env`.
 - **/journals/delete/<timestamp>**: Deletes a journal entry by its timestamp.
 
 ## Documentation
-- [Design Specifications](/documentation/design_doc.md)
-- [Progress and Goals](/documentation/ProgressAndGoals.md)
+- [Design Specifications](/documents/design_doc.md)
+- [Progress and Goals](/documents/ProgressAndGoals.md)
 
 ## About
 This Flask API serves as the backend for a journaling application. It leverages OpenAI's GPT-3 to provide journaling insights and prompts based on user journal entries.
