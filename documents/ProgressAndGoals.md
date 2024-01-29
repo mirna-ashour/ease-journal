@@ -28,3 +28,8 @@
 - Currently missing unit tests for our data modules will be created to improve coverage.
 - Consider adding more features such as user roles and permissions, journal entry categorization, and advanced search functionality.
 - Continuous monitoring and updating of the system to address any emerging issues or user feedback.
+- Link data modules together through unique attributes. 
+- Ensure that data modules are created and updated appropiately 
+- Add more checks before creating or updating data modules to ensure that are in format we intend
+- Work on the front-end of the project
+- Try using openAI to suggest prompts/topics the user may want to journal about
