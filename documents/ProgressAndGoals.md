@@ -26,4 +26,5 @@
 ## Goals:
 
 - Currently missing unit tests for our data modules will be created to improve coverage.
-- 
+- Consider adding more features such as user roles and permissions, journal entry categorization, and advanced search functionality.
+- Continuous monitoring and updating of the system to address any emerging issues or user feedback.
