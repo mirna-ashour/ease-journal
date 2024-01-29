@@ -5,8 +5,8 @@
 
 - Created an API server with endpoints following CRUD operations on related data.
 - Endpoints:
-	- POST `/journals` - Adds a journal entry
 	- GET `/journals` - Returns all journal entries
+	- POST `/journals` - Adds a journal entry
 	- DELETE `/journals/delete/{timestamp}` - Deletes a journal entry by timestamp
 	- PUT `/journals/{timestamp}` - Updates details of a journal entry
 	- GET `/users` - Returns all users.
@@ -29,7 +29,7 @@
 - Consider adding more features such as user roles and permissions, journal entry categorization, and advanced search functionality.
 - Continuous monitoring and updating of the system to address any emerging issues or user feedback.
 - Link data modules together through unique attributes. 
-- Ensure that data modules are created and updated appropiately 
-- Add more checks before creating or updating data modules to ensure that are in format we intend
+- Ensure that data modules are created and updated appropriately 
+- Add more checks before creating or updating data modules to ensure that they are in the intended format
 - Work on the front-end of the project
 - Try using openAI to suggest prompts/topics the user may want to journal about
