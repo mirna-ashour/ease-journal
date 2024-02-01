@@ -9,6 +9,7 @@ from flask import Flask, request
 from http import HTTPStatus
 from flask_restx import Resource, Api, fields
 import werkzeug.exceptions as wz
+from flask_cors import CORS
 
 import data.users as usrs
 import data.journals as journals
@@ -17,6 +18,7 @@ import data.categories as categories
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 MAIN_MENU = 'MainMenu'
 MAIN_MENU_NM = "Welcome to Ease Journal"
