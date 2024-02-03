@@ -1,6 +1,6 @@
 
 # Flask API
-An example Flask REST API server for a journaling application powered by OpenAI's GPT3. This API offers journaling insights and prompts based on the user's journal entries.
+A Flask REST API server for a journaling application powered by OpenAI's GPT3. This API offers journaling insights and prompts based on the user's journal entries.
 
 ## Getting Started
 To build for production, type `make prod`.
@@ -11,8 +11,8 @@ To set up the development environment for a new developer, run `make dev_env`.
 - **/hello**: A basic endpoint for testing server connectivity. Returns a "hello world" response.
 - **/endpoints**: Lists all available endpoints in the system.
 - **/** or **/MainMenu**: Provides a main menu interface with various options:
-  - List user account information
-  - List user journal categories
+  - List a user's account information
+  - List a user's journal categories
   - List all user journal entries
   - List all users
   - Exit
