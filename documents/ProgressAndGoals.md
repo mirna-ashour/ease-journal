@@ -21,6 +21,8 @@
 	- 
 	- 
 - Endpoints and data module functions have unit tests to verify correct behavior, document expected behavior, isolate issues, and receive rapid feedback.
+- Created a React frontend to interact with the Flask API, providing a user interface for journal entries, user management, and category listing.
+- The frontend includes components for navigation, displaying categories, users, and journals, and supports CRUD operations through the UI.
 
 
 ## Goals:
