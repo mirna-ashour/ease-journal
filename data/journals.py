@@ -122,8 +122,16 @@ def get_title(journal: dict):
     return journal.get(TITLE)
 
 
+def get_prompt(journal: dict):
+    return journal.get(PROMPT)
+
+
 def get_content(journal: dict):
     return journal.get(CONTENT)
+
+
+def get_modified(journal: dict):
+    return journal.get(MODIFIED)
 
 
 def update_journal(timestamp: str, journal_data: dict) -> bool:

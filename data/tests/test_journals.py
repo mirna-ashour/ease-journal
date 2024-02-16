@@ -51,9 +51,19 @@ def test_get_title(temp_journal):
     assert jrnls.get_title(journal) == journal[jrnls.TITLE]
 
 
+def test_get_prompt(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_prompt(journal) == journal[jrnls.PROMPT]
+
+
 def test_get_content(temp_journal):
     journal = jrnls.get_journal(temp_journal)
     assert jrnls.get_content(journal) == journal[jrnls.CONTENT]
+
+
+def test_get_modified(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_modified(journal) == journal[jrnls.MODIFIED]
 
 
 """
@@ -86,10 +96,10 @@ def test_get_journals(temp_journal):
 
         assert journal[jrnls.TIMESTAMP] == key
 
-        assert isinstance(journal[jrnls.TITLE], str)
-        assert isinstance(journal[jrnls.PROMPT] ,str)
-        assert isinstance(journal[jrnls.CONTENT] ,str)
-        assert isinstance(journal[jrnls.MODIFIED] ,str)
+        assert isinstance(jrnls.get_title(journal), str)
+        assert isinstance(jrnls.get_prompt(journal), str)
+        assert isinstance(jrnls.get_content(journal), str)
+        assert isinstance(jrnls.get_modified(journal), str)
 
         assert datetime.strptime(key, FORMAT) <= datetime.strptime(journal[jrnls.MODIFIED], FORMAT)
         
@@ -116,10 +126,12 @@ def test_add_journal():
     jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_MODIFIED)
     journals = jrnls.get_journals()
     assert ADD_TIMESTAMP in journals
-    assert journals[ADD_TIMESTAMP][jrnls.TITLE] == ADD_TITLE
-    assert journals[ADD_TIMESTAMP][jrnls.PROMPT] == ADD_PROMPT0
-    assert journals[ADD_TIMESTAMP][jrnls.CONTENT] == ADD_CONTENT
-    assert journals[ADD_TIMESTAMP][jrnls.MODIFIED] == ADD_MODIFIED
+
+    added_journal = jrnls.get_journal(ADD_TIMESTAMP)
+    assert jrnls.get_title(added_journal) == ADD_TITLE
+    assert jrnls.get_prompt(added_journal) == ADD_PROMPT0
+    assert jrnls.get_content(added_journal) == ADD_CONTENT
+    assert jrnls.get_modified(added_journal) == ADD_MODIFIED
     jrnls.del_journal(ADD_TIMESTAMP)
 
 
@@ -127,10 +139,12 @@ def test_add_journal_without_title_or_content():
     jrnls.add_journal(ADD_TIMESTAMP, "", ADD_PROMPT1, "", ADD_MODIFIED)
     journals = jrnls.get_journals()
     assert ADD_TIMESTAMP in journals
-    assert journals[ADD_TIMESTAMP][jrnls.TITLE] == jrnls.DEFAULT_TITLE
-    assert journals[ADD_TIMESTAMP][jrnls.PROMPT] == ADD_PROMPT1
-    assert journals[ADD_TIMESTAMP][jrnls.CONTENT] == ""
-    assert journals[ADD_TIMESTAMP][jrnls.MODIFIED] == ADD_MODIFIED
+
+    added_journal = jrnls.get_journal(ADD_TIMESTAMP)
+    assert jrnls.get_title(added_journal) == jrnls.DEFAULT_TITLE
+    assert jrnls.get_prompt(added_journal) == ADD_PROMPT1
+    assert jrnls.get_content(added_journal) == ""
+    assert jrnls.get_modified(added_journal) == ADD_MODIFIED
     jrnls.del_journal(ADD_TIMESTAMP)
 
 
@@ -186,32 +200,34 @@ UPDATED_CONTENT = "Updated Content"
 
 def test_update_journal(temp_journal):
     timestamp = temp_journal
-    prev_modified = jrnls.get_journal(timestamp)[jrnls.MODIFIED]
+    prev_journal = jrnls.get_journal(timestamp)
+    prev_modified = jrnls.get_modified(prev_journal)
 
     update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, jrnls.CONTENT: UPDATED_CONTENT}
     assert jrnls.update_journal(timestamp, update_data)
 
     updated_journal = jrnls.get_journal(timestamp)
-    assert updated_journal[jrnls.TITLE] == UPDATED_TITLE
-    assert updated_journal[jrnls.PROMPT] == UPDATED_PROMPT
-    assert updated_journal[jrnls.CONTENT] == UPDATED_CONTENT
-    assert updated_journal[jrnls.MODIFIED] > prev_modified
+    assert jrnls.get_title(updated_journal) == UPDATED_TITLE
+    assert jrnls.get_prompt(updated_journal) == UPDATED_PROMPT
+    assert jrnls.get_content(updated_journal) == UPDATED_CONTENT
+    assert jrnls.get_modified(updated_journal) > prev_modified
 
 
 def test_update_journal_partially(temp_journal):
     timestamp = temp_journal
-    prev_prompt = jrnls.get_journal(timestamp)[jrnls.PROMPT]
-    prev_content = jrnls.get_journal(timestamp)[jrnls.CONTENT]
-    prev_modified = jrnls.get_journal(timestamp)[jrnls.MODIFIED]
+    prev_journal = jrnls.get_journal(timestamp)
+    prev_prompt = jrnls.get_prompt(prev_journal)
+    prev_content = jrnls.get_content(prev_journal)
+    prev_modified = jrnls.get_modified(prev_journal)
 
     update_data = {jrnls.TITLE: UPDATED_TITLE}
     assert jrnls.update_journal(timestamp, update_data)
 
     updated_journal = jrnls.get_journal(timestamp)
-    assert updated_journal[jrnls.TITLE] == UPDATED_TITLE
-    assert updated_journal[jrnls.PROMPT] == prev_prompt
-    assert updated_journal[jrnls.CONTENT] == prev_content
-    assert updated_journal[jrnls.MODIFIED] > prev_modified
+    assert jrnls.get_title(updated_journal) == UPDATED_TITLE
+    assert jrnls.get_prompt(updated_journal) == prev_prompt
+    assert jrnls.get_content(updated_journal) == prev_content
+    assert jrnls.get_modified(updated_journal) > prev_modified
 
 
 def test_update_journal_invalid_timestamp():
