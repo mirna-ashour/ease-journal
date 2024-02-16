@@ -46,6 +46,16 @@ def test_get_journal(temp_journal):
     assert jrnls.MODIFIED in journal
 
 
+def test_get_title(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_title(journal) == journal[jrnls.TITLE]
+
+
+def test_get_content(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_content(journal) == journal[jrnls.CONTENT]
+
+
 """
     Ensure:
         - get_journals() returns a dict with at least 1 journal
@@ -87,12 +97,13 @@ def test_get_journals(temp_journal):
 
 
 ADD_TIMESTAMP = '2000-01-01 09:57:00'
-ADD_TITLE = 'SOME TITLE'
-ADD_PROMPT0 = 'some prompt0'
-ADD_PROMPT1 = 'some prompt1'
-ADD_CONTENT = 'blah blah blah'
+ADD_TITLE = 'Added title'
+ADD_PROMPT0 = 'Added prompt0'
+ADD_PROMPT1 = 'Added prompt1'
+ADD_CONTENT = 'Added content'
 ADD_MODIFIED = ADD_TIMESTAMP
 
+INVALID_TIMESTAMP = "invalid timestamp"
 NON_STRING = 123
 
 
@@ -132,7 +143,7 @@ def test_add_journal_dup_prompt(temp_journal):
 
 def test_add_journal_invalid_timestamp():
     with pytest.raises(ValueError):
-        jrnls.add_journal("invalid timestamp", ADD_TITLE, ADD_PROMPT1, ADD_CONTENT, ADD_MODIFIED)
+        jrnls.add_journal(INVALID_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, ADD_CONTENT, ADD_MODIFIED)
 
 
 def test_add_journal_prompt_too_long():
@@ -166,3 +177,58 @@ def test_del_journal_not_there():
     timestamp = jrnls._get_test_timestamp()
     with pytest.raises(ValueError):
         jrnls.del_journal(timestamp)
+
+
+UPDATED_TITLE = "Updated Title"
+UPDATED_PROMPT = "Updated Prompt"
+UPDATED_CONTENT = "Updated Content"
+
+
+def test_update_journal(temp_journal):
+    timestamp = temp_journal
+    prev_modified = jrnls.get_journal(timestamp)[jrnls.MODIFIED]
+
+    update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, jrnls.CONTENT: UPDATED_CONTENT}
+    assert jrnls.update_journal(timestamp, update_data)
+
+    updated_journal = jrnls.get_journal(timestamp)
+    assert updated_journal[jrnls.TITLE] == UPDATED_TITLE
+    assert updated_journal[jrnls.PROMPT] == UPDATED_PROMPT
+    assert updated_journal[jrnls.CONTENT] == UPDATED_CONTENT
+    assert updated_journal[jrnls.MODIFIED] > prev_modified
+
+
+def test_update_journal_partially(temp_journal):
+    timestamp = temp_journal
+    prev_prompt = jrnls.get_journal(timestamp)[jrnls.PROMPT]
+    prev_content = jrnls.get_journal(timestamp)[jrnls.CONTENT]
+    prev_modified = jrnls.get_journal(timestamp)[jrnls.MODIFIED]
+
+    update_data = {jrnls.TITLE: UPDATED_TITLE}
+    assert jrnls.update_journal(timestamp, update_data)
+
+    updated_journal = jrnls.get_journal(timestamp)
+    assert updated_journal[jrnls.TITLE] == UPDATED_TITLE
+    assert updated_journal[jrnls.PROMPT] == prev_prompt
+    assert updated_journal[jrnls.CONTENT] == prev_content
+    assert updated_journal[jrnls.MODIFIED] > prev_modified
+
+
+def test_update_journal_invalid_timestamp():
+    update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, jrnls.CONTENT: UPDATED_CONTENT}
+    with pytest.raises(TypeError):
+        jrnls.update_journal(INVALID_TIMESTAMP, update_data)
+
+
+def test_update_journal_nonexistent_timestamp():
+    timestamp = jrnls._get_test_timestamp()
+    update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, jrnls.CONTENT: UPDATED_CONTENT}
+    with pytest.raises(ValueError):
+        jrnls.update_journal(timestamp, update_data)
+
+
+def test_update_journal_nothing_to_update(temp_journal):
+    timestamp = temp_journal
+    update_data = {}
+    with pytest.raises(ValueError):
+        jrnls.update_journal(timestamp, update_data)

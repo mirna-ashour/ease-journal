@@ -126,19 +126,27 @@ def get_content(journal: dict):
     return journal.get(CONTENT)
 
 
-def update_journal(time_stamp: str, journal_data: dict) -> bool:
+def update_journal(timestamp: str, journal_data: dict) -> bool:
     """
     Updates a journal's information.
 
     Args:
-    time_stamp (str): The timestamp of the journal to update.
+    timestamp (str): The timestamp of the journal to update.
     journal_data (dict): Dictionary containing journal data to update.
 
     Returns:
     bool: True if the update was successful, False otherwise.
     """
-    if not exists(time_stamp):
-        return False
+    try:
+        datetime.strptime(timestamp, FORMAT)
+    except ValueError:
+        raise TypeError("Invalid timestamp format")
+
+    if not exists(timestamp):
+        raise ValueError(f"Update failure: {timestamp} not in database.")
+
+    if not journal_data:
+        raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
     for key in [TITLE, PROMPT, CONTENT]:
@@ -147,9 +155,6 @@ def update_journal(time_stamp: str, journal_data: dict) -> bool:
 
     update_data[MODIFIED] = datetime.now().strftime(FORMAT)
 
-    if not update_data:
-        raise ValueError("No valid fields to update.")
-
     dbc.connect_db()
-    dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: time_stamp}, update_data)
+    dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp}, update_data)
     return True
