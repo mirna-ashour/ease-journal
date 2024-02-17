@@ -146,15 +146,15 @@ def update_user(user_id: str, user_data: dict) -> bool:
     bool: True if the update was successful, False otherwise.
     """
     if not exists(user_id):
-        return False
+        raise ValueError(f"Update failure: {user_id} not in database.")
+
+    if not user_data:
+        raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
     for key in [FIRST_NAME, LAST_NAME, DOB, EMAIL]:
         if key in user_data:
             update_data[key] = user_data[key]
-
-    if not update_data:
-        raise ValueError("No valid fields to update.")
 
     dbc.connect_db()
     dbc.update_doc(USERS_COLLECT, {USER_ID: user_id}, update_data)
