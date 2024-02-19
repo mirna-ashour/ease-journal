@@ -1,3 +1,11 @@
+<p align="center">
+    <img src="documents/src/EaseJournalLOGO_V1_vector.png" alt="logo">
+</p>
+
+<p align="center">
+[EASE-JOURNAL]
+</p>
+
 
 # Flask API
 A Flask REST API server for a journaling application powered by OpenAI's GPT3. This API offers journaling insights and prompts based on the user's journal entries.
