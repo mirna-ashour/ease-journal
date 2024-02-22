@@ -18,7 +18,8 @@ import data.categories as categories
 
 app = Flask(__name__)
 api = Api(app)
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 MAIN_MENU = 'MainMenu'
 MAIN_MENU_NM = "Welcome to Ease Journal"
