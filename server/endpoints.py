@@ -292,15 +292,7 @@ class Category(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-journal_fields = api.model('NewJournal', {
-    journals.TIMESTAMP: fields.String,
-    journals.TITLE: fields.String,
-    journals.PROMPT: fields.String,
-    journals.CONTENT: fields.String,
-    journals.MODIFIED: fields.String,
-})
-
-journal_fields2 = api.model('UpdateJournal', {
+journal_fields = api.model('Journal', {
     journals.TITLE: fields.String,
     journals.PROMPT: fields.String,
     journals.CONTENT: fields.String,
@@ -331,17 +323,14 @@ class Journals(Resource):
         """
         This method adds a journal entry.
         """
-        timestamp = request.json[journals.TIMESTAMP]
         title = request.json[journals.TITLE]
         prompt = request.json[journals.PROMPT]
         content = request.json[journals.CONTENT]
-        modified = request.json[journals.MODIFIED]
         try:
-            new_id = journals.add_journal(timestamp, title,
-                                          prompt, content, modified)
-            if new_id is None:
+            timestamp = journals.add_journal(title, prompt, content)
+            if timestamp is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
-            return {JOURNAL_CREATED: new_id}
+            return {JOURNAL_CREATED: timestamp}
         except ValueError as e:
             raise wz.NotAcceptable(f'{str(e)}')
 
@@ -351,7 +340,7 @@ class UpdateJournal(Resource):
     """
     Updates a Journal's details.
     """
-    @api.expect(journal_fields2)
+    @api.expect(journal_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
     def put(self, time_stamp):

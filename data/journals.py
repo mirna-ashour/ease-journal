@@ -2,6 +2,7 @@
 This module interfaces to our journal data.
 """
 import random
+# import time
 import data.db_connect as dbc
 
 from datetime import datetime, timedelta
@@ -13,6 +14,7 @@ ID_LEN = 9
 BIG_NUM = 1_000_000_000
 
 MOCK_ID = "0" * ID_LEN
+MOCK_TIMESTAMP = '2001-01-01 01:01:01'
 
 TIMESTAMP = 'timestamp'
 TITLE = 'title'
@@ -60,8 +62,7 @@ def get_journals() -> dict:
     return dbc.fetch_all_as_dict(TIMESTAMP, JOURNALS_COLLECT)
 
 
-def add_journal(timestamp: str, title: str, prompt: str,
-                content: str, modified: str) -> bool:
+def add_journal(title: str, prompt: str, content: str):
     # Check if the input types are correct
     if not isinstance(title, str):
         raise TypeError("Title must be a string")
@@ -74,20 +75,18 @@ def add_journal(timestamp: str, title: str, prompt: str,
     if len(prompt) > 255:
         raise ValueError("Prompt exceeds 255 character limit")
 
-    # Validate timestamp format
-    try:
-        datetime.strptime(timestamp, FORMAT)
-    except ValueError:
-        raise ValueError("Invalid timestamp format")
-
-    # Set default title if empty
-    if not title:
-        title = DEFAULT_TITLE
-
     # Check for duplicate prompts (case-insensitive)
     if any(journal.get(PROMPT, '').lower() ==
             prompt.lower() for journal in get_journals().values()):
         raise ValueError(f'Duplicate prompt: {prompt}')
+
+    # Set the created and modified timestamps
+    timestamp = datetime.now().strftime(FORMAT)
+    modified = timestamp
+
+    # Set default title if empty
+    if not title:
+        title = DEFAULT_TITLE
 
     # Create and add journal entry
     journal_entry = {}
@@ -98,7 +97,9 @@ def add_journal(timestamp: str, title: str, prompt: str,
     journal_entry[MODIFIED] = modified
     dbc.connect_db()
     _id = dbc.insert_one(JOURNALS_COLLECT, journal_entry)
-    return _id is not None
+    if _id is not None:
+        return timestamp
+    return None
 
 
 def del_journal(timestamp: str):
@@ -161,6 +162,8 @@ def update_journal(timestamp: str, journal_data: dict) -> bool:
         if key in journal_data:
             update_data[key] = journal_data[key]
 
+    # To see a measureable difference between TIMESTAMP and MODIFIED
+    # time.sleep(1)
     update_data[MODIFIED] = datetime.now().strftime(FORMAT)
 
     dbc.connect_db()

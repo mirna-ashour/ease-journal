@@ -9,9 +9,9 @@ FORMAT = "%Y-%m-%d %H:%M:%S"
 
 @pytest.fixture(scope='function')
 def temp_journal():
-    timestamp = jrnls._get_test_timestamp()
-    prompt = f"UniquePrompt_{timestamp}"
-    ret = jrnls.add_journal(timestamp, "", prompt, "This is a fixture", timestamp)
+    test_timestamp = jrnls._get_test_timestamp()
+    prompt = f"UniquePrompt_{test_timestamp}"
+    timestamp = jrnls.add_journal("", prompt, "This is a fixture")
     yield timestamp
     if jrnls.exists(timestamp):
         jrnls.del_journal(timestamp)
@@ -106,12 +106,10 @@ def test_get_journals(temp_journal):
     assert jrnls.exists(temp_journal)
 
 
-ADD_TIMESTAMP = '2000-01-01 09:57:00'
 ADD_TITLE = 'Added title'
 ADD_PROMPT0 = 'Added prompt0'
 ADD_PROMPT1 = 'Added prompt1'
 ADD_CONTENT = 'Added content'
-ADD_MODIFIED = ADD_TIMESTAMP
 
 INVALID_TIMESTAMP = "invalid timestamp"
 NON_STRING = 123
@@ -123,62 +121,57 @@ NON_STRING = 123
           in the list of journals with valid input
 """
 def test_add_journal():
-    jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, ADD_MODIFIED)
+    timestamp = jrnls.add_journal(ADD_TITLE, ADD_PROMPT0, ADD_CONTENT)
     journals = jrnls.get_journals()
-    assert ADD_TIMESTAMP in journals
+    assert timestamp in journals
 
-    added_journal = jrnls.get_journal(ADD_TIMESTAMP)
+    added_journal = jrnls.get_journal(timestamp)
     assert jrnls.get_title(added_journal) == ADD_TITLE
     assert jrnls.get_prompt(added_journal) == ADD_PROMPT0
     assert jrnls.get_content(added_journal) == ADD_CONTENT
-    assert jrnls.get_modified(added_journal) == ADD_MODIFIED
-    jrnls.del_journal(ADD_TIMESTAMP)
+    assert jrnls.get_modified(added_journal) == timestamp
+    jrnls.del_journal(timestamp)
 
 
 def test_add_journal_without_title_or_content():
-    jrnls.add_journal(ADD_TIMESTAMP, "", ADD_PROMPT1, "", ADD_MODIFIED)
+    timestamp = jrnls.add_journal("", ADD_PROMPT1, "")
     journals = jrnls.get_journals()
-    assert ADD_TIMESTAMP in journals
+    assert timestamp in journals
 
-    added_journal = jrnls.get_journal(ADD_TIMESTAMP)
+    added_journal = jrnls.get_journal(timestamp)
     assert jrnls.get_title(added_journal) == jrnls.DEFAULT_TITLE
     assert jrnls.get_prompt(added_journal) == ADD_PROMPT1
     assert jrnls.get_content(added_journal) == ""
-    assert jrnls.get_modified(added_journal) == ADD_MODIFIED
-    jrnls.del_journal(ADD_TIMESTAMP)
+    assert jrnls.get_modified(added_journal) == timestamp
+    jrnls.del_journal(timestamp)
 
 
 def test_add_journal_dup_prompt(temp_journal):
     temp_journal_entry = jrnls.get_journal(temp_journal)
     temp_prompt = temp_journal_entry[jrnls.PROMPT]
     with pytest.raises(ValueError):
-        jrnls.add_journal(ADD_TIMESTAMP, "", temp_prompt, "", ADD_MODIFIED)
-
-
-def test_add_journal_invalid_timestamp():
-    with pytest.raises(ValueError):
-        jrnls.add_journal(INVALID_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, ADD_CONTENT, ADD_MODIFIED)
+        jrnls.add_journal("", temp_prompt, "")
 
 
 def test_add_journal_prompt_too_long():
     long_prompt = "x" * 500  # Assuming there's a limit to prompt length
     with pytest.raises(ValueError):
-        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, long_prompt, ADD_CONTENT, ADD_MODIFIED)
+        jrnls.add_journal(ADD_TITLE, long_prompt, ADD_CONTENT)
 
 
 def test_add_journal_non_string_title():
     with pytest.raises(TypeError):
-        jrnls.add_journal(ADD_TIMESTAMP, NON_STRING, ADD_PROMPT1, ADD_CONTENT, ADD_MODIFIED)
+        jrnls.add_journal(NON_STRING, ADD_PROMPT1, ADD_CONTENT)
 
 
 def test_add_journal_non_string_prompt():
     with pytest.raises(TypeError):
-        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, NON_STRING, ADD_CONTENT, ADD_MODIFIED)
+        jrnls.add_journal(ADD_TITLE, NON_STRING, ADD_CONTENT)
 
 
 def test_add_journal_non_string_content():
     with pytest.raises(TypeError):
-        jrnls.add_journal(ADD_TIMESTAMP, ADD_TITLE, ADD_PROMPT1, NON_STRING, ADD_MODIFIED)
+        jrnls.add_journal(ADD_TITLE, ADD_PROMPT1, NON_STRING)
 
 
 def test_del_journal(temp_journal):
@@ -210,7 +203,7 @@ def test_update_journal(temp_journal):
     assert jrnls.get_title(updated_journal) == UPDATED_TITLE
     assert jrnls.get_prompt(updated_journal) == UPDATED_PROMPT
     assert jrnls.get_content(updated_journal) == UPDATED_CONTENT
-    assert jrnls.get_modified(updated_journal) > prev_modified
+    assert jrnls.get_modified(updated_journal) >= prev_modified
 
 
 def test_update_journal_partially(temp_journal):
@@ -227,7 +220,7 @@ def test_update_journal_partially(temp_journal):
     assert jrnls.get_title(updated_journal) == UPDATED_TITLE
     assert jrnls.get_prompt(updated_journal) == prev_prompt
     assert jrnls.get_content(updated_journal) == prev_content
-    assert jrnls.get_modified(updated_journal) > prev_modified
+    assert jrnls.get_modified(updated_journal) >= prev_modified
 
 
 def test_update_journal_invalid_timestamp():

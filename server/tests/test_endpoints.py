@@ -220,7 +220,7 @@ def test_list_journals():
     assert ep.DATA in resp_json
 
 
-@patch('data.journals.add_journal', return_value=jrnls.MOCK_ID, autospec=True)
+@patch('data.journals.add_journal', return_value=jrnls.MOCK_TIMESTAMP, autospec=True)
 def test_journals_add(mock_add):
     """
     Testing we do the right thing with a good return from add_journal.
