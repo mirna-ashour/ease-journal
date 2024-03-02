@@ -119,6 +119,10 @@ def get_category(category_id: str) -> dict:
     return dbc.fetch_one(CATEGORIES_COLLECT, {CATEGORY_ID: category_id})
 
 
+def get_title(category: dict):
+    return category.get(TITLE)
+
+
 def update_category(category_id: str, category_data: dict) -> bool:
     """
     Updates a category's information.
@@ -131,15 +135,15 @@ def update_category(category_id: str, category_data: dict) -> bool:
     bool: True if the update was successful, False otherwise.
     """
     if not exists(category_id):
-        return False
+        raise ValueError(f"Update failure: {category_id} not in database.")
+
+    if not category_data:
+        raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
-    for key in [TITLE, USER, DATE_TIME]:
+    for key in [TITLE]:
         if key in category_data:
             update_data[key] = category_data[key]
-
-    if not update_data:
-        raise ValueError("No valid fields to update.")
 
     dbc.connect_db()
     dbc.update_doc(CATEGORIES_COLLECT, {CATEGORY_ID: category_id}, update_data)

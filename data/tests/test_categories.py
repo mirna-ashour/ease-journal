@@ -72,6 +72,11 @@ def test_get_title_name():
     assert isinstance(name, str)
 
 
+def test_get_title(temp_category):
+    category = cats.get_category(temp_category)
+    assert cats.get_title(category) == category[cats.TITLE]
+
+
 def test_get_categories(temp_category):
     categories = cats.get_categories()
     assert isinstance(categories, dict)
@@ -136,4 +141,42 @@ def test_del_category_not_there():
     category_id = cats._get_category_id()
     with pytest.raises(ValueError):
         cats.del_category(category_id)      
-        
+
+
+UPDATED_TITLE = "Updated Title"
+
+
+def test_update_category(temp_category):
+    category_id = temp_category
+    update_data = {cats.TITLE: UPDATED_TITLE}
+    assert cats.update_category(category_id, update_data)
+
+    updated_category = cats.get_category(category_id)
+    assert cats.get_title(updated_category) == UPDATED_TITLE
+
+
+# This test must be updated if more category attributes are added
+def test_update_category_partially(temp_category):
+    category_id = temp_category
+    prev_category = cats.get_category(category_id)
+    prev_title = cats.get_title(prev_category)
+
+    update_data = {cats.DATE_TIME: "03-01-2024 10:57:00"}
+    assert cats.update_category(category_id, update_data)
+
+    updated_category = cats.get_category(category_id)
+    assert cats.get_title(updated_category) == prev_title
+
+
+def test_update_category_nonexistent_category():
+    category_id = cats._get_category_id()
+    update_data = {cats.TITLE: UPDATED_TITLE}
+    with pytest.raises(ValueError):
+        cats.update_category(category_id, update_data)
+
+
+def test_update_category_nothing_to_update(temp_category):
+    category_id = temp_category
+    update_data = {}
+    with pytest.raises(ValueError):
+        cats.update_category(category_id, update_data)
