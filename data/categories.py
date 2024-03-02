@@ -99,6 +99,10 @@ def add_category(category_id: str, title: str, user_id: str):
     if existing_category:
         raise ValueError("Duplicate title.")
 
+    # The commented check below is done in the POST endpoint for Category class
+    # if not usrs.exists(user_id):
+    #     raise wz.NotAcceptable("Please input a user ID that exists.")
+
     date_time = datetime.now().strftime(FORMAT)
     category_entry = {}
     category_entry[CATEGORY_ID] = category_id
