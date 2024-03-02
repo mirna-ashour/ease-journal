@@ -182,9 +182,8 @@ class Users(Resource):
 
 
 category_fields = api.model('NewCategory', {
-    categories.TITLE: fields.String(default="Untitled"),
+    categories.TITLE: fields.String(default=""),
     categories.USER: fields.String,
-    categories.DATE_TIME: fields.String,
 })
 
 
@@ -281,10 +280,12 @@ class Category(Resource):
         category_id = categories._get_category_id()
         title = request.json[categories.TITLE]
         user_id = request.json[categories.USER]
-        date_time = request.json[categories.DATE_TIME]
+        if not usrs.exists(user_id):
+            raise wz.NotAcceptable("Please input a user ID that exists.")
+
         try:
             new_id = categories.add_category(category_id, title,
-                                             user_id, date_time)
+                                             user_id)
             if new_id is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
             return {f'New category added; with {CATEGORY_ID}': category_id}

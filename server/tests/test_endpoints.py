@@ -141,7 +141,8 @@ def test_list_categories():
 
 
 @patch('data.categories.add_category', return_value=categories.MOCK_ID, autospec=True)
-def test_categories_add(mock_add):
+@patch('data.users.exists', return_value=True)  # Mocking usrs.exists to always return True
+def test_categories_add(mock_add, mock_exists):
     """
     Testing we do the right thing with a good return from add_category.
     """
@@ -159,7 +160,8 @@ def test_categories_bad_add(mock_add):
 
 
 @patch('data.categories.add_category', return_value=None)
-def test_categories_add_db_failure(mock_add):
+@patch('data.users.exists', return_value=True)  # Mocking usrs.exists to always return True
+def test_categories_add_db_failure(mock_add, mock_exists):
     """
     Testing we do the right thing with a null ID return from add_category.
     """

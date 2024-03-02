@@ -4,6 +4,7 @@ from datetime import datetime
 This module interfaces to our categories data.
 """
 
+# import data.users as usrs
 import data.db_connect as dbc
 import random
 
@@ -87,12 +88,18 @@ def get_user_categories(user_id: str) -> dict:
 
 
 # category ids are currently a parameter but should later be uniquely generated
-def add_category(category_id: str, title: str, user_id: str, date_time: str):
+def add_category(category_id: str, title: str, user_id: str):
     if exists(category_id):
         raise ValueError("Duplicate category.")
     if not title:
-        title = "Untitled"
-    date_time = str(datetime.strptime(date_time, FORMAT))
+        raise ValueError("Please input a title.")
+
+    # Check for duplicate title
+    existing_category = dbc.fetch_one(CATEGORIES_COLLECT, {TITLE: title})
+    if existing_category:
+        raise ValueError("Duplicate title.")
+
+    date_time = datetime.now().strftime(FORMAT)
     category_entry = {}
     category_entry[CATEGORY_ID] = category_id
     category_entry[TITLE] = title

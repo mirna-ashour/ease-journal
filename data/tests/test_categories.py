@@ -13,8 +13,8 @@ def temp_category():
     category_id = cats._get_category_id()
     user_id = cats._get_user_id()
     title = cats._get_title_name()
-    date_time = '2023-10-27 12:45:00'
-    ret = cats.add_category(category_id, title, user_id, date_time)
+    #date_time = '2023-10-27 12:45:00'
+    ret = cats.add_category(category_id, title, user_id)
     yield category_id
     if cats.exists(category_id):
         cats.del_category(category_id)
@@ -54,8 +54,8 @@ def test_get_user_categories(temp_category):
     cat1_id = cats._get_category_id()
     cat2_id = cats._get_category_id()
 
-    cats.add_category(cat1_id, "Category 1", user_id, datetime.now().strftime(FORMAT))
-    cats.add_category(cat2_id, "Category 2", user_id, datetime.now().strftime(FORMAT))
+    cats.add_category(cat1_id, "Category 1", user_id)
+    cats.add_category(cat2_id, "Category 2", user_id)
 
     user_cats = cats.get_user_categories(user_id)
 
@@ -102,8 +102,8 @@ def test_add_category():
     category_id = cats._get_category_id()
     title = cats._get_title_name()
     user_id = cats._get_user_id()
-    date_time = '2023-10-27 12:45:00'
-    ret = cats.add_category(category_id, title, user_id, date_time)
+    #date_time = '2023-10-27 12:45:00'
+    ret = cats.add_category(category_id, title, user_id)
     assert cats.exists(category_id)
     assert isinstance(ret, bool)
     cats.del_category(category_id)
@@ -113,24 +113,23 @@ def test_add_category_without_title():
     category_id = cats._get_category_id()
     title = ""
     user_id = cats._get_user_id()
-    date_time = (datetime.now()).strftime(FORMAT)
-    ret = cats.add_category(category_id, title, user_id, date_time)
-    assert cats.exists(category_id)
-    assert isinstance(ret, bool)
-    cats.del_category(category_id)
+
+    # attempting to add category without a title 
+    with pytest.raises(ValueError):
+        cats.add_category(category_id, title, user_id)
 
 
 def test_add_duplicate_category(temp_category):
     cat_id = temp_category
     user = cats._get_user_id()
     title = cats._get_title_name()
-    date_time = '2023-10-27 12:45:00'
+    #date_time = '2023-10-27 12:45:00'
         
     # attempting to add category again
     with pytest.raises(ValueError):
-        cats.add_category(cat_id, title, user, date_time)
-
-
+        cats.add_category(cat_id, title, user)
+       
+       
 def test_del_category(temp_category):
     category_id = temp_category
     cats.del_category(category_id)
