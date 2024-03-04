@@ -94,8 +94,13 @@ def add_category(category_id: str, title: str, user_id: str):
     if not title:
         raise ValueError("Please input a title.")
 
+    lowercase_title = title.lower()
+
     # Check for duplicate title
-    existing_category = dbc.fetch_one(CATEGORIES_COLLECT, {TITLE: title})
+    existing_category = dbc.fetch_one(CATEGORIES_COLLECT,
+                                      {TITLE:
+                                       {'$regex': f'^{lowercase_title}$',
+                                        '$options': 'i'}})
     if existing_category:
         raise ValueError("Duplicate title.")
 
