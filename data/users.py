@@ -13,6 +13,7 @@ FIRST_NAME = 'first_name'
 LAST_NAME = 'last_name'
 DOB = 'dob'
 EMAIL = 'email'
+PASSWORD = 'password'
 
 FORMAT = "%Y-%m-%d"
 
@@ -31,6 +32,7 @@ MIN_USER_EMAIL_LEN = 8
 #         LAST_NAME: "Watson",
 #         DOB: "2002-11-20",
 #         EMAIL: "emma.watson@gmail.com"
+#         PASSWORD: Password1
 #     },
 # }
 
@@ -49,6 +51,7 @@ def get_test_user():
     test_user[LAST_NAME] = "Watson"
     test_user[DOB] = "2002-11-20"
     test_user[EMAIL] = "test@gmail.com"
+    test_user[PASSWORD] = "Password1"
     return test_user
 
 
@@ -58,7 +61,7 @@ def get_users() -> dict:
 
 
 def add_user(user_id: str, first_name: str, last_name: str,
-             dob: str, email: str):
+             dob: str, email: str, password: str):
 
     if exists(user_id):
         raise ValueError("Duplicate user.")
@@ -90,6 +93,12 @@ def add_user(user_id: str, first_name: str, last_name: str,
         raise ValueError(f'Email must be at least '
                          f'{MIN_USER_EMAIL_LEN} characters.')
 
+    if len(password) < 8:
+        raise ValueError('Password must be at least 8 characters long.')
+
+    if not any(char.isdigit() for char in password):
+        raise ValueError('Password must contain at least one digit.')
+
     dob = datetime.strptime(dob, FORMAT).strftime(FORMAT)
     user_entry = {}
     user_entry[USER_ID] = user_id
@@ -97,6 +106,7 @@ def add_user(user_id: str, first_name: str, last_name: str,
     user_entry[LAST_NAME] = last_name
     user_entry[DOB] = dob
     user_entry[EMAIL] = email
+    user_entry[PASSWORD] = password
     dbc.connect_db()
     _id = dbc.insert_one(USERS_COLLECT, user_entry)
     return _id is not None
@@ -134,6 +144,10 @@ def get_email(user: dict):
     return user.get(EMAIL)
 
 
+def get_password(user: dict):
+    return user.get(PASSWORD)
+
+
 def update_user(user_id: str, user_data: dict) -> bool:
     """
     Updates a user's information.
@@ -152,7 +166,7 @@ def update_user(user_id: str, user_data: dict) -> bool:
         raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
-    for key in [FIRST_NAME, LAST_NAME, DOB, EMAIL]:
+    for key in [FIRST_NAME, LAST_NAME, DOB, EMAIL, PASSWORD]:
         if key in user_data:
             update_data[key] = user_data[key]
 

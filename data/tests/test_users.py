@@ -17,7 +17,7 @@ FORMAT = "%Y-%m-%d"
 @pytest.fixture(scope='function')
 def temp_user():
     user_id = usrs._get_user_id()
-    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com", "Password1")
     yield user_id
     if usrs.exists(user_id):
         usrs.del_user(user_id)
@@ -68,6 +68,11 @@ def test_get_email(temp_user):
     assert usrs.get_email(user) == user[usrs.EMAIL]
 
 
+def test_get_password(temp_user):
+    user = usrs.get_user(temp_user)
+    assert usrs.get_password(user) == user[usrs.PASSWORD]
+
+
 def test_get_users(temp_user):
     users = usrs.get_users()
     assert isinstance(users, dict)
@@ -91,13 +96,15 @@ def test_get_users(temp_user):
         assert isinstance(usrs.get_last_name(user), str)
         assert isinstance(usrs.get_email(user), str)
         assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT), datetime)
+        assert isinstance(usrs.get_password(user), str)
+
         
     assert usrs.exists(temp_user)
 
 
 def test_add_user():
     user_id = usrs._get_user_id()
-    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com", "password1")
     assert usrs.exists(user_id)
     assert isinstance(ret, bool)
     usrs.del_user(user_id)
@@ -108,42 +115,42 @@ def test_add_duplicate_user(temp_user):
         
     # attempting to add user again
     with pytest.raises(ValueError):
-        usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com")
+        usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com", "password1")
 
 
 def test_add_user_invalid_id_length():
     with pytest.raises(ValueError):
-        usrs.add_user("short_id", "John", "smith", "2002-11-20", "testemail@gmail.com")
+        usrs.add_user("short_id", "John", "smith", "2002-11-20", "testemail@gmail.com", "password1")
 
 
 def test_add_user_short_first_name():
     with pytest.raises(ValueError):
-        usrs.add_user(usrs._get_user_id(), "J", "Smith", "2002-11-20", "testemail@gmail.com")
+        usrs.add_user(usrs._get_user_id(), "J", "Smith", "2002-11-20", "testemail@gmail.com", "password1")
 
 
 def test_add_user_short_last_name():
     with pytest.raises(ValueError):
-        usrs.add_user(usrs._get_user_id(), "John", "S", "2002-11-20", "testemail@gmail.com")
+        usrs.add_user(usrs._get_user_id(), "John", "S", "2002-11-20", "testemail@gmail.com", "password1")
 
 
 def test_add_user_missing_at_in_email():
     with pytest.raises(ValueError):
-        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemailgmail.com")
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemailgmail.com", "password1")
 
 
 def test_add_user_missing_dot_in_email():
     with pytest.raises(ValueError):
-        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemail@gmailcom")
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemail@gmailcom", "password1")
 
 
 def test_add_user_incorrect_order_of_domain_and_dot_in_email():
     with pytest.raises(ValueError):
-        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemail.gmail@com")
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "testemail.gmail@com", "password1")
 
 
 def test_add_user_short_email():
     with pytest.raises(ValueError):
-        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "a@b.com")
+        usrs.add_user(usrs._get_user_id(), "John", "Smith", "2002-11-20", "a@b.com", "password1")
 
 
 def test_del_user(temp_user):
@@ -162,11 +169,13 @@ UPDATED_FIRST_NAME = "James"
 UPDATED_LAST_NAME = "Johnson"
 UPDATED_DOB = "1980-02-16"
 UPDATED_EMAIL = "johnsonJames@gmail.com"
+UPDATED_PASSWORD = "Password2"
 
 
 def test_update_user(temp_user):
     user_id = temp_user
-    update_data = {usrs.FIRST_NAME: UPDATED_FIRST_NAME, usrs.LAST_NAME: UPDATED_LAST_NAME, usrs.DOB: UPDATED_DOB, usrs.EMAIL: UPDATED_EMAIL}
+    update_data = {usrs.FIRST_NAME: UPDATED_FIRST_NAME, usrs.LAST_NAME: UPDATED_LAST_NAME,
+                   usrs.DOB: UPDATED_DOB, usrs.EMAIL: UPDATED_EMAIL, usrs.PASSWORD: UPDATED_PASSWORD}
     assert usrs.update_user(user_id, update_data)
 
     updated_user = usrs.get_user(user_id)
@@ -174,6 +183,7 @@ def test_update_user(temp_user):
     assert usrs.get_last_name(updated_user) == UPDATED_LAST_NAME
     assert usrs.get_dob(updated_user) == UPDATED_DOB
     assert usrs.get_email(updated_user) == UPDATED_EMAIL
+    assert usrs.get_password(updated_user) == UPDATED_PASSWORD
 
 
 def test_update_user_partially(temp_user):
@@ -182,6 +192,7 @@ def test_update_user_partially(temp_user):
     prev_last_name = usrs.get_last_name(prev_user)
     prev_dob = usrs.get_dob(prev_user)
     prev_email = usrs.get_email(prev_user)
+    prev_password = usrs.get_password(prev_user)
 
     update_data = {usrs.FIRST_NAME: UPDATED_FIRST_NAME}
     assert usrs.update_user(user_id, update_data)
@@ -191,11 +202,13 @@ def test_update_user_partially(temp_user):
     assert usrs.get_last_name(updated_user) == prev_last_name
     assert usrs.get_dob(updated_user) == prev_dob
     assert usrs.get_email(updated_user) == prev_email
+    assert usrs.get_password(updated_user) == prev_password
 
 
 def test_update_user_nonexistent_user():
     user_id = usrs._get_user_id()
-    update_data = {usrs.FIRST_NAME: UPDATED_FIRST_NAME, usrs.LAST_NAME: UPDATED_LAST_NAME, usrs.DOB: UPDATED_DOB, usrs.EMAIL: UPDATED_EMAIL}
+    update_data = {usrs.FIRST_NAME: UPDATED_FIRST_NAME, usrs.LAST_NAME: UPDATED_LAST_NAME,
+                   usrs.DOB: UPDATED_DOB, usrs.EMAIL: UPDATED_EMAIL, usrs.PASSWORD: UPDATED_PASSWORD}
     with pytest.raises(ValueError):
         usrs.update_user(user_id, update_data)
 

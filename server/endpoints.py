@@ -100,6 +100,7 @@ user_fields = api.model('NewUser', {
     usrs.LAST_NAME: fields.String,
     usrs.DOB: fields.String,
     usrs.EMAIL: fields.String,
+    usrs.PASSWORD: fields.String,
 })
 
 
@@ -172,8 +173,10 @@ class Users(Resource):
         last_name = request.json[usrs.LAST_NAME]
         dob = request.json[usrs.DOB]
         email = request.json[usrs.EMAIL]
+        password = request.json[usrs.PASSWORD]
         try:
-            new_id = usrs.add_user(user_id, first_name, last_name, dob, email)
+            new_id = usrs.add_user(user_id, first_name, last_name,
+                                   dob, email, password)
             if new_id is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
             return {f'New user has been added; with {USER_ID}': user_id}
