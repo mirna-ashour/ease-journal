@@ -164,7 +164,7 @@ def test_add_user_short_password():
         usrs.add_user(usrs._get_user_id(), ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, "pswd1")
 
 
-def test_add_user_missing_digin_in_password():
+def test_add_user_missing_digit_in_password():
     with pytest.raises(ValueError):
         usrs.add_user(usrs._get_user_id(), ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, "password")
 
