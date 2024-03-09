@@ -13,7 +13,6 @@ def temp_category():
     category_id = cats._get_category_id()
     user_id = cats._get_user_id()
     title = cats._get_title_name()
-    #date_time = '2023-10-27 12:45:00'
     ret = cats.add_category(category_id, title, user_id)
     yield category_id
     if cats.exists(category_id):
@@ -102,7 +101,6 @@ def test_add_category():
     category_id = cats._get_category_id()
     title = cats._get_title_name()
     user_id = cats._get_user_id()
-    #date_time = '2023-10-27 12:45:00'
     ret = cats.add_category(category_id, title, user_id)
     assert cats.exists(category_id)
     assert isinstance(ret, bool)
@@ -119,13 +117,23 @@ def test_add_category_without_title():
         cats.add_category(category_id, title, user_id)
 
 
-def test_add_duplicate_category(temp_category):
+def test_add_dup_category_id(temp_category):
     cat_id = temp_category
     user = cats._get_user_id()
     title = cats._get_title_name()
-    #date_time = '2023-10-27 12:45:00'
         
     # attempting to add category again
+    with pytest.raises(ValueError):
+        cats.add_category(cat_id, title, user)
+
+
+def test_add_dup_category_title(temp_category):
+    category = cats.get_category(temp_category)
+
+    cat_id = cats._get_category_id()
+    title = cats.get_title(category)
+    user = cats._get_user_id()
+    
     with pytest.raises(ValueError):
         cats.add_category(cat_id, title, user)
        
