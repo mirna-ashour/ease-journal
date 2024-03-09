@@ -25,6 +25,7 @@ MOCK_ID = '0' * USER_ID_LEN
 MIN_USER_NAME_LEN = 2
 
 MIN_USER_EMAIL_LEN = 8
+MIN_USER_PSWD_LEN = 8
 
 # users = {
 #     1234567890: {
@@ -93,7 +94,7 @@ def add_user(user_id: str, first_name: str, last_name: str,
         raise ValueError(f'Email must be at least '
                          f'{MIN_USER_EMAIL_LEN} characters.')
 
-    if len(password) < 8:
+    if len(password) < MIN_USER_PSWD_LEN:
         raise ValueError('Password must be at least 8 characters long.')
 
     if not any(char.isdigit() for char in password):
