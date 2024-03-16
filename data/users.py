@@ -94,6 +94,17 @@ def add_user(user_id: str, first_name: str, last_name: str,
         raise ValueError(f'Email must be at least '
                          f'{MIN_USER_EMAIL_LEN} characters.')
 
+    lowercase_email = email.lower()
+
+    # Check for duplicate Email
+    existing_email = dbc.fetch_one(USERS_COLLECT, {EMAIL:
+                                                   {'$regex':
+                                                    f'^{lowercase_email}$',
+                                                    '$options': 'i'}})
+
+    if existing_email:
+        raise ValueError("Duplicate Email.")
+
     if len(password) < MIN_USER_PSWD_LEN:
         raise ValueError('Password must be at least 8 characters long.')
 

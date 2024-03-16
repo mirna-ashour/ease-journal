@@ -124,6 +124,16 @@ def test_add_duplicate_user(temp_user):
         usrs.add_user(user_id, ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, ADD_PASSWORD)
 
 
+def test_add_user_with_duplicate_email(temp_user):
+    user_entry = usrs.get_user(temp_user)
+    email = usrs.get_email(user_entry)
+    user_id = usrs._get_user_id()
+
+    # attempting to add user again
+    with pytest.raises(ValueError):
+        usrs.add_user(user_id, ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, email, ADD_PASSWORD)
+
+
 def test_add_user_invalid_id_length():
     with pytest.raises(ValueError):
         usrs.add_user("short_id", ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, ADD_PASSWORD)
