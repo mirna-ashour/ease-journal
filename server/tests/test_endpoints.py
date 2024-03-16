@@ -222,7 +222,7 @@ def test_list_journals():
     assert ep.DATA in resp_json
 
 
-@patch('data.journals.add_journal', return_value=jrnls.MOCK_TIMESTAMP, autospec=True)
+@patch('data.journals.add_journal', return_value=jrnls.MOCK_ID, autospec=True)
 def test_journals_add(mock_add):
     """
     Testing we do the right thing with a good return from add_journal.
@@ -254,7 +254,7 @@ def test_journals_del(mock_del):
     """
     Testing we do the right thing with a call to del_journal that succeeds.
     """
-    resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/timestamp')
+    resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/journal_id')
     assert resp.status_code == OK
 
 
@@ -263,7 +263,7 @@ def test_journals_bad_del(mock_del):
     """
     Testing we do the right thing with a value error from del_journal.
     """
-    resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/timestamp')
+    resp = TEST_CLIENT.delete(f'{ep.DEL_JOURNAL_EP}/journal_id')
     assert resp.status_code == NOT_FOUND
 
 
@@ -272,8 +272,8 @@ def test_update_journal_success(mock_update):
     """
     Testing successful update of a Journal's details.
     """
-    time_stamp = "test_journal_timestamp"
-    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{time_stamp}', json=jrnls.get_test_journal())
+    journal_id = "test_journal_id"
+    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{journal_id}', json=jrnls.get_test_journal())
     assert resp.status_code == OK
 
 
@@ -282,6 +282,6 @@ def test_update_journal_not_found(mock_update):
     """
     Testing update of a journal's details when journal is not found.
     """
-    time_stamp = "nonexistent_category_id"
-    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{time_stamp}', json=jrnls.get_test_journal())
+    journal_id = "nonexistent_journal_id"
+    resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{journal_id}', json=jrnls.get_test_journal())
     assert resp.status_code == NOT_FOUND

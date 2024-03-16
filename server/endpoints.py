@@ -27,13 +27,12 @@ MAIN_MENU_NM = "Welcome to Ease Journal"
 USERS_EP = '/users'
 USER_ID = 'User ID'
 CATEGORY_ID = 'Category ID'
+JOURNAL_ID = 'Journal ID'
 DELETE = 'delete'
 DEL_USER_EP = f'{USERS_EP}/{DELETE}'
 JOURNALS_EP = '/journals'
 CATEGORIES_EP = '/categories'
 DEL_CATEGORY_EP = f'{CATEGORIES_EP}/{DELETE}'
-JOURNAL_CREATED = 'Journal Created'
-TIMESTAMP = 'Timestamp'
 DEL_JOURNAL_EP = f'{JOURNALS_EP}/{DELETE}'
 DATA = 'Data'
 TYPE = 'Type'
@@ -327,19 +326,20 @@ class Journals(Resource):
         """
         This method adds a journal entry.
         """
+        journal_id = journals._get_journal_id()
         title = request.json[journals.TITLE]
         prompt = request.json[journals.PROMPT]
         content = request.json[journals.CONTENT]
         try:
-            timestamp = journals.add_journal(title, prompt, content)
-            if timestamp is None:
+            ret = journals.add_journal(journal_id, title, prompt, content)
+            if ret is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
-            return {JOURNAL_CREATED: timestamp}
+            return {JOURNAL_ID: journal_id}
         except ValueError as e:
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-@api.route(f'{JOURNALS_EP}/<time_stamp>')
+@api.route(f'{JOURNALS_EP}/<journal_id>')
 class UpdateJournal(Resource):
     """
     Updates a Journal's details.
@@ -347,34 +347,34 @@ class UpdateJournal(Resource):
     @api.expect(journal_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
-    def put(self, time_stamp):
+    def put(self, journal_id):
         """
         Update a Journals's details.
         """
         journal_data = request.json
         try:
-            updated = journals.update_journal(time_stamp, journal_data)
+            updated = journals.update_journal(journal_id, journal_data)
             if not updated:
                 raise wz.NotFound(f'Journal with '
-                                  f'{TIMESTAMP} {time_stamp} not found')
-            return {f'Updated Journal with {TIMESTAMP}': time_stamp}
+                                  f'{JOURNAL_ID} {journal_id} not found')
+            return {f'Updated Journal with {JOURNAL_ID}': journal_id}
         except ValueError as e:
             raise wz.BadRequest(f'{str(e)}')
 
 
-@api.route(f'{DEL_JOURNAL_EP}/<timestamp>')
+@api.route(f'{DEL_JOURNAL_EP}/<journal_id>')
 class DelJournal(Resource):
     """
-    Deletes a journal by timestamp.
+    Deletes a journal by its ID.
     """
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
-    def delete(self, timestamp):
+    def delete(self, journal_id):
         """
-        Deletes a journal by timestamp.
+        Deletes a journal by ID.
         """
         try:
-            journals.del_journal(timestamp)
-            return {f'Deleted journal with {TIMESTAMP}': timestamp}
+            journals.del_journal(journal_id)
+            return {f'Deleted journal with {JOURNAL_ID}': journal_id}
         except ValueError as e:
             raise wz.NotFound(f'{str(e)}')

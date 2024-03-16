@@ -14,8 +14,8 @@ ID_LEN = 9
 BIG_NUM = 1_000_000_000
 
 MOCK_ID = "0" * ID_LEN
-MOCK_TIMESTAMP = '2001-01-01 01:01:01'
 
+JOURNAL_ID = 'journal_id'
 TIMESTAMP = 'timestamp'
 TITLE = 'title'
 PROMPT = 'prompt'
@@ -40,8 +40,16 @@ def _get_test_timestamp():
     return rand_timestamp_str
 
 
+def _get_journal_id() -> str:
+    _id = random.randint(0, BIG_NUM)
+    _id = str(_id)
+    _id = _id.rjust(ID_LEN, '0')
+    return _id
+
+
 def get_test_journal():
     test_journal = {}
+    test_journal[JOURNAL_ID] = _get_journal_id()
     test_journal[TIMESTAMP] = _get_test_timestamp()
     test_journal[TITLE] = DEFAULT_TITLE
     test_journal[PROMPT] = TEST_PROMPT
@@ -50,19 +58,15 @@ def get_test_journal():
     return test_journal
 
 
-def _gen_id() -> str:
-    _id = random.randint(0, BIG_NUM)
-    _id = str(_id)
-    _id = _id.rjust(ID_LEN, '0')
-    return _id
-
-
 def get_journals() -> dict:
     dbc.connect_db()
-    return dbc.fetch_all_as_dict(TIMESTAMP, JOURNALS_COLLECT)
+    return dbc.fetch_all_as_dict(JOURNAL_ID, JOURNALS_COLLECT)
 
 
-def add_journal(title: str, prompt: str, content: str):
+def add_journal(journal_id: str, title: str, prompt: str, content: str):
+    if exists(journal_id):
+        raise ValueError("Duplicate journal")
+
     # Check if the input types are correct
     if not isinstance(title, str):
         raise TypeError("Title must be a string")
@@ -90,6 +94,7 @@ def add_journal(title: str, prompt: str, content: str):
 
     # Create and add journal entry
     journal_entry = {}
+    journal_entry[JOURNAL_ID] = journal_id
     journal_entry[TIMESTAMP] = timestamp
     journal_entry[TITLE] = title
     journal_entry[PROMPT] = prompt
@@ -97,26 +102,28 @@ def add_journal(title: str, prompt: str, content: str):
     journal_entry[MODIFIED] = modified
     dbc.connect_db()
     _id = dbc.insert_one(JOURNALS_COLLECT, journal_entry)
-    if _id is not None:
-        return timestamp
-    return None
+    return _id is not None
 
 
-def del_journal(timestamp: str):
+def del_journal(journal_id: str):
     dbc.connect_db()
-    if not exists(timestamp):
-        raise ValueError(f"Delete failure: {timestamp} not in database.")
-    dbc.del_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
+    if not exists(journal_id):
+        raise ValueError(f"Delete failure: {journal_id} not in database.")
+    dbc.del_one(JOURNALS_COLLECT, {JOURNAL_ID: journal_id})
     return True
 
 
-def get_journal(timestamp: str) -> dict:
+def get_journal(journal_id: str) -> dict:
     dbc.connect_db()
-    return dbc.fetch_one(JOURNALS_COLLECT, {TIMESTAMP: timestamp})
+    return dbc.fetch_one(JOURNALS_COLLECT, {JOURNAL_ID: journal_id})
 
 
-def exists(timestamp: str) -> bool:
-    return get_journal(timestamp) is not None
+def exists(journal_id: str) -> bool:
+    return get_journal(journal_id) is not None
+
+
+def get_timestamp(journal: dict):
+    return journal.get(TIMESTAMP)
 
 
 def get_title(journal: dict):
@@ -135,24 +142,19 @@ def get_modified(journal: dict):
     return journal.get(MODIFIED)
 
 
-def update_journal(timestamp: str, journal_data: dict) -> bool:
+def update_journal(journal_id: str, journal_data: dict) -> bool:
     """
     Updates a journal's information.
 
     Args:
-    timestamp (str): The timestamp of the journal to update.
+    journal_id (str): The journal_id of the journal to update.
     journal_data (dict): Dictionary containing journal data to update.
 
     Returns:
     bool: True if the update was successful, False otherwise.
     """
-    try:
-        datetime.strptime(timestamp, FORMAT)
-    except ValueError:
-        raise TypeError("Invalid timestamp format")
-
-    if not exists(timestamp):
-        raise ValueError(f"Update failure: {timestamp} not in database.")
+    if not exists(journal_id):
+        raise ValueError(f"Update failure: {journal_id} not in database.")
 
     if not journal_data:
         raise ValueError("Update failure: No valid fields to update.")
@@ -167,5 +169,5 @@ def update_journal(timestamp: str, journal_data: dict) -> bool:
     update_data[MODIFIED] = datetime.now().strftime(FORMAT)
 
     dbc.connect_db()
-    dbc.update_doc(JOURNALS_COLLECT, {TIMESTAMP: timestamp}, update_data)
+    dbc.update_doc(JOURNALS_COLLECT, {JOURNAL_ID: journal_id}, update_data)
     return True
