@@ -223,7 +223,9 @@ def test_list_journals():
 
 
 @patch('data.journals.add_journal', return_value=jrnls.MOCK_ID, autospec=True)
-def test_journals_add(mock_add):
+@patch('data.users.exists', return_value=True)  # Mocking usrs.exists to always return True
+@patch('data.categories.exists', return_value=True)  # Mocking categories.exists to always return True
+def test_journals_add(mock_add, mock_user_exists, mock_category_exists):
     """
     Testing we do the right thing with a good return from add_journal.
     """
@@ -241,7 +243,9 @@ def test_journals_bad_add(mock_add):
 
 
 @patch('data.journals.add_journal', return_value=None)
-def test_journals_add_db_failure(mock_add):
+@patch('data.users.exists', return_value=True)  # Mocking usrs.exists to always return True
+@patch('data.categories.exists', return_value=True)  # Mocking categories.exists to always return True
+def test_journals_add_db_failure(mock_add, mock_user_exists, mock_category_exists):
     """
     Testing we do the right thing with a null ID return from add_journal.
     """

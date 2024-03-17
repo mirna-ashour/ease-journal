@@ -1,5 +1,7 @@
 import pytest
 import data.journals as jrnls
+import data.users as usrs
+import data.categories as ctgs
 
 from datetime import datetime
 
@@ -12,7 +14,9 @@ def temp_journal():
     journal_id = jrnls._get_journal_id()
     timestamp = jrnls._get_test_timestamp()
     prompt = f"UniquePrompt_{timestamp}"
-    ret  = jrnls.add_journal(journal_id, "", prompt, "This is a journal fixture")
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
+    ret  = jrnls.add_journal(journal_id, "", prompt, "This is a journal fixture", user_id, category_id)
     yield journal_id
     if jrnls.exists(journal_id):
         jrnls.del_journal(journal_id)
@@ -66,6 +70,16 @@ def test_get_content(temp_journal):
 def test_get_modified(temp_journal):
     journal = jrnls.get_journal(temp_journal)
     assert jrnls.get_modified(journal) == journal[jrnls.MODIFIED]
+
+
+def test_get_user(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_user(journal) == journal[jrnls.USER]
+
+
+def test_get_modified(temp_journal):
+    journal = jrnls.get_journal(temp_journal)
+    assert jrnls.get_category(journal) == journal[jrnls.CATEGORY]
 
 
 """
@@ -128,7 +142,9 @@ NON_STRING = 123
 """
 def test_add_journal():
     journal_id = jrnls._get_journal_id()
-    ret = jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT)
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
+    ret = jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, user_id, category_id)
     assert jrnls.exists(journal_id)
     assert isinstance(ret, bool)
 
@@ -137,20 +153,26 @@ def test_add_journal():
     assert jrnls.get_title(added_journal) == ADD_TITLE
     assert jrnls.get_prompt(added_journal) == ADD_PROMPT0
     assert jrnls.get_content(added_journal) == ADD_CONTENT
+    assert jrnls.get_user(added_journal) == user_id
+    assert jrnls.get_category(added_journal) == category_id
     jrnls.del_journal(journal_id)
 
 
 def test_add_dup_journal_id(temp_journal):
     journal_id = temp_journal
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
         
     # attempting to add journal again
     with pytest.raises(ValueError):
-        jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT1, ADD_CONTENT)
+        jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT1, ADD_CONTENT, user_id, category_id)
 
 
 def test_add_journal_without_title_or_content():
     journal_id = jrnls._get_journal_id()
-    ret = jrnls.add_journal(journal_id, "", ADD_PROMPT1, "")
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
+    ret = jrnls.add_journal(journal_id, "", ADD_PROMPT1, "", user_id, category_id)
     assert jrnls.exists(journal_id)
     assert isinstance(ret, bool)
 
@@ -159,6 +181,8 @@ def test_add_journal_without_title_or_content():
     assert jrnls.get_title(added_journal) == jrnls.DEFAULT_TITLE
     assert jrnls.get_prompt(added_journal) == ADD_PROMPT1
     assert jrnls.get_content(added_journal) == ""
+    assert jrnls.get_user(added_journal) == user_id
+    assert jrnls.get_category(added_journal) == category_id
     jrnls.del_journal(journal_id)
 
 
@@ -166,33 +190,43 @@ def test_add_journal_dup_prompt(temp_journal):
     temp_journal_entry = jrnls.get_journal(temp_journal)
     new_journal_id = jrnls._get_journal_id()
     temp_prompt = jrnls.get_prompt(temp_journal_entry)
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
     with pytest.raises(ValueError):
-        jrnls.add_journal(new_journal_id, "", temp_prompt, "")
+        jrnls.add_journal(new_journal_id, "", temp_prompt, "", user_id, category_id)
 
 
 def test_add_journal_prompt_too_long():
     journal_id = jrnls._get_journal_id()
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
     long_prompt = "x" * 500  # Assuming there's a limit to prompt length
     with pytest.raises(ValueError):
-        jrnls.add_journal(journal_id, ADD_TITLE, long_prompt, ADD_CONTENT)
+        jrnls.add_journal(journal_id, ADD_TITLE, long_prompt, ADD_CONTENT, user_id, category_id)
 
 
 def test_add_journal_non_string_title():
     journal_id = jrnls._get_journal_id()
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
     with pytest.raises(TypeError):
-        jrnls.add_journal(journal_id, NON_STRING, ADD_PROMPT1, ADD_CONTENT)
+        jrnls.add_journal(journal_id, NON_STRING, ADD_PROMPT1, ADD_CONTENT, user_id, category_id)
 
 
 def test_add_journal_non_string_prompt():
     journal_id = jrnls._get_journal_id()
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
     with pytest.raises(TypeError):
-        jrnls.add_journal(journal_id, ADD_TITLE, NON_STRING, ADD_CONTENT)
+        jrnls.add_journal(journal_id, ADD_TITLE, NON_STRING, ADD_CONTENT, user_id, category_id)
 
 
 def test_add_journal_non_string_content():
     journal_id = jrnls._get_journal_id()
+    user_id = usrs._get_user_id()
+    category_id = ctgs._get_category_id()
     with pytest.raises(TypeError):
-        jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT1, NON_STRING)
+        jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT1, NON_STRING, user_id, category_id)
 
 
 def test_del_journal(temp_journal):
@@ -217,8 +251,11 @@ def test_update_journal(temp_journal):
     prev_journal = jrnls.get_journal(journal_id)
     prev_timestamp = jrnls.get_timestamp(prev_journal)
     prev_modified = jrnls.get_modified(prev_journal)
+    prev_user = jrnls.get_user(prev_journal)
 
-    update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, jrnls.CONTENT: UPDATED_CONTENT}
+    updated_category = ctgs._get_category_id()
+    update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, 
+                   jrnls.CONTENT: UPDATED_CONTENT, jrnls.CATEGORY: updated_category}
     assert jrnls.update_journal(journal_id, update_data)
 
     updated_journal = jrnls.get_journal(journal_id)
@@ -227,6 +264,8 @@ def test_update_journal(temp_journal):
     assert jrnls.get_prompt(updated_journal) == UPDATED_PROMPT
     assert jrnls.get_content(updated_journal) == UPDATED_CONTENT
     assert jrnls.get_modified(updated_journal) >= prev_modified
+    assert jrnls.get_user(updated_journal) == prev_user
+    assert jrnls.get_category(updated_journal) == updated_category
 
 
 def test_update_journal_partially(temp_journal):
@@ -236,6 +275,8 @@ def test_update_journal_partially(temp_journal):
     prev_prompt = jrnls.get_prompt(prev_journal)
     prev_content = jrnls.get_content(prev_journal)
     prev_modified = jrnls.get_modified(prev_journal)
+    prev_user = jrnls.get_user(prev_journal)
+    prev_category = jrnls.get_category(prev_journal)
 
     update_data = {jrnls.TITLE: UPDATED_TITLE}
     assert jrnls.update_journal(journal_id, update_data)
@@ -246,6 +287,8 @@ def test_update_journal_partially(temp_journal):
     assert jrnls.get_prompt(updated_journal) == prev_prompt
     assert jrnls.get_content(updated_journal) == prev_content
     assert jrnls.get_modified(updated_journal) >= prev_modified
+    assert jrnls.get_user(updated_journal) == prev_user
+    assert jrnls.get_category(updated_journal) == prev_category
 
 
 def test_update_journal_nonexistent_journal():

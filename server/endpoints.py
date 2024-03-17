@@ -295,10 +295,20 @@ class Category(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-journal_fields = api.model('Journal', {
+journal_post_fields = api.model('Journal Post', {
     journals.TITLE: fields.String,
     journals.PROMPT: fields.String,
     journals.CONTENT: fields.String,
+    journals.USER: fields.String,
+    journals.CATEGORY: fields.String,
+})
+
+
+journal_put_fields = api.model('Journal Put', {
+    journals.TITLE: fields.String,
+    journals.PROMPT: fields.String,
+    journals.CONTENT: fields.String,
+    journals.CATEGORY: fields.String,
 })
 
 
@@ -319,7 +329,7 @@ class Journals(Resource):
             DATA: journals.get_journals(),
         }
 
-    @api.expect(journal_fields)
+    @api.expect(journal_post_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
     def post(self):
@@ -330,8 +340,17 @@ class Journals(Resource):
         title = request.json[journals.TITLE]
         prompt = request.json[journals.PROMPT]
         content = request.json[journals.CONTENT]
+        user_id = request.json[journals.USER]
+        category_id = request.json[journals.CATEGORY]
+
+        if not usrs.exists(user_id):
+            raise wz.NotAcceptable("Please input a user ID that exists.")
+        if not categories.exists(category_id):
+            raise wz.NotAcceptable("Please input a category ID that exists.")
+
         try:
-            ret = journals.add_journal(journal_id, title, prompt, content)
+            ret = journals.add_journal(journal_id, title, prompt, content,
+                                       user_id, category_id)
             if ret is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')
             return {JOURNAL_ID: journal_id}
@@ -344,7 +363,7 @@ class UpdateJournal(Resource):
     """
     Updates a Journal's details.
     """
-    @api.expect(journal_fields)
+    @api.expect(journal_put_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
     def put(self, journal_id):

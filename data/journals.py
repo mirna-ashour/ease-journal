@@ -4,6 +4,8 @@ This module interfaces to our journal data.
 import random
 # import time
 import data.db_connect as dbc
+import data.users as usrs
+import data.categories as ctgs
 
 from datetime import datetime, timedelta
 
@@ -21,6 +23,8 @@ TITLE = 'title'
 PROMPT = 'prompt'
 CONTENT = 'content'
 MODIFIED = 'modified'
+USER = 'user'
+CATEGORY = 'category'
 
 DEFAULT_TITLE = 'Untitled'
 TEST_PROMPT = 'Reflect on an act of kindness.'
@@ -55,6 +59,8 @@ def get_test_journal():
     test_journal[PROMPT] = TEST_PROMPT
     test_journal[CONTENT] = 'some content'
     test_journal[MODIFIED] = test_journal[TIMESTAMP]
+    test_journal[USER] = usrs._get_user_id()
+    test_journal[CATEGORY] = ctgs._get_category_id()
     return test_journal
 
 
@@ -63,9 +69,16 @@ def get_journals() -> dict:
     return dbc.fetch_all_as_dict(JOURNAL_ID, JOURNALS_COLLECT)
 
 
-def add_journal(journal_id: str, title: str, prompt: str, content: str):
+def add_journal(journal_id: str, title: str, prompt: str, content: str,
+                user_id: str, category_id: str):
     if exists(journal_id):
         raise ValueError("Duplicate journal")
+
+    # The commented checks below are done in the Journal POST endpoint
+    # if not usrs.exists(user_id):
+    #     raise wz.NotAcceptable("Please input a user ID that exists.")
+    # if not categories.exists(user_id):
+    #     raise wz.NotAcceptable("Please input a category ID that exists.")
 
     # Check if the input types are correct
     if not isinstance(title, str):
@@ -100,6 +113,8 @@ def add_journal(journal_id: str, title: str, prompt: str, content: str):
     journal_entry[PROMPT] = prompt
     journal_entry[CONTENT] = content
     journal_entry[MODIFIED] = modified
+    journal_entry[USER] = user_id
+    journal_entry[CATEGORY] = category_id
     dbc.connect_db()
     _id = dbc.insert_one(JOURNALS_COLLECT, journal_entry)
     return _id is not None
@@ -142,6 +157,14 @@ def get_modified(journal: dict):
     return journal.get(MODIFIED)
 
 
+def get_user(journal: dict):
+    return journal.get(USER)
+
+
+def get_category(journal: dict):
+    return journal.get(CATEGORY)
+
+
 def update_journal(journal_id: str, journal_data: dict) -> bool:
     """
     Updates a journal's information.
@@ -160,7 +183,7 @@ def update_journal(journal_id: str, journal_data: dict) -> bool:
         raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
-    for key in [TITLE, PROMPT, CONTENT]:
+    for key in [TITLE, PROMPT, CONTENT, CATEGORY]:
         if key in journal_data:
             update_data[key] = journal_data[key]
 
