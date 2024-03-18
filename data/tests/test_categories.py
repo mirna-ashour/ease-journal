@@ -77,6 +77,11 @@ def test_get_title(temp_category):
     assert cats.get_title(category) == category[cats.TITLE]
 
 
+def test_get_journals(temp_category):
+    category = cats.get_category(temp_category)
+    assert cats.get_journals(category) == category[cats.JOURNALS]
+
+
 def test_get_categories(temp_category):
     categories = cats.get_categories()
     assert isinstance(categories, dict)
@@ -91,14 +96,12 @@ def test_get_categories(temp_category):
         assert cats.DATE_TIME in category
         assert cats.JOURNALS in category
 
-
         assert isinstance(category[cats.TITLE], str)
         assert isinstance(category[cats.USER], str)
         date_time = str(category[cats.DATE_TIME])
         assert isinstance(datetime.strptime(date_time, FORMAT), datetime)
-        assert isinstance(category[cats.JOURNALS], list)
+        assert isinstance(category[cats.JOURNALS], dict)
 
-    
     assert cats.exists(temp_category)
 
 

@@ -55,7 +55,7 @@ def get_test_category():
     test_category[TITLE] = "untitled"
     test_category[USER] = "1234567890"
     test_category[DATE_TIME] = "2002-11-20 12:00:00"
-    test_category[JOURNALS] = []
+    test_category[JOURNALS] = {}
     return test_category
 
 
@@ -116,7 +116,7 @@ def add_category(category_id: str, title: str, user_id: str):
     category_entry[TITLE] = title
     category_entry[USER] = user_id
     category_entry[DATE_TIME] = date_time
-    category_entry[JOURNALS] = []
+    category_entry[JOURNALS] = {}
     dbc.connect_db()
     _id = dbc.insert_one(CATEGORIES_COLLECT, category_entry)
     return _id is not None
@@ -140,6 +140,10 @@ def get_category(category_id: str) -> dict:
 
 def get_title(category: dict):
     return category.get(TITLE)
+
+
+def get_journals(category: dict):
+    return category.get(JOURNALS)
 
 
 def update_category(category_id: str, category_data: dict) -> bool:
