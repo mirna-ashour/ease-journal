@@ -17,7 +17,7 @@ FORMAT = "%Y-%m-%d"
 @pytest.fixture(scope='function')
 def temp_user():
     user_id = usrs._get_user_id()
-    ret = usrs.add_user(user_id, "John", "smith", "2002-11-20", "testemail@gmail.com", "Password1")
+    ret = usrs.add_user(user_id, ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, ADD_PASSWORD)
     yield user_id
     if usrs.exists(user_id):
         usrs.del_user(user_id)

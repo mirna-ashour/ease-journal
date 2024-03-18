@@ -1,5 +1,3 @@
-from datetime import datetime
-
 """
 This module interfaces to our categories data.
 """
@@ -7,6 +5,8 @@ This module interfaces to our categories data.
 # import data.users as usrs
 import data.db_connect as dbc
 import random
+
+from datetime import datetime
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 CATEGORIES_COLLECT = 'categories'
@@ -142,6 +142,10 @@ def get_title(category: dict):
     return category.get(TITLE)
 
 
+def get_user(category: dict):
+    return category.get(USER)
+
+
 def get_journals(category: dict):
     return category.get(JOURNALS)
 
@@ -164,7 +168,7 @@ def update_category(category_id: str, category_data: dict) -> bool:
         raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
-    for key in [TITLE]:
+    for key in [TITLE, JOURNALS]:
         if key in category_data:
             update_data[key] = category_data[key]
 

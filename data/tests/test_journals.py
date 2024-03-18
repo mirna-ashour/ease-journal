@@ -9,13 +9,47 @@ from datetime import datetime
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
+@pytest.fixture(scope='module')
+def temp_user():
+    """
+    Fixture to create a temporary user for testing purposes.
+    Adds a user to the database and deletes it after the test module completes.
+    """
+    user_id = usrs._get_user_id()
+    ret = usrs.add_user(user_id, "John", "Smith", "2002-11-20", "testemail@gmail.com", "Password1")
+    yield user_id
+    if usrs.exists(user_id):
+        usrs.del_user(user_id)
+
+
+@pytest.fixture(scope='module')
+def temp_category(temp_user):
+    """
+    Fixture to create a temporary category for testing purposes.
+    Adds a category to the database associated with a temporary user,
+    and deletes it after the test module completes.
+    """
+    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    title = ctgs._get_title_name()
+    ret = ctgs.add_category(category_id, title, user_id)
+    yield category_id
+    if ctgs.exists(category_id):
+        ctgs.del_category(category_id)
+
+
 @pytest.fixture(scope='function')
-def temp_journal():
+def temp_journal(temp_category):
+    """
+    Fixture to create a temporary journal entry for testing purposes.
+    Adds a journal entry to the database associated with a temporary user and category,
+    and deletes it after each test function that uses this fixture completes.
+    """
     journal_id = jrnls._get_journal_id()
     timestamp = jrnls._get_test_timestamp()
     prompt = f"UniquePrompt_{timestamp}"
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = ctgs.get_user(ctgs.get_category(temp_category))
+    category_id = temp_category
     ret  = jrnls.add_journal(journal_id, "", prompt, "This is a journal fixture", user_id, category_id)
     yield journal_id
     if jrnls.exists(journal_id):
@@ -140,10 +174,10 @@ NON_STRING = 123
         - After adding a sample journal entry, it is 
           in the list of journals with valid input
 """
-def test_add_journal():
+def test_add_journal(temp_user, temp_category):
     journal_id = jrnls._get_journal_id()
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    category_id = temp_category
     ret = jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT0, ADD_CONTENT, user_id, category_id)
     assert jrnls.exists(journal_id)
     assert isinstance(ret, bool)
@@ -160,18 +194,18 @@ def test_add_journal():
 
 def test_add_dup_journal_id(temp_journal):
     journal_id = temp_journal
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = jrnls.get_user(jrnls.get_journal(journal_id))
+    category_id = jrnls.get_category(jrnls.get_journal(journal_id))
         
     # attempting to add journal again
     with pytest.raises(ValueError):
         jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT1, ADD_CONTENT, user_id, category_id)
 
 
-def test_add_journal_without_title_or_content():
+def test_add_journal_without_title_or_content(temp_user, temp_category):
     journal_id = jrnls._get_journal_id()
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    category_id = temp_category
     ret = jrnls.add_journal(journal_id, "", ADD_PROMPT1, "", user_id, category_id)
     assert jrnls.exists(journal_id)
     assert isinstance(ret, bool)
@@ -187,44 +221,45 @@ def test_add_journal_without_title_or_content():
 
 
 def test_add_journal_dup_prompt(temp_journal):
-    temp_journal_entry = jrnls.get_journal(temp_journal)
+    journal_id = temp_journal
+    existing_journal = jrnls.get_journal(journal_id)
+    existing_prompt = jrnls.get_prompt(existing_journal)
     new_journal_id = jrnls._get_journal_id()
-    temp_prompt = jrnls.get_prompt(temp_journal_entry)
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = jrnls.get_user(jrnls.get_journal(journal_id))
+    category_id = jrnls.get_category(jrnls.get_journal(journal_id))
     with pytest.raises(ValueError):
-        jrnls.add_journal(new_journal_id, "", temp_prompt, "", user_id, category_id)
+        jrnls.add_journal(new_journal_id, "", existing_prompt, "", user_id, category_id)
 
 
-def test_add_journal_prompt_too_long():
+def test_add_journal_prompt_too_long(temp_user, temp_category):
     journal_id = jrnls._get_journal_id()
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    category_id = temp_category
     long_prompt = "x" * 500  # Assuming there's a limit to prompt length
     with pytest.raises(ValueError):
         jrnls.add_journal(journal_id, ADD_TITLE, long_prompt, ADD_CONTENT, user_id, category_id)
 
 
-def test_add_journal_non_string_title():
+def test_add_journal_non_string_title(temp_user, temp_category):
     journal_id = jrnls._get_journal_id()
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    category_id = temp_category
     with pytest.raises(TypeError):
         jrnls.add_journal(journal_id, NON_STRING, ADD_PROMPT1, ADD_CONTENT, user_id, category_id)
 
 
-def test_add_journal_non_string_prompt():
+def test_add_journal_non_string_prompt(temp_user, temp_category):
     journal_id = jrnls._get_journal_id()
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    category_id = temp_category
     with pytest.raises(TypeError):
         jrnls.add_journal(journal_id, ADD_TITLE, NON_STRING, ADD_CONTENT, user_id, category_id)
 
 
-def test_add_journal_non_string_content():
+def test_add_journal_non_string_content(temp_user, temp_category):
     journal_id = jrnls._get_journal_id()
-    user_id = usrs._get_user_id()
-    category_id = ctgs._get_category_id()
+    user_id = temp_user
+    category_id = temp_category
     with pytest.raises(TypeError):
         jrnls.add_journal(journal_id, ADD_TITLE, ADD_PROMPT1, NON_STRING, user_id, category_id)
 

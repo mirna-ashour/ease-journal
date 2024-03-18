@@ -1,6 +1,7 @@
 """
 This module interfaces to our journal data.
 """
+
 import random
 # import time
 import data.db_connect as dbc
@@ -117,6 +118,15 @@ def add_journal(journal_id: str, title: str, prompt: str, content: str,
     journal_entry[CATEGORY] = category_id
     dbc.connect_db()
     _id = dbc.insert_one(JOURNALS_COLLECT, journal_entry)
+
+    # Add (journal_id: title) key-value pair to the
+    # corresponding category's Journals field
+    category = ctgs.get_category(category_id)
+    category_journals = ctgs.get_journals(category)
+    category_journals[journal_id] = title
+    category_data = {ctgs.JOURNALS: category_journals}
+    ctgs.update_category(category_id, category_data)
+
     return _id is not None
 
 

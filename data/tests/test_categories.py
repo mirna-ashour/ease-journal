@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
 import data.categories as cats
+import data.users as usrs
 import pytest
 from datetime import datetime
 
@@ -8,10 +9,28 @@ from datetime import datetime
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
+@pytest.fixture(scope='module')
+def temp_user():
+    """
+    Fixture to create a temporary user for testing purposes.
+    Adds a user to the database and deletes it after the test module completes.
+    """
+    user_id = usrs._get_user_id()
+    ret = usrs.add_user(user_id, "John", "Smith", "2002-11-20", "testemail@gmail.com", "Password1")
+    yield user_id
+    if usrs.exists(user_id):
+        usrs.del_user(user_id)
+
+
 @pytest.fixture(scope='function')
-def temp_category():
+def temp_category(temp_user):
+    """
+    Fixture to create a temporary category for testing purposes.
+    Adds a category to the database associated with a temporary user,
+    and deletes it after each test function that uses this fixture completes.
+    """
     category_id = cats._get_category_id()
-    user_id = cats._get_user_id()
+    user_id = temp_user
     title = cats._get_title_name()
     ret = cats.add_category(category_id, title, user_id)
     yield category_id
@@ -105,20 +124,20 @@ def test_get_categories(temp_category):
     assert cats.exists(temp_category)
 
 
-def test_add_category():
+def test_add_category(temp_user):
     category_id = cats._get_category_id()
     title = cats._get_title_name()
-    user_id = cats._get_user_id()
+    user_id = temp_user
     ret = cats.add_category(category_id, title, user_id)
     assert cats.exists(category_id)
     assert isinstance(ret, bool)
     cats.del_category(category_id)
 
 
-def test_add_category_without_title():
+def test_add_category_without_title(temp_user):
     category_id = cats._get_category_id()
     title = ""
-    user_id = cats._get_user_id()
+    user_id = temp_user
 
     # attempting to add category without a title 
     with pytest.raises(ValueError):
@@ -127,7 +146,7 @@ def test_add_category_without_title():
 
 def test_add_dup_category_id(temp_category):
     cat_id = temp_category
-    user = cats._get_user_id()
+    user = cats.get_user(cats.get_category(cat_id))
     title = cats._get_title_name()
         
     # attempting to add category again
@@ -136,14 +155,16 @@ def test_add_dup_category_id(temp_category):
 
 
 def test_add_dup_category_title(temp_category):
-    category = cats.get_category(temp_category)
+    existing_category = cats.get_category(temp_category)
+    existing_title = cats.get_title(existing_category)
+    user = cats.get_user(existing_category)
 
-    cat_id = cats._get_category_id()
-    title = cats.get_title(category)
-    user = cats._get_user_id()
-    
+    # Ensure that the category title is not empty
+    assert existing_title is not None
+
+    # Attempt to add a new category with the same title
     with pytest.raises(ValueError):
-        cats.add_category(cat_id, title, user)
+        cats.add_category(cats._get_category_id(), existing_title, user)
        
        
 def test_del_category(temp_category):
@@ -170,17 +191,17 @@ def test_update_category(temp_category):
     assert cats.get_title(updated_category) == UPDATED_TITLE
 
 
-# This test must be updated if more category attributes are added
 def test_update_category_partially(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
-    prev_title = cats.get_title(prev_category)
-
-    update_data = {cats.DATE_TIME: "03-01-2024 10:57:00"}
+    prev_journals = cats.get_journals(prev_category)
+    
+    update_data = {cats.TITLE: UPDATED_TITLE}
     assert cats.update_category(category_id, update_data)
 
     updated_category = cats.get_category(category_id)
-    assert cats.get_title(updated_category) == prev_title
+    assert cats.get_title(updated_category) == UPDATED_TITLE
+    assert cats.get_journals(updated_category) == prev_journals
 
 
 def test_update_category_nonexistent_category():
