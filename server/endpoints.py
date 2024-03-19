@@ -183,9 +183,14 @@ class Users(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
-category_fields = api.model('NewCategory', {
+category_post_fields = api.model('NewCategory', {
     categories.TITLE: fields.String(default=""),
     categories.USER: fields.String,
+})
+
+
+category_put_fields = api.model('UpdateCategory', {
+    categories.TITLE: fields.String(default=""),
 })
 
 
@@ -219,7 +224,7 @@ class UpdateCategory(Resource):
     """
     Updates a category's details.
     """
-    @api.expect(category_fields)
+    @api.expect(category_put_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
     def put(self, category_id):
@@ -272,7 +277,7 @@ class Category(Resource):
             DATA: categories.get_categories(),
         }
 
-    @api.expect(category_fields)
+    @api.expect(category_post_fields)
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not Acceptable')
     def post(self):
