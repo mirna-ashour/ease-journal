@@ -194,7 +194,40 @@ def update_journal(journal_id: str, journal_data: dict) -> bool:
 
     update_data = {}
     for key in [TITLE, PROMPT, CONTENT, CATEGORY]:
-        if key in journal_data:
+        if key in journal_data and (len(journal_data[key]) != 0):
+
+            # if key == CATEGORY:
+            #     # Maybe we can do this on the endpoints side?
+            #     # if not ctgs.exists(journal_data[CATEGORY]):
+            #     # raise ValueError("Please input a category ID that exists.")
+
+            #     # remove journal from old category
+            #     journal_entry = get_journal(journal_id)
+            #     old_cat_id = get_category(journal_entry)
+            #     old_category_entry = ctgs.get_category(old_cat_id)
+            #     old_journals_dict = ctgs.get_journals(old_category_entry)
+            #     del old_journals_dict[journal_id]
+            #     category_data = {ctgs.JOURNALS: old_journals_dict}
+            #     ctgs.update_category(old_cat_id, category_data)
+
+            #     # add journal to new category
+            #     new_cat_id = journal_data[CATEGORY]
+            #     new_category_entry = ctgs.get_category(new_cat_id)
+            #     new_journals_dict = ctgs.get_journals(new_category_entry)
+            #     new_journals_dict[journal_id] = get_title(
+            #         get_journal(journal_id))
+            #     category_data2 = {ctgs.JOURNALS: new_journals_dict}
+            #     ctgs.update_category(journal_data[CATEGORY], category_data2)
+
+            # if key == TITLE:
+            #     journal_entry = get_journal(journal_id)
+            #     old_cat_id = get_category(journal_entry)
+            #     old_category_entry = ctgs.get_category(old_cat_id)
+            #     old_journals_dict = ctgs.get_journals(old_category_entry)
+            #     old_journals_dict[journal_id] = journal_data[TITLE]
+            #     category_data = {ctgs.JOURNALS: old_journals_dict}
+            #     ctgs.update_category(old_cat_id, category_data)
+
             update_data[key] = journal_data[key]
 
     # To see a measureable difference between TIMESTAMP and MODIFIED
