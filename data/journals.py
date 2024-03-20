@@ -196,7 +196,7 @@ def update_journal(journal_id: str, journal_data: dict) -> bool:
     for key in [TITLE, PROMPT, CONTENT, CATEGORY]:
         if key in journal_data and (len(journal_data[key]) != 0):
 
-            if key == CATEGORY:
+            if key == CATEGORY and (len(journal_data[key]) != 0):
                 if not ctgs.exists(journal_data[CATEGORY]):
                     raise ValueError("Please input a category ID that exists.")
 
@@ -217,7 +217,7 @@ def update_journal(journal_id: str, journal_data: dict) -> bool:
                 new_category_data = {ctgs.JOURNALS: new_category_journals}
                 ctgs.update_category(new_cat_id, new_category_data)
 
-            if key == TITLE:
+            if key == TITLE and (len(journal_data[key]) != 0):
                 journal_entry = get_journal(journal_id)
                 cat_id = get_category(journal_entry)
                 category = ctgs.get_category(cat_id)

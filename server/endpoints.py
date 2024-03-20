@@ -310,10 +310,10 @@ journal_post_fields = api.model('Journal Post', {
 
 
 journal_put_fields = api.model('Journal Put', {
-    journals.TITLE: fields.String,
-    journals.PROMPT: fields.String,
-    journals.CONTENT: fields.String,
-    journals.CATEGORY: fields.String,
+    journals.TITLE: fields.String(default=""),
+    journals.PROMPT: fields.String(default=""),
+    journals.CONTENT: fields.String(default=""),
+    journals.CATEGORY: fields.String(default=""),
 })
 
 
