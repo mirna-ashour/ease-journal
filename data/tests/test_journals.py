@@ -288,7 +288,7 @@ def test_update_journal(temp_journal):
     prev_modified = jrnls.get_modified(prev_journal)
     prev_user = jrnls.get_user(prev_journal)
 
-    updated_category = ctgs._get_category_id()
+    updated_category = jrnls.get_category(jrnls.get_journal(journal_id))
     update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, 
                    jrnls.CONTENT: UPDATED_CONTENT, jrnls.CATEGORY: updated_category}
     assert jrnls.update_journal(journal_id, update_data)
@@ -329,6 +329,14 @@ def test_update_journal_partially(temp_journal):
 def test_update_journal_nonexistent_journal():
     journal_id = jrnls._get_journal_id()
     update_data = {jrnls.TITLE: UPDATED_TITLE, jrnls.PROMPT: UPDATED_PROMPT, jrnls.CONTENT: UPDATED_CONTENT}
+    with pytest.raises(ValueError):
+        jrnls.update_journal(journal_id, update_data)
+
+
+def test_update_journal_nonexistent_new_category(temp_journal):
+    journal_id = temp_journal
+    new_category_id = ctgs._get_category_id()
+    update_data = {jrnls.CATEGORY: new_category_id}
     with pytest.raises(ValueError):
         jrnls.update_journal(journal_id, update_data)
 
