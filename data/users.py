@@ -1,7 +1,6 @@
 """
 This module interfaces to our user data.
 """
-
 import re
 import data.db_connect as dbc
 import random
@@ -92,7 +91,6 @@ def add_user(user_id: str, first_name: str, last_name: str,
 
     # if email.find('@') > email.find('.'):
     #     raise ValueError('Invalid email address. '
-    #                      'Incorrect order of domain and dot in email address.')
 
     # if len(email) < MIN_USER_EMAIL_LEN:
     #     raise ValueError(f'Email must be at least '
