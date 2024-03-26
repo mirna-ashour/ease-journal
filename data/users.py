@@ -2,6 +2,7 @@
 This module interfaces to our user data.
 """
 
+import re
 import data.db_connect as dbc
 import random
 from datetime import datetime
@@ -78,21 +79,24 @@ def add_user(user_id: str, first_name: str, last_name: str,
         raise ValueError(f'Last name must be at least '
                          f'{MIN_USER_NAME_LEN} characters.')
 
-    if email.find('@') == -1:
-        raise ValueError('Invalid email address. '
-                         'Missing domain (@) in email address.')
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        raise ValueError('Invalid email address.')
 
-    if email.find('.') == -1:
-        raise ValueError('Invalid email address. '
-                         'Missing dot (.) in email address.')
+    # if email.find('@') == -1:
+    #     raise ValueError('Invalid email address. '
+    #                      'Missing domain (@) in email address.')
 
-    if email.find('@') > email.find('.'):
-        raise ValueError('Invalid email address. '
-                         'Incorrect order of domain and dot in email address.')
+    # if email.find('.') == -1:
+    #     raise ValueError('Invalid email address. '
+    #                      'Missing dot (.) in email address.')
 
-    if len(email) < MIN_USER_EMAIL_LEN:
-        raise ValueError(f'Email must be at least '
-                         f'{MIN_USER_EMAIL_LEN} characters.')
+    # if email.find('@') > email.find('.'):
+    #     raise ValueError('Invalid email address. '
+    #                      'Incorrect order of domain and dot in email address.')
+
+    # if len(email) < MIN_USER_EMAIL_LEN:
+    #     raise ValueError(f'Email must be at least '
+    #                      f'{MIN_USER_EMAIL_LEN} characters.')
 
     lowercase_email = email.lower()
 
