@@ -65,7 +65,7 @@ def add_user(user_id: str, first_name: str, last_name: str,
              dob: str, email: str, password: str):
 
     if exists(user_id):
-        raise ValueError("Duplicate user.")
+        raise ValueError("This user is already registered.")
 
     if len(user_id) != USER_ID_LEN:
         raise ValueError(f'User id must be {USER_ID_LEN} characters.')
@@ -103,7 +103,7 @@ def add_user(user_id: str, first_name: str, last_name: str,
                                                     '$options': 'i'}})
 
     if existing_email:
-        raise ValueError("Duplicate Email.")
+        raise ValueError("A user is already registered under this email.")
 
     if len(password) < MIN_USER_PSWD_LEN:
         raise ValueError('Password must be at least 8 characters long.')
