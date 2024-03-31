@@ -169,8 +169,11 @@ def update_category(category_id: str, category_data: dict) -> bool:
 
     update_data = {}
     for key in [TITLE, JOURNALS]:
-        if key in category_data and (len(category_data[key]) != 0):
-            update_data[key] = category_data[key]
+        if key in category_data:
+            if key == TITLE and (len(category_data[key]) != 0):
+                update_data[key] = category_data[key]
+            elif key == JOURNALS:  # Journals dictionary can be empty
+                update_data[key] = category_data[key]
 
     dbc.connect_db()
     dbc.update_doc(CATEGORIES_COLLECT, {CATEGORY_ID: category_id}, update_data)
