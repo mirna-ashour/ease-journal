@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
 import data.categories as cats
+import data.journals as jrnls
 import data.users as usrs
 import pytest
 from datetime import datetime
@@ -191,7 +192,7 @@ def test_update_category(temp_category):
     assert cats.get_title(updated_category) == UPDATED_TITLE
 
 
-def test_update_category_partially(temp_category):
+def test_update_category_title(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
     prev_journals = cats.get_journals(prev_category)
@@ -201,6 +202,34 @@ def test_update_category_partially(temp_category):
 
     updated_category = cats.get_category(category_id)
     assert cats.get_title(updated_category) == UPDATED_TITLE
+    assert cats.get_journals(updated_category) == prev_journals
+
+
+def test_update_category_journals(temp_category):
+    category_id = temp_category
+    prev_category = cats.get_category(category_id)
+    prev_title = cats.get_title(prev_category)
+
+    new_journals = {jrnls._get_journal_id() : "New Journal"}
+    update_data = {cats.JOURNALS: new_journals}
+    assert cats.update_category(category_id, update_data)
+
+    updated_category = cats.get_category(category_id)
+    assert cats.get_title(updated_category) == prev_title
+    assert cats.get_journals(updated_category) == new_journals
+
+
+def test_update_category_invalid_key(temp_category):
+    category_id = temp_category
+    prev_category = cats.get_category(category_id)
+    prev_title = cats.get_title(prev_category)
+    prev_journals = cats.get_journals(prev_category)
+    
+    update_data = {"INVALID": "KEY"}
+    assert cats.update_category(category_id, update_data)
+
+    updated_category = cats.get_category(category_id)
+    assert cats.get_title(updated_category) == prev_title
     assert cats.get_journals(updated_category) == prev_journals
 
 
