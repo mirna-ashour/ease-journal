@@ -209,14 +209,18 @@ def test_update_category_journals(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
     prev_title = cats.get_title(prev_category)
+    prev_journals = cats.get_journals(prev_category)
 
-    new_journals = {jrnls._get_journal_id() : "New Journal"}
-    update_data = {cats.JOURNALS: new_journals}
-    assert cats.update_category(category_id, update_data)
+    journal_id = jrnls._get_journal_id()
+    new_journal = jrnls.add_journal(journal_id, "", "", "", 
+        cats.get_user(prev_category), category_id)
+    journal_update_data = {jrnls.TITLE: UPDATED_TITLE}
+    assert jrnls.update_journal(journal_id, journal_update_data)
 
     updated_category = cats.get_category(category_id)
     assert cats.get_title(updated_category) == prev_title
-    assert cats.get_journals(updated_category) == new_journals
+    assert cats.get_journals(updated_category) != prev_journals
+    assert cats.get_journals(updated_category) == {journal_id: UPDATED_TITLE}
 
 
 def test_update_category_invalid_key(temp_category):

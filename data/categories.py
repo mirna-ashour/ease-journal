@@ -5,7 +5,7 @@ This module interfaces to our categories data.
 # import data.users as usrs
 import data.db_connect as dbc
 import random
-# import data.journals as jrnls
+import data.journals as jrnls
 
 from datetime import datetime
 
@@ -129,12 +129,12 @@ def exists(category_id: str) -> bool:
 
 def del_category(category_id: str):
     if exists(category_id):
-        # category_entry = get_category(category_id)
-        # journals_entry = get_journals(category_entry)
+        category_entry = get_category(category_id)
+        journals_entry = get_journals(category_entry)
 
-        # if len(journals_entry) != 0:
-        #     for key in journals_entry:
-        #         jrnls.del_journal(key)
+        if len(journals_entry) != 0:
+            for key in journals_entry:
+                jrnls.del_journal(key)
 
         return dbc.del_one(CATEGORIES_COLLECT, {CATEGORY_ID: category_id})
     else:
