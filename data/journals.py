@@ -134,6 +134,17 @@ def del_journal(journal_id: str):
     dbc.connect_db()
     if not exists(journal_id):
         raise ValueError(f"Delete failure: {journal_id} not in database.")
+
+    # Removing the journal entry from
+    # the category it belongs to before deleting
+    journal_entry = get_journal(journal_id)
+    category_id = get_category(journal_entry)
+    category_entry = ctgs.get_category(category_id)
+    category_entry_journals = ctgs.get_journals(category_entry)
+    del category_entry_journals[journal_id]
+    category_data = {ctgs.JOURNALS: category_entry_journals}
+    ctgs.update_category(category_id, category_data)
+
     dbc.del_one(JOURNALS_COLLECT, {JOURNAL_ID: journal_id})
     return True
 
