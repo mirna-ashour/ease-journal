@@ -126,9 +126,18 @@ def add_user(user_id: str, first_name: str, last_name: str,
     return _id is not None
 
 
-def get_user(user_id: str) -> dict:
+def get_user(identifier: str) -> dict:
     dbc.connect_db()
-    return dbc.fetch_one(USERS_COLLECT, {USER_ID: user_id})
+    if identifier.isdigit():
+        return dbc.fetch_one(USERS_COLLECT, {USER_ID: identifier})
+    elif re.match(r"[^@]+@[^@]+\.[^@]+", identifier):
+        lowercase_email = identifier.lower()
+        return dbc.fetch_one(USERS_COLLECT, {EMAIL:
+                                             {'$regex':
+                                              f'^{lowercase_email}$',
+                                              '$options': 'i'}})
+    else:
+        raise ValueError("Invalid identifier. Use 'user_id' or 'email'.")
 
 
 def exists(user_id: str) -> bool:

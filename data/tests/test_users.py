@@ -33,7 +33,7 @@ def test_get_test_user():
     assert isinstance(usrs.get_test_user(), dict)
 
 
-def test_get_user(temp_user):
+def test_get_user_by_user_id(temp_user):
     user = usrs.get_user(temp_user)
 
     assert user is not None
@@ -46,6 +46,42 @@ def test_get_user(temp_user):
     assert usrs.EMAIL in user
 
     assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT), datetime)
+
+
+def test_get_user_by_email(temp_user):
+    user_by_user_id = usrs.get_user(temp_user)
+    email = usrs.get_email(user_by_user_id)
+    user_by_email = usrs.get_user(email)
+
+    assert user_by_user_id == user_by_email
+
+    assert user_by_email is not None
+    assert isinstance(user_by_email, dict)
+
+    assert usrs.USER_ID in user_by_email
+    assert usrs.FIRST_NAME in user_by_email
+    assert usrs.LAST_NAME in user_by_email
+    assert usrs.DOB in user_by_email
+    assert usrs.EMAIL in user_by_email
+
+    assert isinstance(datetime.strptime(user_by_email[usrs.DOB], FORMAT), datetime)
+
+
+def test_get_user_invalid_id():
+    with pytest.raises(ValueError):
+        usrs.get_user('invalid_identifier')
+
+
+def test_get_user_non_existent_email():
+    non_existent_email = 'non_existent_user@example.com'
+    user = usrs.get_user(non_existent_email)
+    assert user is None
+
+
+def test_get_user_non_existent_user_id():
+    non_existent_user_id = usrs._get_user_id()
+    user = usrs.get_user(non_existent_user_id)
+    assert user is None
 
 
 def test_get_first_name(temp_user):
@@ -136,7 +172,7 @@ def test_add_user_with_duplicate_email(temp_user):
 
 def test_add_user_invalid_id_length():
     with pytest.raises(ValueError):
-        usrs.add_user("short_id", ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, ADD_PASSWORD)
+        usrs.add_user("1", ADD_FIRST_NAME, ADD_LAST_NAME, ADD_DOB, ADD_EMAIL, ADD_PASSWORD)
 
 
 def test_add_user_short_first_name():
