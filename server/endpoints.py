@@ -183,6 +183,28 @@ class Users(Resource):
             raise wz.NotAcceptable(f'{str(e)}')
 
 
+@api.route(f'{USERS_EP}/<identifier>')
+class GetUser(Resource):
+    """
+    This class supports:
+        - retrieving a user by their ID or email
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def get(self, identifier):
+        """
+        This method retrieves a user by their ID or email.
+        """
+        try:
+            user = usrs.get_user(identifier)
+            if not user:
+                raise wz.NotFound(f'User with {USER_ID} or {usrs.EMAIL} ' +
+                                  f'{identifier} not found')
+            return user
+        except ValueError as e:
+            raise wz.BadRequest(f'{str(e)}')
+
+
 category_post_fields = api.model('NewCategory', {
     categories.TITLE: fields.String(default=""),
     categories.USER: fields.String,

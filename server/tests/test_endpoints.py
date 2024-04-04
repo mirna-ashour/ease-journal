@@ -98,6 +98,45 @@ def test_users_bad_del(mock_del):
     assert resp.status_code == NOT_FOUND
 
 
+@patch('data.users.get_user', return_value=usrs.get_test_user(), autospec=True)
+def test_get_user_by_id_success(mock_get_user):
+    """
+    Testing successful retrieval of a user by ID.
+    """
+    USER_ID = mock_get_user.return_value[usrs.USER_ID]
+    resp = TEST_CLIENT.get(f'{ep.USERS_EP}/{USER_ID}')
+    assert resp.status_code == OK
+
+
+@patch('data.users.get_user', return_value=usrs.get_test_user(), autospec=True)
+def test_get_user_by_email_success(mock_get_user):
+    """
+    Testing successful retrieval of a user by email.
+    """
+    EMAIL = mock_get_user.return_value[usrs.EMAIL]
+    resp = TEST_CLIENT.get(f'{ep.USERS_EP}/{EMAIL}')
+    assert resp.status_code == OK
+
+
+@patch('data.users.get_user', return_value=None, autospec=True)
+def test_get_user_not_found(mock_get_user):
+    """
+    Testing retrieval of a user that does not exist.
+    """
+    nonexistent_user_id = usrs._get_user_id()
+    resp = TEST_CLIENT.get(f'{ep.USERS_EP}/{nonexistent_user_id}')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.users.get_user', side_effect=ValueError(), autospec=True)
+def test_get_user_invalid_identifier(mock_get_user):
+    """
+    Testing retrieval of a user with an invalid identifier.
+    """
+    resp = TEST_CLIENT.get(f'{ep.USERS_EP}/invalid_identifier')
+    assert resp.status_code == BAD_REQUEST
+
+
 def test_main_menu():
     resp = TEST_CLIENT.get(ep.MAIN_MENU)
     resp_json = resp.get_json()
