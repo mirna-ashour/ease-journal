@@ -206,13 +206,13 @@ class GetUser(Resource):
 
 
 category_post_fields = api.model('NewCategory', {
-    categories.TITLE: fields.String(default=""),
+    categories.CATEGORY_NAME: fields.String(default=""),
     categories.USER: fields.String,
 })
 
 
 category_put_fields = api.model('UpdateCategory', {
-    categories.TITLE: fields.String(default=""),
+    categories.CATEGORY_NAME: fields.String(default=""),
 })
 
 
@@ -307,13 +307,13 @@ class Category(Resource):
         Add a category.
         """
         category_id = categories._get_category_id()
-        title = request.json[categories.TITLE]
+        category_name = request.json[categories.CATEGORY_NAME]
         user_id = request.json[categories.USER]
         if not usrs.exists(user_id):
             raise wz.NotAcceptable("Please input a user ID that exists.")
 
         try:
-            new_id = categories.add_category(category_id, title,
+            new_id = categories.add_category(category_id, category_name,
                                              user_id)
             if new_id is None:
                 raise wz.ServiceUnavailable('We have a technical problem.')

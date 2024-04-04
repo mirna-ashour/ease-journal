@@ -32,8 +32,8 @@ def temp_category(temp_user):
     """
     category_id = cats._get_category_id()
     user_id = temp_user
-    title = cats._get_title_name()
-    ret = cats.add_category(category_id, title, user_id)
+    category_name = cats._get_category_name()
+    ret = cats.add_category(category_id, category_name, user_id)
     yield category_id
     if cats.exists(category_id):
         cats.del_category(category_id)
@@ -58,7 +58,7 @@ def test_get_category(temp_category):
     assert isinstance(category, dict)
     
     assert cats.CATEGORY_ID in category
-    assert cats.TITLE in category
+    assert cats.CATEGORY_NAME in category
     assert cats.USER in category
     assert cats.DATE_TIME in category
     assert cats.JOURNALS in category
@@ -87,14 +87,14 @@ def test_get_user_categories(temp_category):
     cats.del_category(cat2_id)
 
 
-def test_get_title_name():
-    name = cats._get_title_name()
+def test_get_category_name():
+    name = cats._get_category_name()
     assert isinstance(name, str)
 
 
-def test_get_title(temp_category):
+def test_get_category_name(temp_category):
     category = cats.get_category(temp_category)
-    assert cats.get_title(category) == category[cats.TITLE]
+    assert cats.get_category_name(category) == category[cats.CATEGORY_NAME]
 
 
 def test_get_journals(temp_category):
@@ -111,12 +111,12 @@ def test_get_categories(temp_category):
 
         category = categories[key]
         assert isinstance(category, dict)
-        assert cats.TITLE in category
+        assert cats.CATEGORY_NAME in category
         assert cats.USER in category
         assert cats.DATE_TIME in category
         assert cats.JOURNALS in category
 
-        assert isinstance(category[cats.TITLE], str)
+        assert isinstance(category[cats.CATEGORY_NAME], str)
         assert isinstance(category[cats.USER], str)
         date_time = str(category[cats.DATE_TIME])
         assert isinstance(datetime.strptime(date_time, FORMAT), datetime)
@@ -127,45 +127,45 @@ def test_get_categories(temp_category):
 
 def test_add_category(temp_user):
     category_id = cats._get_category_id()
-    title = cats._get_title_name()
+    category_name = cats._get_category_name()
     user_id = temp_user
-    ret = cats.add_category(category_id, title, user_id)
+    ret = cats.add_category(category_id, category_name, user_id)
     assert cats.exists(category_id)
     assert isinstance(ret, bool)
     cats.del_category(category_id)
 
 
-def test_add_category_without_title(temp_user):
+def test_add_category_without_category_name(temp_user):
     category_id = cats._get_category_id()
-    title = ""
+    category_name = ""
     user_id = temp_user
 
-    # attempting to add category without a title 
+    # attempting to add category without a category_name 
     with pytest.raises(ValueError):
-        cats.add_category(category_id, title, user_id)
+        cats.add_category(category_id, category_name, user_id)
 
 
 def test_add_dup_category_id(temp_category):
     cat_id = temp_category
     user = cats.get_user(cats.get_category(cat_id))
-    title = cats._get_title_name()
+    category_name = cats._get_category_name()
         
     # attempting to add category again
     with pytest.raises(ValueError):
-        cats.add_category(cat_id, title, user)
+        cats.add_category(cat_id, category_name, user)
 
 
-def test_add_dup_category_title(temp_category):
+def test_add_dup_category_name(temp_category):
     existing_category = cats.get_category(temp_category)
-    existing_title = cats.get_title(existing_category)
+    existing_category_name = cats.get_category_name(existing_category)
     user = cats.get_user(existing_category)
 
-    # Ensure that the category title is not empty
-    assert existing_title is not None
+    # Ensure that the category category_name is not empty
+    assert existing_category_name is not None
 
-    # Attempt to add a new category with the same title
+    # Attempt to add a new category with the same category_name
     with pytest.raises(ValueError):
-        cats.add_category(cats._get_category_id(), existing_title, user)
+        cats.add_category(cats._get_category_id(), existing_category_name, user)
        
        
 def test_del_category(temp_category):
@@ -180,66 +180,66 @@ def test_del_category_not_there():
         cats.del_category(category_id)      
 
 
-UPDATED_TITLE = "Updated Title"
+UPDATED_CATEGORY_NAME = "Updated category_name"
 
 
 def test_update_category(temp_category):
     category_id = temp_category
-    update_data = {cats.TITLE: UPDATED_TITLE}
+    update_data = {cats.CATEGORY_NAME: UPDATED_CATEGORY_NAME}
     assert cats.update_category(category_id, update_data)
 
     updated_category = cats.get_category(category_id)
-    assert cats.get_title(updated_category) == UPDATED_TITLE
+    assert cats.get_category_name(updated_category) == UPDATED_CATEGORY_NAME
 
 
-def test_update_category_title(temp_category):
+def test_update_category_name(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
     prev_journals = cats.get_journals(prev_category)
     
-    update_data = {cats.TITLE: UPDATED_TITLE}
+    update_data = {cats.CATEGORY_NAME: UPDATED_CATEGORY_NAME}
     assert cats.update_category(category_id, update_data)
 
     updated_category = cats.get_category(category_id)
-    assert cats.get_title(updated_category) == UPDATED_TITLE
+    assert cats.get_category_name(updated_category) == UPDATED_CATEGORY_NAME
     assert cats.get_journals(updated_category) == prev_journals
 
 
 def test_update_category_journals(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
-    prev_title = cats.get_title(prev_category)
+    prev_category_name = cats.get_category_name(prev_category)
     prev_journals = cats.get_journals(prev_category)
 
     journal_id = jrnls._get_journal_id()
     new_journal = jrnls.add_journal(journal_id, "", "", "", 
         cats.get_user(prev_category), category_id)
-    journal_update_data = {jrnls.TITLE: UPDATED_TITLE}
+    journal_update_data = {jrnls.TITLE: UPDATED_CATEGORY_NAME}
     assert jrnls.update_journal(journal_id, journal_update_data)
 
     updated_category = cats.get_category(category_id)
-    assert cats.get_title(updated_category) == prev_title
+    assert cats.get_category_name(updated_category) == prev_category_name
     assert cats.get_journals(updated_category) != prev_journals
-    assert cats.get_journals(updated_category) == {journal_id: UPDATED_TITLE}
+    assert cats.get_journals(updated_category) == {journal_id: UPDATED_CATEGORY_NAME}
 
 
 def test_update_category_invalid_key(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
-    prev_title = cats.get_title(prev_category)
+    prev_category_name = cats.get_category_name(prev_category)
     prev_journals = cats.get_journals(prev_category)
     
     update_data = {"INVALID": "KEY"}
     assert cats.update_category(category_id, update_data)
 
     updated_category = cats.get_category(category_id)
-    assert cats.get_title(updated_category) == prev_title
+    assert cats.get_category_name(updated_category) == prev_category_name
     assert cats.get_journals(updated_category) == prev_journals
 
 
 def test_update_category_nonexistent_category():
     category_id = cats._get_category_id()
-    update_data = {cats.TITLE: UPDATED_TITLE}
+    update_data = {cats.CATEGORY_NAME: UPDATED_CATEGORY_NAME}
     with pytest.raises(ValueError):
         cats.update_category(category_id, update_data)
 

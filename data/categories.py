@@ -12,7 +12,7 @@ from datetime import datetime
 FORMAT = "%Y-%m-%d %H:%M:%S"
 CATEGORIES_COLLECT = 'categories'
 CATEGORY_ID = 'category_id'
-TITLE = 'title'
+CATEGORY_NAME = 'category_name'
 USER = 'user'
 DATE_TIME = 'created'
 JOURNALS = 'Journals'
@@ -30,13 +30,13 @@ MOCK_ID = '0' * CATEGORY_ID_LEN
 # categories = [
 #     {
 #         CATEGORY_ID:  75638475,
-#         TITLE: "Work",
+#         CATEGORY_NAME: "Work",
 #         USER: 1234567890,
 #         DATE_TIME: "2023-10-27 12:45:00"
 #     },
 #     {
 #         CATEGORY_ID: 384762549,
-#         TITLE: "School",
+#         CATEGORY_NAME: "School",
 #         USER: 9876543210,
 #         DATE_TIME: "2023-10-27 18:15:00"
 #     }
@@ -53,7 +53,7 @@ def _get_category_id():
 def get_test_category():
     test_category = {}
     test_category[CATEGORY_ID] = _get_category_id()
-    test_category[TITLE] = "untitled"
+    test_category[CATEGORY_NAME] = "unnamed"
     test_category[USER] = "1234567890"
     test_category[DATE_TIME] = "2002-11-20 12:00:00"
     test_category[JOURNALS] = {}
@@ -67,7 +67,7 @@ def _get_user_id():
     return _id
 
 
-def _get_title_name():
+def _get_category_name():
     name = 'test'
     rand_part = random.randint(0, BIG_NUM)
     return name + str(rand_part)
@@ -91,21 +91,22 @@ def get_user_categories(user_id: str) -> dict:
 
 
 # category ids are currently a parameter but should later be uniquely generated
-def add_category(category_id: str, title: str, user_id: str):
+def add_category(category_id: str, category_name: str, user_id: str):
     if exists(category_id):
         raise ValueError("Duplicate category.")
-    if not title:
-        raise ValueError("Please input a title.")
+    if not category_name:
+        raise ValueError("Please input a category_name.")
 
-    lowercase_title = title.lower()
+    lowercase_category_name = category_name.lower()
 
-    # Check for duplicate title
+    # Check for duplicate category_name
     existing_category = dbc.fetch_one(CATEGORIES_COLLECT,
-                                      {TITLE:
-                                       {'$regex': f'^{lowercase_title}$',
+                                      {CATEGORY_NAME:
+                                       {'$regex':
+                                        f'^{lowercase_category_name}$',
                                         '$options': 'i'}})
     if existing_category:
-        raise ValueError("Duplicate title.")
+        raise ValueError("Duplicate category_name.")
 
     # The commented check below is done in the POST endpoint for Category class
     # if not usrs.exists(user_id):
@@ -114,7 +115,7 @@ def add_category(category_id: str, title: str, user_id: str):
     date_time = datetime.now().strftime(FORMAT)
     category_entry = {}
     category_entry[CATEGORY_ID] = category_id
-    category_entry[TITLE] = title
+    category_entry[CATEGORY_NAME] = category_name
     category_entry[USER] = user_id
     category_entry[DATE_TIME] = date_time
     category_entry[JOURNALS] = {}
@@ -146,8 +147,8 @@ def get_category(category_id: str) -> dict:
     return dbc.fetch_one(CATEGORIES_COLLECT, {CATEGORY_ID: category_id})
 
 
-def get_title(category: dict):
-    return category.get(TITLE)
+def get_category_name(category: dict):
+    return category.get(CATEGORY_NAME)
 
 
 def get_user(category: dict):
@@ -176,9 +177,9 @@ def update_category(category_id: str, category_data: dict) -> bool:
         raise ValueError("Update failure: No valid fields to update.")
 
     update_data = {}
-    for key in [TITLE, JOURNALS]:
+    for key in [CATEGORY_NAME, JOURNALS]:
         if key in category_data:
-            if key == TITLE and (len(category_data[key]) != 0):
+            if key == CATEGORY_NAME and (len(category_data[key]) != 0):
                 update_data[key] = category_data[key]
             elif key == JOURNALS:  # Journals dictionary can be empty
                 update_data[key] = category_data[key]

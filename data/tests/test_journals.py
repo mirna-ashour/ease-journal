@@ -31,8 +31,8 @@ def temp_category(temp_user):
     """
     category_id = ctgs._get_category_id()
     user_id = temp_user
-    title = ctgs._get_title_name()
-    ret = ctgs.add_category(category_id, title, user_id)
+    category_name = ctgs._get_category_name()
+    ret = ctgs.add_category(category_id, category_name, user_id)
     yield category_id
     if ctgs.exists(category_id):
         ctgs.del_category(category_id)
