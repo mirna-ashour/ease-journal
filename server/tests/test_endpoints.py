@@ -328,3 +328,11 @@ def test_update_journal_not_found(mock_update):
     journal_id = "nonexistent_journal_id"
     resp = TEST_CLIENT.put(f'{ep.JOURNALS_EP}/{journal_id}', json=jrnls.get_test_journal())
     assert resp.status_code == NOT_FOUND
+
+
+def test_get_signup_form():
+    signup_url = '/signup/form'
+    resp = TEST_CLIENT.get(signup_url)
+    resp_json = resp.get_json()
+    assert ep.SIGNUP_FORM in resp_json
+    assert isinstance(resp_json, dict)

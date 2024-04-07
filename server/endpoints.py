@@ -14,6 +14,7 @@ from flask_cors import CORS
 import data.users as usrs
 import data.journals as journals
 import data.categories as categories
+import forms.SignUp_form as SignUp
 
 
 app = Flask(__name__)
@@ -39,6 +40,9 @@ TYPE = 'Type'
 TITLE = 'Title'
 HELLO_EP = '/hello'
 HELLO_RESP = 'hello'
+SIGNUP = 'signup'
+FORM = 'form'
+SIGNUP_FORM = 'signup_form'
 
 
 @api.route(HELLO_EP)
@@ -424,3 +428,15 @@ class DelJournal(Resource):
             return {f'Deleted journal with {JOURNAL_ID}': journal_id}
         except ValueError as e:
             raise wz.NotFound(f'{str(e)}')
+
+
+@api.route(f'/{SIGNUP}/{FORM}')
+class SignUpForm(Resource):
+    """
+    Get the form for a new user to sign up
+    """
+    def get(self):
+        """
+        Get the form for a new user to sign up
+        """
+        return {SIGNUP_FORM: SignUp.get_form()}
