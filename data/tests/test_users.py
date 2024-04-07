@@ -44,6 +44,7 @@ def test_get_user_by_user_id(temp_user):
     assert usrs.LAST_NAME in user
     assert usrs.DOB in user
     assert usrs.EMAIL in user
+    assert usrs.PASSWORD in user
 
     assert isinstance(datetime.strptime(user[usrs.DOB], FORMAT), datetime)
 
@@ -63,6 +64,7 @@ def test_get_user_by_email(temp_user):
     assert usrs.LAST_NAME in user_by_email
     assert usrs.DOB in user_by_email
     assert usrs.EMAIL in user_by_email
+    assert usrs.PASSWORD in user_by_email
 
     assert isinstance(datetime.strptime(user_by_email[usrs.DOB], FORMAT), datetime)
 
