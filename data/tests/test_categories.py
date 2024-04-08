@@ -205,6 +205,20 @@ def test_update_category_name(temp_category):
     assert cats.get_journals(updated_category) == prev_journals
 
 
+def test_update_category_name_zero_length(temp_category):
+    category_id = temp_category
+    prev_category = cats.get_category(category_id)
+    prev_category_name = cats.get_category_name(prev_category)
+    prev_journals = cats.get_journals(prev_category)
+
+    update_data = {cats.CATEGORY_NAME: ""}
+    assert cats.update_category(category_id, update_data)
+
+    updated_category = cats.get_category(category_id)
+    assert cats.get_category_name(updated_category) == prev_category_name
+    assert cats.get_journals(updated_category) == prev_journals
+
+
 def test_update_category_journals(temp_category):
     category_id = temp_category
     prev_category = cats.get_category(category_id)
