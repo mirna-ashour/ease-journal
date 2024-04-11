@@ -48,7 +48,11 @@ SIGNUP_FORM_FLDS = [
         ff.QSTN: 'Password:',
         ff.PARAM_TYPE: ff.PASSWORD,
         ff.OPT: False,
-        ff.INSTRUCTIONS: PASSWORD_INSTRUCTIONS,  # Additional instructions
+    },
+    {
+        FLD_NM: 'Password Instructions',
+        ff.QSTN: PASSWORD_INSTRUCTIONS,
+        ff.INSTRUCTIONS: True,
     },
 ]
 
