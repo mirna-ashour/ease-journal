@@ -70,6 +70,16 @@ def get_journals() -> dict:
     return dbc.fetch_all_as_dict(JOURNAL_ID, JOURNALS_COLLECT)
 
 
+def get_user_journals(user_id: str) -> dict:
+    dbc.connect_db()
+    all_journals = dbc.fetch_all_as_dict(JOURNAL_ID, JOURNALS_COLLECT)
+    user_specific_journals = {}
+    for journal_id, journal in all_journals.items():
+        if journal[USER] == user_id:
+            user_specific_journals[journal_id] = journal
+    return user_specific_journals
+
+
 def add_journal(journal_id: str, title: str, prompt: str, content: str,
                 user_id: str, category_id: str):
     if exists(journal_id):
@@ -95,7 +105,7 @@ def add_journal(journal_id: str, title: str, prompt: str, content: str,
 
     # Check for duplicate prompts (case-insensitive)
     if any(journal.get(PROMPT, '').lower() ==
-            prompt.lower() for journal in get_journals().values()):
+            prompt.lower() for journal in get_user_journals(user_id).values()):
         raise ValueError(f'Duplicate prompt: {prompt}')
 
     # Set the created and modified timestamps

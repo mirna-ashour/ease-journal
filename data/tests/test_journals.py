@@ -160,6 +160,26 @@ def test_get_journals(temp_journal):
     assert jrnls.exists(temp_journal)
 
 
+def test_get_user_journals(temp_user, temp_category):
+    user_id = temp_user
+    category_id = temp_category
+
+    jrnl1_id = jrnls._get_journal_id()
+    jrnl2_id = jrnls._get_journal_id()
+
+    jrnls.add_journal(jrnl1_id, "Journal 1", ADD_PROMPT0, "", user_id, category_id)
+    jrnls.add_journal(jrnl2_id, "Journal 2", ADD_PROMPT1, "", user_id, category_id)
+
+    user_jrnls = jrnls.get_user_journals(user_id)
+
+    assert len(user_jrnls) == 2
+    assert jrnl1_id in user_jrnls
+    assert jrnl2_id in user_jrnls
+
+    jrnls.del_journal(jrnl1_id)
+    jrnls.del_journal(jrnl2_id)
+
+
 ADD_TITLE = 'Added title'
 ADD_PROMPT0 = 'Added prompt0'
 ADD_PROMPT1 = 'Added prompt1'
