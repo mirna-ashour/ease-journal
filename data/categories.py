@@ -99,12 +99,15 @@ def add_category(category_id: str, category_name: str, user_id: str):
 
     lowercase_category_name = category_name.lower()
 
-    # Check for duplicate category_name
-    existing_category = dbc.fetch_one(CATEGORIES_COLLECT,
-                                      {CATEGORY_NAME:
-                                       {'$regex':
-                                        f'^{lowercase_category_name}$',
-                                        '$options': 'i'}})
+    # Check for duplicate category_name (user-specific)
+    existing_category = dbc.fetch_one(
+        CATEGORIES_COLLECT,
+        {
+            USER: user_id,
+            CATEGORY_NAME: {"$regex": f"^{lowercase_category_name}$",
+                            "$options": "i"},
+        },
+    )
     if existing_category:
         raise ValueError("Duplicate category_name.")
 

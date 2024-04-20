@@ -68,8 +68,8 @@ def test_get_test_category():
     assert isinstance(cats.get_test_category(), dict)
 
 
-def test_get_user_categories():
-    user_id = cats._get_user_id()
+def test_get_user_categories(temp_user):
+    user_id = temp_user
 
     cat1_id = cats._get_category_id()
     cat2_id = cats._get_category_id()
