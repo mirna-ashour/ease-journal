@@ -190,7 +190,7 @@ def test_get_category_journals(temp_user, temp_category):
     jrnls.add_journal(jrnl1_id, "Journal 1", ADD_PROMPT0, "", user_id, category_id)
     jrnls.add_journal(jrnl2_id, "Journal 2", ADD_PROMPT1, "", user_id, category_id)
 
-    category_jrnls = jrnls.get_user_journals(user_id)
+    category_jrnls = jrnls.get_category_journals(category_id)
 
     assert len(category_jrnls) == 2
     assert jrnl1_id in category_jrnls
