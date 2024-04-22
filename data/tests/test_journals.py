@@ -180,6 +180,26 @@ def test_get_user_journals(temp_user, temp_category):
     jrnls.del_journal(jrnl2_id)
 
 
+def test_get_category_journals(temp_user, temp_category):
+    user_id = temp_user
+    category_id = temp_category
+
+    jrnl1_id = jrnls._get_journal_id()
+    jrnl2_id = jrnls._get_journal_id()
+
+    jrnls.add_journal(jrnl1_id, "Journal 1", ADD_PROMPT0, "", user_id, category_id)
+    jrnls.add_journal(jrnl2_id, "Journal 2", ADD_PROMPT1, "", user_id, category_id)
+
+    category_jrnls = jrnls.get_user_journals(user_id)
+
+    assert len(category_jrnls) == 2
+    assert jrnl1_id in category_jrnls
+    assert jrnl2_id in category_jrnls
+
+    jrnls.del_journal(jrnl1_id)
+    jrnls.del_journal(jrnl2_id)
+
+
 ADD_TITLE = 'Added title'
 ADD_PROMPT0 = 'Added prompt0'
 ADD_PROMPT1 = 'Added prompt1'

@@ -80,6 +80,16 @@ def get_user_journals(user_id: str) -> dict:
     return user_specific_journals
 
 
+def get_category_journals(category_id: str) -> dict:
+    dbc.connect_db()
+    all_journals = dbc.fetch_all_as_dict(JOURNAL_ID, JOURNALS_COLLECT)
+    category_specific_journals = {}
+    for journal_id, journal in all_journals.items():
+        if journal[CATEGORY] == category_id:
+            category_specific_journals[journal_id] = journal
+    return category_specific_journals
+
+
 def add_journal(journal_id: str, title: str, prompt: str, content: str,
                 user_id: str, category_id: str):
     if exists(journal_id):
