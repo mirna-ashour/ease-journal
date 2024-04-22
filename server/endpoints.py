@@ -430,6 +430,31 @@ class DelJournal(Resource):
             raise wz.NotFound(f'{str(e)}')
 
 
+@api.route(f'{JOURNALS_EP}/<category_id>')
+class GetJournals(Resource):
+    """
+    This class supports:
+        - retrieving journals for a category
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'Not Found')
+    def get(self, category_id):
+        """
+        This method returns all journals for a category.
+        """
+        data = journals.get_category_journals(category_id)
+        if data:
+            return {
+                TYPE: DATA,
+                TITLE: 'Journals for category',
+                DATA: data
+            }
+        else:
+            raise wz.NotAcceptable(
+                'There are no journals under this category.'
+            )
+
+
 @api.route(f'/{SIGNUP}/{FORM}')
 class SignUpForm(Resource):
     """

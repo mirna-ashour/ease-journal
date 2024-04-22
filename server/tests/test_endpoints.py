@@ -260,6 +260,24 @@ def test_list_journals():
     assert ep.TYPE in resp_json
     assert ep.DATA in resp_json
 
+@patch('data.journals.get_category_journals', return_value='journals_list', autospec=True)
+def test_get_category_journals_success(mock_get_category_journals):
+    CATEGORY_ID= "12345678"
+    resp = TEST_CLIENT.get(f'{ep.JOURNALS_EP}/{CATEGORY_ID}')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert ep.TITLE in resp_json
+    assert ep.TYPE in resp_json
+    assert ep.DATA in resp_json
+
+
+@patch('data.journals.get_category_journals', return_value=None, autospec=True)
+def test_get_category_journals_not_found(mock_get_category_journals):
+    CATEGORY_ID= "12345678"
+    resp = TEST_CLIENT.get(f'{ep.JOURNALS_EP}/{CATEGORY_ID}')
+    assert resp.status_code == NOT_ACCEPTABLE
+
 
 @patch('data.journals.add_journal', return_value=jrnls.MOCK_ID, autospec=True)
 @patch('data.users.exists', return_value=True)  # Mocking usrs.exists to always return True
