@@ -15,37 +15,32 @@ PASSWORD_INSTRUCTIONS = "Password must be at least 8 characters long and contain
 
 SIGNUP_FORM_FLDS = [
     {
-        FLD_NM: 'Instructions',
-        ff.QSTN: 'Enter your details to sign up.',
-        ff.INSTRUCTIONS: True,
-    },
-    {
         FLD_NM: FIRST_NAME,
-        ff.QSTN: 'First Name:',
+        ff.QSTN: 'First Name',
         ff.PARAM_TYPE: ff.QUERY_STR,
         ff.OPT: False,
     },
     {
         FLD_NM: LAST_NAME,
-        ff.QSTN: 'Last Name:',
+        ff.QSTN: 'Last Name',
         ff.PARAM_TYPE: ff.QUERY_STR,
         ff.OPT: False,
     },
     {
         FLD_NM: DATE_OF_BIRTH,
-        ff.QSTN: 'Date of Birth (YYYY-MM-DD):',
+        ff.QSTN: 'Date of Birth',
         ff.PARAM_TYPE: ff.DATE,
         ff.OPT: False,
     },
     {
         FLD_NM: EMAIL,
-        ff.QSTN: 'Email:',
+        ff.QSTN: 'Email',
         ff.PARAM_TYPE: ff.QUERY_STR,
         ff.OPT: False,
     },
     {
         FLD_NM: PASSWORD,
-        ff.QSTN: 'Password:',
+        ff.QSTN: 'Password',
         ff.PARAM_TYPE: ff.PASSWORD,
         ff.OPT: False,
     },
