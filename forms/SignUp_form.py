@@ -11,6 +11,7 @@ EMAIL = 'email'
 PASSWORD = 'password'
 
 # Additional password instructions
+DOB_INSTRUCTIONS = "Please enter your date of birth."
 PASSWORD_INSTRUCTIONS = "Password must be at least 8 characters long and contain at least one digit."
 
 SIGNUP_FORM_FLDS = [
@@ -31,6 +32,11 @@ SIGNUP_FORM_FLDS = [
         ff.QSTN: 'Date of Birth',
         ff.PARAM_TYPE: ff.DATE,
         ff.OPT: False,
+    },
+    {
+        FLD_NM: 'Date of Birth Instructions',
+        ff.QSTN: DOB_INSTRUCTIONS,
+        ff.INSTRUCTIONS: True,
     },
     {
         FLD_NM: EMAIL,
