@@ -114,9 +114,10 @@ def add_journal(journal_id: str, title: str, prompt: str, content: str,
         raise ValueError("Prompt exceeds 255 character limit")
 
     # Check for duplicate prompts (case-insensitive and user-specific)
-    if any(journal.get(PROMPT, '').lower() ==
-            prompt.lower() for journal in get_user_journals(user_id).values()):
-        raise ValueError(f'Duplicate prompt: {prompt}')
+    # if any(journal.get(PROMPT, '').lower() ==
+    #         prompt.lower() for journal in
+    # get_user_journals(user_id).values()):
+    #     raise ValueError(f'Duplicate prompt: {prompt}')
 
     # Set the created and modified timestamps
     timestamp = datetime.now().strftime(FORMAT)

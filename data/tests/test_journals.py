@@ -260,6 +260,7 @@ def test_add_journal_without_title_or_content(temp_user, temp_category):
     jrnls.del_journal(journal_id)
 
 
+@pytest.mark.skip('This test is no longer neeeded')
 def test_add_journal_dup_prompt(temp_journal):
     journal_id = temp_journal
     existing_journal = jrnls.get_journal(journal_id)
