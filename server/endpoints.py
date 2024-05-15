@@ -239,10 +239,10 @@ class GetCategory(Resource):
                 TITLE: 'Categories for user',
                 DATA: data
             }
-        else:
-            raise wz.NotAcceptable(
-                'There are no categories under this user.'
-            )
+        # else:
+        #     raise wz.NotAcceptable(
+        #         'There are no categories under this user.'
+        #     )
 
 
 @api.route(f'{CATEGORIES_EP}/<category_id>')
@@ -449,10 +449,10 @@ class GetJournals(Resource):
                 TITLE: 'Journals for category',
                 DATA: data
             }
-        else:
-            raise wz.NotAcceptable(
-                'There are no journals under this category.'
-            )
+        # else:
+        #     raise wz.NotAcceptable(
+        #         'There are no journals under this category.'
+        #     )
 
 
 @api.route(f'/{SIGNUP}/{FORM}')
